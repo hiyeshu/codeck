@@ -11,6 +11,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["packages/**/*.test.ts", "skill/**/*.test.ts"],
+    include: ["packages/**/*.test.ts", "skills/**/*.test.ts"],
   },
 });

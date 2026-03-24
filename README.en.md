@@ -58,10 +58,12 @@ npx skills add hiyeshu/codeck
 
 Type `/codeck` inside Claude Code to get started.
 
+> Breaking change: the repository layout moved from `skill/` to `skills/`. Re-run `./setup` after upgrading; old local scripts or symlinks that still point at `skill/` are no longer supported.
+
 ## Repository Layout
 
 ```
-skill/
+skills/
 ├── codeck/          entry dashboard
 ├── codeck-outline/  editor skill
 ├── codeck-design/   designer skill + reference library

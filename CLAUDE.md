@@ -13,13 +13,14 @@ TypeScript + Vitest + Zod + Playwright + PptxGenJS
 
 <config>
 package.json - 项目依赖（zod, playwright, pptxgenjs, vitest）
-vitest.config.ts - 测试配置，覆盖 skill/**/*.test.ts
+vitest.config.ts - 测试配置，覆盖 skills/**/*.test.ts
 setup - 安装脚本（npm install）
-skill/CONVENTIONS.md - 技能编写规范（frontmatter / pushy description / evals）
+skills/CONVENTIONS.md - 技能编写规范（frontmatter / pushy description / evals）
 </config>
 
 ## 目录结构
 
+- `skills/` — 仓库内的技能源码与共享运行时代码；安装到客户端后的入口目录仍是 `~/.claude/skills/{name}/`
 - `~/.codeck/projects/{slug}/` — 项目中间产物（deck.json、design.json、outline.json、intent.json、pipeline.json、intent.md 等）
 - `~/.codeck/` — 用户全局状态（自动更新、项目历史快照）
 - 最终产出（HTML/PDF/PPTX）输出到项目根目录
@@ -54,7 +55,9 @@ Claude 读取 prompt，直出最终 HTML（保持 default.html 的 slide/block/s
 compiler write-final → 校验 HTML contract → 命名为 {title}-r{revision}.html
 ```
 
-CLI：`npx tsx skill/compiler/index.ts <validate|migrate|render-default|prompt-only|validate-html|write-final>`
+CLI：`npx tsx skills/compiler/index.ts <validate|migrate|render-default|prompt-only|validate-html|write-final>`
+
+迁移说明：仓库已从 `skill/` 硬切到 `skills/`。升级后必须重新运行 `./setup`，旧路径不再兼容。
 
 ## 2.x 远期目标
 

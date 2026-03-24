@@ -58,10 +58,12 @@ npx skills add hiyeshu/codeck
 
 在 Claude Code 中输入 `/codeck` 开始使用。
 
+> 破坏性变更：仓库目录已从 `skill/` 迁移到 `skills/`。升级后请重新运行 `./setup`，旧的基于 `skill/` 的本地脚本和软链不再兼容。
+
 ## 目录
 
 ```
-skill/
+skills/
 ├── codeck/          入口 dashboard
 ├── codeck-outline/  编辑技能
 ├── codeck-design/   设计师技能 + 参考案例库
