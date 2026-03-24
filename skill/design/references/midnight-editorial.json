@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 2,
+  "root": "deck",
+  "meta": {
+    "title": "Midnight Editorial 品牌展示",
+    "language": "zh-CN",
+    "revision": 1
+  },
+  "elements": {
+    "block-slide-cover-0-statement-hero-0": {
+      "type": "StatementHero",
+      "props": {
+        "label": "ATELIER NOIR",
+        "accent": "orange",
+        "title": "我们不做漂亮的东西。我们做不可能忽视的东西。",
+        "body": "数字奢侈品工作室。为拒绝平庸的品牌服务。"
+      },
+      "children": []
+    },
+    "slide-cover-0": {
+      "type": "Slide",
+      "props": {
+        "purpose": "cover",
+        "narrativeRole": "hook",
+        "importance": "high",
+        "speakerNotes": "Midnight Editorial 的封面是纯粹的排版力量——没有图片、没有图标、没有装饰。标题用 Clash Display 700 weight，尽可能大。label 用 10px 全大写 + 超宽字距（0.2em），制造「高端杂志刊头」的感觉。背景纯黑 #050505，文字纯白 #FFFFFF，对比度拉满。如果有大气光晕，放在角落，blur 120px，opacity 5-10%，绝不抢主体。"
+      },
+      "children": [
+        "block-slide-cover-0-statement-hero-0"
+      ]
+    },
+    "block-slide-metrics-1-metric-grid-0": {
+      "type": "MetricGrid",
+      "props": {
+        "items": [
+          {
+            "value": "147",
+            "label": "品牌重塑项目",
+            "note": "跨 12 个行业"
+          },
+          {
+            "value": "2.4B",
+            "label": "触达用户",
+            "note": "年度累计"
+          },
+          {
+            "value": "96%",
+            "label": "客户续约率",
+            "note": "连续三年"
+          },
+          {
+            "value": "23",
+            "label": "设计大奖",
+            "note": "含 D&AD 黑铅笔"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-metrics-1": {
+      "type": "Slide",
+      "props": {
+        "purpose": "metrics",
+        "narrativeRole": "evidence",
+        "importance": "medium",
+        "speakerNotes": "统计数据页是 Midnight Editorial 的标志性组件。四列等宽网格，顶部一条极细的分割线（border-white/5）。每个单元格：上方是 10px 全大写 muted label，下方是 text-2xl 的 medium weight 数字。数字不加单位符号（不写「个」「次」），让数字本身说话。四个单元格用 0.1s 递增延迟依次出现，制造节奏感。这页的设计原则：数据即权威，不需要解释。"
+      },
+      "children": [
+        "block-slide-metrics-1-metric-grid-0"
+      ]
+    },
+    "block-slide-content-2-hero-0": {
+      "type": "Hero",
+      "props": {
+        "eyebrow": "01",
+        "title": "克制是最昂贵的奢侈",
+        "body": "每一个我们删掉的元素，都让留下的元素更有力量。我们不追求「更多」，我们追求「刚好」。当你的竞争对手在堆砌功能时，我们在做减法。当他们在喊口号时，我们在留白。沉默比噪音更难忘。"
+      },
+      "children": []
+    },
+    "slide-content-2": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "编辑式内容页的核心是「不对称布局」：左侧 1/4 放章节编号（01、02），用 Clash Display 超大字；右侧 3/4 放叙事文本，用 Inter Light（300 weight），text-xl 或 text-2xl，行高 1.6。文本宽度控制在 60-80 字符，不要满屏铺开。这种布局模仿高端杂志的分栏排版——编号给结构感，正文给阅读节奏。留大量空白，让文字有呼吸空间。"
+      },
+      "children": [
+        "block-slide-content-2-hero-0"
+      ]
+    },
+    "block-slide-comparison-3-comparison-0": {
+      "type": "Comparison",
+      "props": {
+        "left": {
+          "label": "行业常规",
+          "items": [
+            "渐变背景 + 圆角卡片 + 彩色图标",
+            "「赋能」「一站式」「生态闭环」",
+            "每页塞满 5 个要点",
+            "所有品牌看起来都一样"
+          ]
+        },
+        "right": {
+          "label": "Midnight Editorial",
+          "items": [
+            "纯黑画布 + 锐利边角 + 纯排版",
+            "一句话说完，或者不说",
+            "一页一个呼吸",
+            "看一眼就知道是谁"
+          ],
+          "outcome": "辨识度即护城河"
+        }
+      },
+      "children": []
+    },
+    "slide-comparison-3": {
+      "type": "Slide",
+      "props": {
+        "purpose": "comparison",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "对比页是最有说服力的页面类型之一。左栏列举「大家都在做的事」，右栏列举「我们做的事」。关键技巧：左栏的措辞要具体到让观众产生共鸣（「渐变背景 + 圆角卡片」——他们见过一万次），右栏的措辞要短、要狠、要有态度。outcome 一句话收尾，像宣言。在 Midnight Editorial 风格里，左栏用 surface 色（#0A0A0A），右栏用极细白色边框，不用彩色——颜色克制本身就是风格声明。"
+      },
+      "children": [
+        "block-slide-comparison-3-comparison-0"
+      ]
+    },
+    "block-slide-closing-4-hero-0": {
+      "type": "Hero",
+      "props": {
+        "eyebrow": "CONTACT",
+        "title": "hello@ateliernoir.com",
+        "body": "不接受简报。只接受对话。"
+      },
+      "children": []
+    },
+    "slide-closing-4": {
+      "type": "Slide",
+      "props": {
+        "purpose": "closing",
+        "narrativeRole": "cta",
+        "importance": "high",
+        "speakerNotes": "Midnight Editorial 的结尾页把邮箱地址当作标题——用 Clash Display 最大号渲染，加细下划线。这是一种反常规操作：大多数 deck 的结尾是「谢谢」或「Q&A」，但把联系方式做成视觉主体，传递的信息是「我们随时准备好了，球在你这边」。body 只有一句话，带态度：「不接受简报。只接受对话。」背景可以放一个超大的品牌名幽灵字（opacity 0.03），从底部被裁切，制造纵深感。"
+      },
+      "children": [
+        "block-slide-closing-4-hero-0"
+      ]
+    },
+    "deck": {
+      "type": "Deck",
+      "props": {
+        "totalPages": 5
+      },
+      "children": [
+        "slide-cover-0",
+        "slide-metrics-1",
+        "slide-content-2",
+        "slide-comparison-3",
+        "slide-closing-4"
+      ]
+    }
+  }
+}

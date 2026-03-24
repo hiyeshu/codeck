@@ -1,0 +1,312 @@
+{
+  "schemaVersion": 2,
+  "root": "deck",
+  "meta": {
+    "title": "IDSync 战略分析仪表盘",
+    "language": "zh-CN",
+    "revision": 1
+  },
+  "elements": {
+    "block-slide-cover-0-statement-hero-0": {
+      "type": "StatementHero",
+      "props": {
+        "label": "Q4 2025 战略回顾",
+        "accent": "blue",
+        "title": "从数据到决策，从洞察到行动。",
+        "body": "四大战略支柱的健康度追踪、项目交付分析与关键洞察汇总。"
+      },
+      "children": []
+    },
+    "slide-cover-0": {
+      "type": "Slide",
+      "props": {
+        "purpose": "cover",
+        "narrativeRole": "hook",
+        "importance": "high",
+        "speakerNotes": "企业仪表盘风格的封面要传递两个信息：这是什么（战略分析平台）和这次看什么（Q4 回顾）。label 用时间范围锚定上下文，title 用对仗句式（数据→决策，洞察→行动）传递平台价值。深色背景 + 蓝色 accent 是企业级产品的标准配色——专业、可信、不花哨。"
+      },
+      "children": [
+        "block-slide-cover-0-statement-hero-0"
+      ]
+    },
+    "block-slide-metrics-1-metric-grid-0": {
+      "type": "MetricGrid",
+      "props": {
+        "items": [
+          {
+            "value": "89%",
+            "label": "数据赋能与运营",
+            "note": "超额完成目标"
+          },
+          {
+            "value": "73%",
+            "label": "现场洞察与分析",
+            "note": "稳步推进中"
+          },
+          {
+            "value": "62%",
+            "label": "人文洞察与分析",
+            "note": "需要关注"
+          },
+          {
+            "value": "48%",
+            "label": "AI 与创新",
+            "note": "低于预期"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-metrics-1": {
+      "type": "Slide",
+      "props": {
+        "purpose": "metrics",
+        "narrativeRole": "evidence",
+        "importance": "medium",
+        "speakerNotes": "仪表盘风格的核心页面是「支柱健康度」——用 metric-grid 展示 4 个关键维度的完成率。每个指标用不同颜色编码（绿→蓝→红→黄），让观众一眼看到哪个维度健康、哪个需要关注。note 字段用一句话定性总结，不要只放数字。4 个指标是最佳数量——对应仪表盘的四象限布局。数字从高到低排列，制造「从好到需改进」的叙事节奏。"
+      },
+      "children": [
+        "block-slide-metrics-1-metric-grid-0"
+      ]
+    },
+    "block-slide-content-2-table-0": {
+      "type": "Table",
+      "props": {
+        "heading": "六个月健康度趋势（%）",
+        "columns": [
+          "月份",
+          "数据赋能",
+          "现场洞察",
+          "人文洞察",
+          "AI 创新"
+        ],
+        "rows": [
+          [
+            "6月",
+            "25",
+            "20",
+            "35",
+            "30"
+          ],
+          [
+            "7月",
+            "38",
+            "32",
+            "42",
+            "28"
+          ],
+          [
+            "8月",
+            "45",
+            "48",
+            "52",
+            "35"
+          ],
+          [
+            "9月",
+            "52",
+            "55",
+            "58",
+            "45"
+          ],
+          [
+            "10月",
+            "58",
+            "62",
+            "55",
+            "52"
+          ],
+          [
+            "11月",
+            "68",
+            "72",
+            "60",
+            "58"
+          ],
+          [
+            "12月",
+            "75",
+            "78",
+            "68",
+            "65"
+          ]
+        ]
+      },
+      "children": []
+    },
+    "slide-content-2": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "趋势数据页用 table block 展示时间序列。虽然原始仪表盘用折线图，但在 DeckSpec 中 table 是最可靠的数据呈现方式——AI 不会搞错数据点。标题用问句（「谁在加速，谁在掉队」）比陈述句更抓注意力。表格让观众自己发现规律：数据赋能和现场洞察持续上升，人文洞察在 9 月后放缓，AI 创新一直偏低。让数据自己说话，不要替观众下结论。"
+      },
+      "children": [
+        "block-slide-content-2-table-0"
+      ]
+    },
+    "block-slide-metrics-3-dark-stat-0": {
+      "type": "DarkStat",
+      "props": {
+        "label": "Q4 交付数据",
+        "title": "项目交付全景",
+        "items": [
+          {
+            "value": "24",
+            "label": "已完成项目",
+            "note": "同比 +5",
+            "color": "#22C55E"
+          },
+          {
+            "value": "156",
+            "label": "总请求数",
+            "note": "同比 +19",
+            "color": "#3B82F6"
+          },
+          {
+            "value": "18",
+            "label": "进行中",
+            "note": "同比 +5",
+            "color": "#F59E0B"
+          },
+          {
+            "value": "12",
+            "label": "待分配",
+            "note": "同比 +9",
+            "color": "#8B5CF6"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-metrics-3": {
+      "type": "Slide",
+      "props": {
+        "purpose": "metrics",
+        "narrativeRole": "evidence",
+        "importance": "medium",
+        "speakerNotes": "项目交付页用 dark-stat 展示四个核心运营指标。每个指标用独立颜色（绿/蓝/黄/紫），与前面的支柱颜色体系区分开——这是两套不同的度量维度。note 字段放同比变化（+5、+19），让决策者快速判断趋势方向。「待分配 12 个，同比 +9」是一个隐含的警告信号——积压在增长，但不需要你说出来，数字自己会说。"
+      },
+      "children": [
+        "block-slide-metrics-3-dark-stat-0"
+      ]
+    },
+    "block-slide-content-4-problem-card-grid-0": {
+      "type": "ProblemCardGrid",
+      "props": {
+        "label": "风险",
+        "title": "需要立即关注的阻塞项",
+        "cards": [
+          {
+            "title": "治疗转换障碍分析",
+            "body": "数据源接入受阻，等待合规审批。已延期 2 周，影响下游 3 个项目。",
+            "tone": "red"
+          },
+          {
+            "title": "AI 创新支柱整体滞后",
+            "body": "完成率 48%，低于 70% 的季度目标。核心原因：模型评估周期超预期，缺少专职 ML 工程师。",
+            "tone": "orange"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-content-4": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "风险页用 problem-card-grid 聚焦需要行动的阻塞项。只放 2-3 个最关键的，不要把所有问题都列出来——决策者的注意力是稀缺资源。每张卡片的 body 要包含三个要素：现状（受阻/滞后）、原因（合规审批/缺人）、影响范围（延期 2 周/影响 3 个项目）。tone 用 red 和 orange 区分紧急程度。这页的目的不是汇报问题，是推动决策。"
+      },
+      "children": [
+        "block-slide-content-4-problem-card-grid-0"
+      ]
+    },
+    "block-slide-content-5-bullet-list-0": {
+      "type": "BulletList",
+      "props": {
+        "heading": "本季度三个关键洞察",
+        "items": [
+          {
+            "id": "insight-1",
+            "title": "现场洞察加速最快",
+            "body": "从 20% 到 78%，得益于 Workshop 机制的落地。建议将此模式复制到 AI 创新支柱。"
+          },
+          {
+            "id": "insight-2",
+            "title": "人文洞察在 Q3 后放缓",
+            "body": "9 月达到 58% 后增速下降。根因：关键研究员离职 + 新项目排期冲突。需要补充人力。"
+          },
+          {
+            "id": "insight-3",
+            "title": "待分配积压持续增长",
+            "body": "从 3 个增长到 12 个，同比 +9。如果不扩容，Q1 交付能力将成为瓶颈。"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-content-5": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "洞察页用 bullet-list 而不是 problem-card-grid——因为这里不全是问题，也有好消息。每条洞察的结构是「结论 + 证据 + 建议」：title 是结论（加速最快/放缓/积压增长），body 先给数据证据，再给行动建议。三条洞察覆盖「好/坏/警告」三种信号，给决策者一个平衡的全景。最后一条故意用「如果不扩容」的假设句式，制造紧迫感。"
+      },
+      "children": [
+        "block-slide-content-5-bullet-list-0"
+      ]
+    },
+    "block-slide-closing-6-flow-0": {
+      "type": "Flow",
+      "props": {
+        "heading": "Q1 三个优先行动",
+        "items": [
+          {
+            "title": "解除阻塞",
+            "subtitle": "推动合规审批，释放治疗转换分析项目。目标：2 周内完成。"
+          },
+          {
+            "title": "补充 AI 人力",
+            "subtitle": "招聘 2 名 ML 工程师，将 AI 创新支柱完成率从 48% 拉到 70%。"
+          },
+          {
+            "title": "复制 Workshop 模式",
+            "subtitle": "将现场洞察的 Workshop 机制推广到其他三个支柱，加速交付。"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-closing-6": {
+      "type": "Slide",
+      "props": {
+        "purpose": "closing",
+        "narrativeRole": "cta",
+        "importance": "high",
+        "speakerNotes": "结尾页用 flow block 展示下一步行动，不用 hero block 做感性收尾——企业仪表盘的结尾必须是可执行的。三个行动按优先级排列：先解除阻塞（止血），再补充人力（补能力），最后复制成功模式（放大效果）。每个行动有明确的目标和时间线。决策者看完这页应该知道：下周一开会要讨论什么。这就是仪表盘 deck 和品牌 deck 的本质区别——品牌 deck 卖感觉，仪表盘 deck 推动作。"
+      },
+      "children": [
+        "block-slide-closing-6-flow-0"
+      ]
+    },
+    "deck": {
+      "type": "Deck",
+      "props": {
+        "totalPages": 7
+      },
+      "children": [
+        "slide-cover-0",
+        "slide-metrics-1",
+        "slide-content-2",
+        "slide-metrics-3",
+        "slide-content-4",
+        "slide-content-5",
+        "slide-closing-6"
+      ]
+    }
+  }
+}

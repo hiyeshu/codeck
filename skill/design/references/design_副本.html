@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>codeck 组件展示</title>
+  <style>
+    :root {
+      --bg: #f8f8f8;
+      --fg: #111;
+      --muted: #888;
+      --border: #e0e0e0;
+      --card: #fff;
+      --accent: #2563eb;
+      --radius: 12px;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: ui-monospace, "SF Mono", Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: var(--font); color: var(--fg); background: var(--bg); -webkit-font-smoothing: antialiased; }
+    body { max-width: 1200px; margin: 0 auto; padding: 48px 32px 96px; }
+
+    .page-header { margin-bottom: 64px; }
+    .page-header h1 { font-size: 40px; font-weight: 700; letter-spacing: -0.03em; }
+    .page-header p { font-size: 16px; color: var(--muted); margin-top: 8px; }
+
+    .section { margin-bottom: 64px; }
+    .section-title {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 24px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .component-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 24px; overflow: hidden;
+    }
+    .component-card__header {
+      padding: 12px 20px; background: #fafafa;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .component-card__name { font-size: 13px; font-weight: 600; }
+    .component-card__tag {
+      font-size: 11px; padding: 2px 8px; border-radius: 999px;
+      background: #eef2ff; color: #4f46e5;
+    }
+    .component-card__preview { padding: 40px; }
+
+    .slide-preview {
+      width: 100%; aspect-ratio: 16/9;
+      border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; position: relative;
+    }
+    .slide-preview--dark { background: var(--fg); color: #fff; }
+    .slide-preview--light { background: #fff; }
+
+    /* StatementHero */
+    .demo-sh { padding: 48px; display: flex; flex-direction: column; justify-content: center; height: 100%; }
+    .demo-sh.is-center { align-items: center; text-align: center; }
+    .demo-sh__label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .demo-sh__title { font-size: 42px; font-weight: 700; line-height: 1.1; letter-spacing: -0.025em; }
+    .demo-sh__body { font-size: 16px; line-height: 1.5; color: var(--muted); margin-top: 16px; max-width: 500px; }
+
+    /* BulletList */
+    .demo-bl { padding: 32px 48px; }
+    .demo-bl__heading { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    .demo-bl__items { list-style: none; }
+    .demo-bl__item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .demo-bl__item:last-child { border-bottom: none; }
+    .demo-bl__item-t { font-size: 15px; font-weight: 600; }
+    .demo-bl__item-b { font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+    /* Code */
+    .demo-code__bar { background: #313244; padding: 8px 16px; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 6px; }
+    .demo-code__dot { width: 8px; height: 8px; border-radius: 50%; }
+    .demo-code__dot--r { background: #F38BA8; }
+    .demo-code__dot--y { background: #FAB387; }
+    .demo-code__dot--g { background: #A6E3A1; }
+    .demo-code__fname { font-size: 12px; color: #a6adc8; margin-left: 8px; }
+    .demo-code__pre { background: #1E1E2E; color: #CDD6F4; padding: 20px; margin: 0; border-radius: 0 0 8px 8px; font-family: var(--mono); font-size: 13px; line-height: 1.7; overflow-x: auto; }
+    .demo-code__hl { background: rgba(255,183,178,0.12); display: block; margin: 0 -20px; padding: 0 20px; }
+
+    /* Callout */
+    .demo-co { padding: 16px 20px; border-radius: 12px; }
+    .demo-co--info { background: #eef2ff; }
+    .demo-co--warning { background: #FEF3C7; }
+    .demo-co--success { background: #ECFDF5; }
+    .demo-co--danger { background: #FEE2E2; }
+    .demo-co__t { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .demo-co__b { font-size: 14px; line-height: 1.5; }
+
+    /* MetricGrid */
+    .demo-mg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .demo-mc { border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+    .demo-mc__v { font-size: 32px; font-weight: 700; }
+    .demo-mc__l { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .demo-mc__n { font-size: 12px; color: #aaa; margin-top: 6px; }
+
+    /* Shortcuts */
+    .shortcuts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .sc { border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 16px; background: var(--card); }
+    .sc__key { width: 44px; height: 44px; border-radius: 10px; background: var(--fg); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; font-family: var(--mono); flex-shrink: 0; }
+    .sc__name { font-size: 14px; font-weight: 600; }
+    .sc__desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 768px) { .grid-2, .shortcuts { grid-template-columns: 1fr; } .demo-mg { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>codeck 组件展示</h1>
+    <p>5 种核心 Block Type · 4 种页面布局 · 交互层快捷键</p>
+  </header>
+
+  <!-- ═══ 交互层 ═══ -->
+  <div class="section">
+    <div class="section-title">交互层 · Keyboard Shortcuts</div>
+    <div class="shortcuts">
+      <div class="sc"><div class="sc__key">←→</div><div><div class="sc__name">翻页</div><div class="sc__desc">左右箭头或 Space 切换幻灯片</div></div></div>
+      <div class="sc"><div class="sc__key">F</div><div><div class="sc__name">全屏</div><div class="sc__desc">进入/退出浏览器全屏模式</div></div></div>
+      <div class="sc"><div class="sc__key">Esc</div><div><div class="sc__name">全览</div><div class="sc__desc">所有页面平铺预览，点击跳转</div></div></div>
+      <div class="sc"><div class="sc__key">S</div><div><div class="sc__name">演讲备注</div><div class="sc__desc">显示/隐藏当前页的 Speaker Notes</div></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ 页面布局 ═══ -->
+  <div class="section">
+    <div class="section-title">页面布局 · Slide Purposes</div>
+    <div class="grid-2">
+      <div class="component-card">
+        <div class="component-card__header"><span class="component-card__name">Cover</span><span class="component-card__tag">purpose: cover</span></div>
+        <div class="component-card__preview" style="padding:0;">
+          <div class="slide-preview slide-preview--light">
+            <div class="demo-sh is-center">
+              <div class="demo-sh__label">KEYNOTE 2026</div>
+              <div class="demo-sh__title">每个像素都有存在的理由</div>
+              <div class="demo-sh__body">居中布局，大字标题，视觉重心集中</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-card__header"><span class="component-card__name">Content</span><span class="component-card__tag">purpose: content</span></div>
+        <div class="component-card__preview" style="padding:0;">
+          <div class="slide-preview slide-preview--light">
+            <div class="demo-sh">
+              <div class="demo-sh__label">核心论点</div>
+              <div class="demo-sh__title" style="font-size:32px;">AI 让个人开发者成为 10x 团队</div>
+              <div class="demo-sh__body">左上对齐，标题和内容间留足间距</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-card__header"><span class="component-card__name">Section Divider</span><span class="component-card__tag">purpose: section-divider</span></div>
+        <div class="component-card__preview" style="padding:0;">
+          <div class="slide-preview slide-preview--dark">
+            <div class="demo-sh is-center" style="color:#fff;">
+              <div class="demo-sh__label" style="color:rgba(255,255,255,0.5);">PART 2</div>
+              <div class="demo-sh__title">设计系统</div>
+              <div class="demo-sh__body" style="color:rgba(255,255,255,0.5);">反色背景，制造叙事节奏断点</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-card__header"><span class="component-card__name">Closing</span><span class="component-card__tag">purpose: closing</span></div>
+        <div class="component-card__preview" style="padding:0;">
+          <div class="slide-preview slide-preview--dark">
+            <div class="demo-sh is-center" style="color:#fff;">
+              <div class="demo-sh__label" style="color:rgba(255,255,255,0.5);">CODECK</div>
+              <div class="demo-sh__title">谢谢</div>
+              <div class="demo-sh__body" style="color:rgba(255,255,255,0.5);">反色背景收束情绪</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ StatementHero ═══ -->
+  <div class="section">
+    <div class="section-title">内容组件 · StatementHero</div>
+    <div class="component-card">
+      <div class="component-card__header"><span class="component-card__name">StatementHero</span><span class="component-card__tag">大字声明</span></div>
+      <div class="component-card__preview">
+        <div class="demo-sh">
+          <div class="demo-sh__label">CODECK DESIGN SYSTEM</div>
+          <div class="demo-sh__title">每个像素都有存在的理由</div>
+          <div class="demo-sh__body">封面和关键论点页的核心组件。支持 label（上方小字）、title（主标题）、body（副标题）。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BulletList ═══ -->
+  <div class="section">
+    <div class="section-title">内容组件 · BulletList</div>
+    <div class="component-card">
+      <div class="component-card__header"><span class="component-card__name">BulletList</span><span class="component-card__tag">要点列表</span></div>
+      <div class="component-card__preview">
+        <div class="demo-bl">
+          <div class="demo-bl__heading">为什么选择三层架构</div>
+          <ul class="demo-bl__items">
+            <li class="demo-bl__item"><div class="demo-bl__item-t">内容与视觉分离</div><div class="demo-bl__item-b">deck.json 只管内容，design.json 只管视觉</div></li>
+            <li class="demo-bl__item"><div class="demo-bl__item-t">确定性渲染</div><div class="demo-bl__item-b">同样的 JSON 输入，永远产出同样的 HTML</div></li>
+            <li class="demo-bl__item"><div class="demo-bl__item-t">可组合</div><div class="demo-bl__item-b">18 种 block type 自由排列组合</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Code ═══ -->
+  <div class="section">
+    <div class="section-title">内容组件 · Code</div>
+    <div class="component-card">
+      <div class="component-card__header"><span class="component-card__name">Code</span><span class="component-card__tag">代码块</span></div>
+      <div class="component-card__preview">
+        <div class="demo-code__bar">
+          <span class="demo-code__dot demo-code__dot--r"></span>
+          <span class="demo-code__dot demo-code__dot--y"></span>
+          <span class="demo-code__dot demo-code__dot--g"></span>
+          <span class="demo-code__fname">statement-hero.ts</span>
+        </div>
+        <pre class="demo-code__pre"><code>export function renderStatementHero(
+  id: string,
+  props: Record&lt;string, unknown&gt;
+): string {
+<span class="demo-code__hl">  const label = props.label</span>
+<span class="demo-code__hl">    ? `&lt;p class="label"&gt;${escape(props.label)}&lt;/p&gt;`</span>
+<span class="demo-code__hl">    : '';</span>
+  return wrapBlock(id, 'statement-hero', html);
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Callout ═══ -->
+  <div class="section">
+    <div class="section-title">内容组件 · Callout</div>
+    <div class="grid-2">
+      <div class="component-card">
+        <div class="component-card__header"><span class="component-card__name">Callout</span><span class="component-card__tag">info</span></div>
+        <div class="component-card__preview"><div class="demo-co demo-co--info"><div class="demo-co__t">设计原则</div><div class="demo-co__b">每个 block type 都有一个确定性的 HTML 模板。</div></div></div>
+      </div>
+      <div class="component-card">
+        <div class="component-card__header"><span class="component-card__name">Callout</span><span class="component-card__tag">warning</span></div>
+        <div class="component-card__preview"><div class="demo-co demo-co--warning"><div class="demo-co__t">注意</div><div class="demo-co__b">design compiler 不修改 DOM 结构，只注入 CSS。</div></div></div>
+      </div>
+      <div class="component-card">
+        <div class="component-card__header"><span class="component-card__name">Callout</span><span class="component-card__tag">success</span></div>
+        <div class="component-card__preview"><div class="demo-co demo-co--success"><div class="demo-co__t">已验证</div><div class="demo-co__b">同一份 spec 渲染两次，diff 为空。</div></div></div>
+      </div>
+      <div class="component-card">
+        <div class="component-card__header"><span class="component-card__name">Callout</span><span class="component-card__tag">danger</span></div>
+        <div class="component-card__preview"><div class="demo-co demo-co--danger"><div class="demo-co__t">破坏性变更</div><div class="demo-co__b">deck.json 格式从 pages+blocks 改为 flat element tree。</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MetricGrid ═══ -->
+  <div class="section">
+    <div class="section-title">内容组件 · MetricGrid</div>
+    <div class="component-card">
+      <div class="component-card__header"><span class="component-card__name">MetricGrid</span><span class="component-card__tag">指标卡片</span></div>
+      <div class="component-card__preview">
+        <div class="demo-mg">
+          <div class="demo-mc"><div class="demo-mc__v">18</div><div class="demo-mc__l">Block Types</div><div class="demo-mc__n">完整组件库</div></div>
+          <div class="demo-mc"><div class="demo-mc__v">100%</div><div class="demo-mc__l">确定性</div><div class="demo-mc__n">同输入同输出</div></div>
+          <div class="demo-mc"><div class="demo-mc__v">0</div><div class="demo-mc__l">React 依赖</div><div class="demo-mc__n">纯字符串渲染</div></div>
+          <div class="demo-mc"><div class="demo-mc__v">1</div><div class="demo-mc__l">HTML 文件</div><div class="demo-mc__n">自包含，无构建</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+#!/bin/bash
+set -e
+
+# ─── codeck setup ───
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# ─── 检查 Node.js ───
+
+echo "→ 检查 Node.js..."
+if ! command -v node &>/dev/null; then
+  echo "✗ 需要 Node.js >= 18，请先安装"
+  exit 1
+fi
+
+NODE_VERSION=$(node -v | sed 's/v//' | cut -d. -f1)
+if [ "$NODE_VERSION" -lt 18 ]; then
+  echo "✗ Node.js 版本过低 ($(node -v))，需要 >= 18"
+  exit 1
+fi
+
+# ─── 安装 + 编译 ───
+
+echo "→ 安装依赖..."
+npm install --silent
+
+echo "→ 编译 packages..."
+npm run build:packages
+
+# ─── 注册 skills 到 Claude Code ───
+
+CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
+mkdir -p "$CLAUDE_SKILLS_DIR"
+
+SKILLS=(codeck outline design review speech export)
+for skill in "${SKILLS[@]}"; do
+  target="$CLAUDE_SKILLS_DIR/codeck-$skill"
+  [ "$skill" = "codeck" ] && target="$CLAUDE_SKILLS_DIR/codeck"
+  if [ -L "$target" ] || [ ! -e "$target" ]; then
+    ln -snf "$SCRIPT_DIR/skill/$skill" "$target"
+  fi
+done
+echo "→ 已注册 ${#SKILLS[@]} 个 skill"
+
+echo ""
+echo "✓ codeck 安装完成 (v$(cat VERSION 2>/dev/null || echo '?'))"
+echo ""
+echo "使用方式:"
+echo "  /codeck            dashboard"
+echo "  /codeck outline    编辑 — 收集素材，规划结构"
+echo "  /codeck design     设计师 — 生成内容 + HTML"
+echo "  /codeck review     审稿人 — 检查质量"
+echo "  /codeck speech     演讲教练 — 准备上台"
+echo "  /codeck export     出版 — PDF / PPTX"
+echo ""
+echo "更新方式:"
+echo "  cd ~/.claude/skills/codeck && git pull && ./setup"

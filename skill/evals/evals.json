@@ -1,0 +1,129 @@
+{
+  "skill_name": "codeck",
+  "description": "codeck 全 pipeline 技能触发与输出质量测试",
+  "evals": [
+    {
+      "id": 1,
+      "skill": "codeck",
+      "prompt": "我有几个 markdown 文件想做成演示文稿，帮我看看",
+      "expected_output": "显示 pipeline dashboard，列出扫描到的素材文件数量，推荐下一步 /codeck outline",
+      "assertions": [
+        { "type": "contains", "field": "output", "value": "素材", "description": "dashboard 应显示素材统计" },
+        { "type": "contains", "field": "output", "value": "outline", "description": "应推荐下一步为 outline" }
+      ]
+    },
+    {
+      "id": 2,
+      "skill": "codeck",
+      "prompt": "codeck",
+      "expected_output": "显示 pipeline dashboard，检测当前目录状态",
+      "assertions": [
+        { "type": "contains", "field": "output", "value": "codeck", "description": "应显示 codeck dashboard" },
+        { "type": "contains", "field": "output", "value": "NEXT", "description": "应推荐下一步操作" }
+      ]
+    },
+    {
+      "id": 3,
+      "skill": "codeck-outline",
+      "prompt": "帮我规划一个关于 AI Agent 架构的技术分享大纲，给技术团队看，大概 8 页",
+      "expected_output": "跳过大部分提问（已包含主题+受众+篇幅），生成 .codeck/outline.md，包含叙事结构 JSON",
+      "assertions": [
+        { "type": "file_exists", "path": ".codeck/outline.md", "description": "应生成 outline 文件" },
+        { "type": "file_contains", "path": ".codeck/outline.md", "value": "narrativeArc", "description": "outline 应包含叙事结构" },
+        { "type": "file_contains", "path": ".codeck/outline.md", "value": "pages", "description": "outline 应包含页面规划" }
+      ]
+    },
+    {
+      "id": 4,
+      "skill": "codeck-outline",
+      "prompt": "大纲",
+      "expected_output": "扫描素材，进入协作模式提问流程（核心信息→受众→篇幅→语言）",
+      "assertions": [
+        { "type": "asks_question", "description": "应通过 AskUserQuestion 提问" },
+        { "type": "contains", "field": "output", "value": "codeck outline", "description": "应 re-ground 当前步骤" }
+      ]
+    },
+    {
+      "id": 5,
+      "skill": "codeck-design",
+      "prompt": "设计幻灯片",
+      "expected_output": "检测 .codeck/outline.md 是否存在，如果存在则读取并提问视觉风格，如果不存在则提示先跑 outline",
+      "files": [".codeck/outline.md"],
+      "assertions": [
+        { "type": "asks_question", "description": "应提问视觉风格或提示先跑 outline" }
+      ]
+    },
+    {
+      "id": 6,
+      "skill": "codeck-design",
+      "prompt": "generate deck",
+      "expected_output": "触发 codeck-design 技能",
+      "assertions": [
+        { "type": "skill_triggered", "skill": "codeck-design", "description": "英文触发词应正确触发 design 技能" }
+      ]
+    },
+    {
+      "id": 7,
+      "skill": "codeck-review",
+      "prompt": "帮我检查一下这个幻灯片的质量",
+      "expected_output": "检测 deck.json 是否存在，如果存在则开始五维审查，如果不存在则提示先跑 design",
+      "files": ["deck.json"],
+      "assertions": [
+        { "type": "contains", "field": "output", "value": "review", "description": "应进入审查流程或提示依赖" }
+      ]
+    },
+    {
+      "id": 8,
+      "skill": "codeck-speech",
+      "prompt": "帮我写演讲稿",
+      "expected_output": "检测 deck.json，提问受众和风格，生成逐字稿",
+      "files": ["deck.json"],
+      "assertions": [
+        { "type": "skill_triggered", "skill": "codeck-speech", "description": "应触发 speech 技能" }
+      ]
+    },
+    {
+      "id": 9,
+      "skill": "codeck-export",
+      "prompt": "导出 PDF",
+      "expected_output": "检测 deck.json + deck.html，直接导出 PDF 格式",
+      "files": ["deck.json", "deck.html"],
+      "assertions": [
+        { "type": "skill_triggered", "skill": "codeck-export", "description": "应触发 export 技能" },
+        { "type": "contains", "field": "output", "value": "PDF", "description": "应识别 PDF 格式需求" }
+      ]
+    },
+    {
+      "id": 10,
+      "skill": "codeck-export",
+      "prompt": "我要发邮件给客户，需要 PowerPoint 格式",
+      "expected_output": "触发 export 技能，识别 PPTX 格式需求",
+      "assertions": [
+        { "type": "skill_triggered", "skill": "codeck-export", "description": "邮件+PowerPoint 应触发 export" },
+        { "type": "contains", "field": "output", "value": "PPTX", "description": "应识别 PPTX 格式" }
+      ]
+    }
+  ],
+  "trigger_evals": [
+    { "query": "我有一堆 markdown 笔记想做成 PPT", "should_trigger": "codeck", "reason": "做 PPT 是核心入口触发词" },
+    { "query": "帮我把这些材料整理成演示文稿", "should_trigger": "codeck-outline", "reason": "整理材料成演示文稿 = outline 的职责" },
+    { "query": "codeck", "should_trigger": "codeck", "reason": "直接命令" },
+    { "query": "规划一下内容结构，大概 6 页", "should_trigger": "codeck-outline", "reason": "规划结构 + 页数 = outline" },
+    { "query": "大纲", "should_trigger": "codeck-outline", "reason": "直接触发词" },
+    { "query": "outline this content into slides", "should_trigger": "codeck-outline", "reason": "英文触发" },
+    { "query": "开始设计幻灯片", "should_trigger": "codeck-design", "reason": "设计 + 幻灯片" },
+    { "query": "generate the deck", "should_trigger": "codeck-design", "reason": "英文触发" },
+    { "query": "视觉风格想要深色主题", "should_trigger": "codeck-design", "reason": "视觉风格是 design 触发词" },
+    { "query": "审查一下幻灯片", "should_trigger": "codeck-review", "reason": "审查 = review" },
+    { "query": "QA this deck", "should_trigger": "codeck-review", "reason": "QA 是 review 触发词" },
+    { "query": "帮我写演讲稿", "should_trigger": "codeck-speech", "reason": "演讲稿 = speech" },
+    { "query": "speaker notes", "should_trigger": "codeck-speech", "reason": "英文触发" },
+    { "query": "导出 PDF", "should_trigger": "codeck-export", "reason": "导出 + PDF" },
+    { "query": "export to PowerPoint", "should_trigger": "codeck-export", "reason": "英文触发" },
+    { "query": "我要发邮件给客户", "should_trigger": "codeck-export", "reason": "发邮件暗示需要导出" },
+    { "query": "帮我写一个 Python 脚本", "should_trigger": null, "reason": "与演示文稿无关，不应触发任何 codeck 技能" },
+    { "query": "这段代码有 bug", "should_trigger": null, "reason": "代码调试，不是演示文稿" },
+    { "query": "帮我改一下 README", "should_trigger": null, "reason": "编辑 markdown 不等于做演示" },
+    { "query": "git commit", "should_trigger": null, "reason": "版本控制操作" }
+  ]
+}

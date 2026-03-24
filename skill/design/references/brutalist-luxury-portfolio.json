@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 2,
+  "root": "deck",
+  "meta": {
+    "title": "NOIR Studio 作品集",
+    "language": "zh-CN",
+    "revision": 1
+  },
+  "elements": {
+    "block-slide-cover-0-statement-hero-0": {
+      "type": "StatementHero",
+      "props": {
+        "label": "NOIR STUDIO · 2025",
+        "accent": "blue",
+        "title": "我们创造不可忽视的存在。",
+        "body": "品牌设计 · 数字体验 · 视觉叙事"
+      },
+      "children": []
+    },
+    "slide-cover-0": {
+      "type": "Slide",
+      "props": {
+        "purpose": "cover",
+        "narrativeRole": "hook",
+        "importance": "high",
+        "speakerNotes": "粗野奢华风格的封面用 Anton 字体做超大标题——在原始设计中是 18vw，在 deck 里用最大号渲染。背景是深海军蓝 #171E19（不是纯黑），这个微妙的绿调让深色背景有了温度。label 用全大写 + 超宽字距（tracking-widest），模仿高端杂志的刊头。body 用中点分隔服务类型，不用逗号——中点更有设计感。如果编译器支持，背景可以加两个悬浮光晕：鼠尾草绿（#B7C6C2）和柔蓝（#BBE2F5），blur 120px，opacity 20%。"
+      },
+      "children": [
+        "block-slide-cover-0-statement-hero-0"
+      ]
+    },
+    "block-slide-content-1-problem-card-grid-0": {
+      "type": "ProblemCardGrid",
+      "props": {
+        "label": "精选作品",
+        "title": "Selected Works",
+        "cards": [
+          {
+            "title": "Meridian 品牌重塑",
+            "body": "从传统金融机构到数字优先品牌。全新视觉识别系统、网站、移动端体验。",
+            "tone": "blue"
+          },
+          {
+            "title": "Aether 产品发布",
+            "body": "智能家居品牌的全球发布会视觉系统。沉浸式展厅设计 + 数字互动装置。",
+            "tone": "blue"
+          },
+          {
+            "title": "Solace 空间设计",
+            "body": "高端疗愈空间的品牌与环境设计。从标志到建筑导视，一套语言贯穿始终。",
+            "tone": "blue"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-content-1": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "作品页切换到白色背景——这是粗野奢华风格的标志性手法：深色和浅色交替出现，制造强烈的视觉节奏。标题用英文「Selected Works」而不是中文，因为 Anton 字体的全大写英文比中文更有冲击力。三张作品卡片用 problem-card-grid（虽然不是「问题」，但卡片布局完全适用）。每张卡片的 body 用两句话：第一句说做了什么，第二句说具体交付物。tone 统一用 blue 保持视觉一致性。在原始设计中，作品卡片 hover 时图片放大 1.1x + 深色遮罩 + 圆形 VIEW 按钮——这种交互在 deck 里无法实现，但 speakerNotes 可以描述这个设计意图。"
+      },
+      "children": [
+        "block-slide-content-1-problem-card-grid-0"
+      ]
+    },
+    "block-slide-content-2-hero-0": {
+      "type": "Hero",
+      "props": {
+        "eyebrow": "FEATURED PROJECT",
+        "title": "Meridian：从传统到数字优先",
+        "body": "一家百年金融机构的品牌重生。我们没有「现代化」它的旧形象——我们重新定义了金融品牌应该是什么样子。新的视觉语言让 Meridian 在 6 个月内将数字渠道获客成本降低了 34%。"
+      },
+      "children": []
+    },
+    "slide-content-2": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "重点项目页用 hero block 的 editorial-split 布局——左侧放图片（在原始设计中是灰度图 + 青色装饰方块偏移 -48px），右侧放文字。eyebrow 用全大写英文标注「FEATURED PROJECT」。body 的写法是粗野奢华风格的精髓：先用一句话定义项目（百年金融机构的品牌重生），再用一句话展示态度（不是「现代化」旧形象，而是重新定义），最后用一个数字证明效果（获客成本降低 34%）。这三层结构——定义、态度、证据——是高端作品集的标准叙事。"
+      },
+      "children": [
+        "block-slide-content-2-hero-0"
+      ]
+    },
+    "block-slide-content-3-bullet-list-0": {
+      "type": "BulletList",
+      "props": {
+        "heading": "能力",
+        "items": [
+          {
+            "id": "cap-1",
+            "title": "品牌战略",
+            "body": "从定位到视觉识别系统的完整品牌构建"
+          },
+          {
+            "id": "cap-2",
+            "title": "数字体验",
+            "body": "网站、应用、交互装置的设计与开发"
+          },
+          {
+            "id": "cap-3",
+            "title": "视觉叙事",
+            "body": "动态影像、摄影指导、内容策略"
+          },
+          {
+            "id": "cap-4",
+            "title": "空间设计",
+            "body": "展厅、零售空间、环境导视系统"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-content-3": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "能力页再次切换到浅色背景（#FAFAFA），保持深浅交替的节奏。用 bullet-list 而不是 card——能力列表不需要卡片的视觉重量，简洁的列表更符合奢侈极简的调性。在原始设计中，每个列表项前面有一条 40px 的水平线，hover 时延伸到 64px——这种微交互传递的是「克制中的精致」。heading 只用一个字「能力」，不用「我们的核心能力」——粗野风格的文案越短越好。"
+      },
+      "children": [
+        "block-slide-content-3-bullet-list-0"
+      ]
+    },
+    "block-slide-content-4-quote-0": {
+      "type": "Quote",
+      "props": {
+        "content": "NOIR 不只是设计了我们的品牌。他们重新定义了我们对自己的认知。六个月后，我们的团队、我们的客户、甚至我们的竞争对手，都在用 NOIR 创造的语言谈论我们。",
+        "caption": "Sarah Chen · Meridian 首席品牌官"
+      },
+      "children": []
+    },
+    "slide-content-4": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "客户评价页用 quote block，背景切换到炭灰色（#302B2F）。在原始设计中，背景有一个巨大的装饰性引号（海军蓝，30rem，30% opacity）——这种「超大装饰元素」是粗野风格的标志。引用内容的写法：不要用「NOIR 帮助我们提升了品牌认知度」这种空话，要用具体的、有画面感的描述——「我们的竞争对手都在用 NOIR 创造的语言谈论我们」。caption 用中点分隔姓名和职位，与封面的服务列表保持一致的标点风格。"
+      },
+      "children": [
+        "block-slide-content-4-quote-0"
+      ]
+    },
+    "block-slide-closing-5-hero-0": {
+      "type": "Hero",
+      "props": {
+        "eyebrow": "NEXT STEP",
+        "title": "一起创造。",
+        "body": "hello@noir.studio"
+      },
+      "children": []
+    },
+    "slide-closing-5": {
+      "type": "Slide",
+      "props": {
+        "purpose": "closing",
+        "narrativeRole": "cta",
+        "importance": "high",
+        "speakerNotes": "结尾页回到深海军蓝背景。标题只有三个字「一起创造」+ 句号——句号很重要，它把邀请变成了陈述，传递的是确定性而不是请求。body 只放邮箱地址，不放电话、不放地址、不放社交媒体链接。在原始设计中，邮箱用鼠尾草绿（#B7C6C2）渲染，4xl 字号，带 8px offset 的下划线。这种极度克制的结尾是奢侈品牌的标准做法：我们不追你，你来找我们。与 dark-editorial-brand 案例的结尾手法一致，但配色和字体完全不同——同一个策略，不同的视觉表达。"
+      },
+      "children": [
+        "block-slide-closing-5-hero-0"
+      ]
+    },
+    "deck": {
+      "type": "Deck",
+      "props": {
+        "totalPages": 6
+      },
+      "children": [
+        "slide-cover-0",
+        "slide-content-1",
+        "slide-content-2",
+        "slide-content-3",
+        "slide-content-4",
+        "slide-closing-5"
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.next/
+.DS_Store
+.gstack/
+.obsidian/
+.claude/
+.codeck/
+*.log
+
+# 非 skill 文件
+apps/
+demo.html
+shell.html
+PLAN.md
+TODOS.md
+README.zh-CN.md
+tsconfig.base.json
+package-lock.json

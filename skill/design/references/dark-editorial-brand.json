@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 2,
+  "root": "deck",
+  "meta": {
+    "title": "Superdesign 品牌提案",
+    "language": "zh-CN",
+    "revision": 1
+  },
+  "elements": {
+    "block-slide-cover-0-statement-hero-0": {
+      "type": "StatementHero",
+      "props": {
+        "label": "Superdesign",
+        "accent": "orange",
+        "title": "设计负空间，让品牌真正呼吸。",
+        "body": "优雅是拒绝。我们移除噪音，让你的信息以绝对的清晰度共鸣。"
+      },
+      "children": []
+    },
+    "slide-cover-0": {
+      "type": "Slide",
+      "props": {
+        "purpose": "cover",
+        "narrativeRole": "hook",
+        "importance": "high",
+        "speakerNotes": "深色背景 + 衬线大标题 + 极少文字 = 高端感。封面只传递一个情绪：克制即力量。不要放 logo 墙、不要放团队照片、不要放任何多余的东西。「负空间」既是设计理念，也是视觉呈现本身。"
+      },
+      "children": [
+        "block-slide-cover-0-statement-hero-0"
+      ]
+    },
+    "block-slide-content-1-quote-0": {
+      "type": "Quote",
+      "props": {
+        "content": "好的设计是尽可能少的设计。少，但更好——因为它专注于本质，产品不被非本质的东西所累。回归纯粹，回归简单。",
+        "caption": "Dieter Rams，博朗首席设计师"
+      },
+      "children": []
+    },
+    "slide-content-1": {
+      "type": "Slide",
+      "props": {
+        "purpose": "content",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "用一句经典引用定调，比自己写十句话更有说服力。Rams 的这句话是极简设计的圣经。引用页不需要任何装饰——文字本身就是内容。深色背景上的白色衬线斜体字，自带权威感。"
+      },
+      "children": [
+        "block-slide-content-1-quote-0"
+      ]
+    },
+    "block-slide-comparison-2-outcome-comparison-0": {
+      "type": "OutcomeComparison",
+      "props": {
+        "label": "服务",
+        "title": "两种客户，两种路径",
+        "left": {
+          "label": "新锐品牌",
+          "tone": "danger",
+          "body": [
+            "你有火花，我们提供让它燃烧的氛围",
+            "从零构建视觉体系：标志、色彩、字体、版式",
+            "定义品牌的第一印象"
+          ],
+          "outcome": "从无到有，一鸣惊人"
+        },
+        "right": {
+          "label": "成熟品牌",
+          "tone": "success",
+          "body": [
+            "你已经到达，现在让你永远留在他们脑海里",
+            "重塑视觉语言，保留品牌资产",
+            "让经典焕发当代生命力"
+          ],
+          "outcome": "从好到不可替代"
+        }
+      },
+      "children": []
+    },
+    "slide-comparison-2": {
+      "type": "Slide",
+      "props": {
+        "purpose": "comparison",
+        "narrativeRole": "content",
+        "importance": "medium",
+        "speakerNotes": "对比页用来展示服务的两条路径，不是功能列表。左右两栏的标题用情感语言（「火花」「燃烧」），不用行业术语（「品牌策略」「视觉识别」）。outcome 一句话收尾，像广告语一样精炼。深色背景上，左栏用 accent 色卡片、右栏用 surface 色卡片，形成视觉不对称。"
+      },
+      "children": [
+        "block-slide-comparison-2-outcome-comparison-0"
+      ]
+    },
+    "block-slide-metrics-3-metric-grid-0": {
+      "type": "MetricGrid",
+      "props": {
+        "items": [
+          {
+            "value": "VOGUE",
+            "label": "时尚与文化",
+            "note": "品牌视觉重塑"
+          },
+          {
+            "value": "TESLA",
+            "label": "科技与能源",
+            "note": "发布会视觉系统"
+          },
+          {
+            "value": "MoMA",
+            "label": "艺术与机构",
+            "note": "展览视觉识别"
+          },
+          {
+            "value": "AESOP",
+            "label": "生活方式",
+            "note": "全球零售视觉"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slide-metrics-3": {
+      "type": "Slide",
+      "props": {
+        "purpose": "metrics",
+        "narrativeRole": "evidence",
+        "importance": "medium",
+        "speakerNotes": "客户名单页不用 logo 图片，直接用品牌名做大字。metric-grid 的 value 字段放品牌名而不是数字——这是一种非常规用法，但视觉效果极好：四个大写品牌名排成一行，比 logo 墙更有冲击力。note 字段简短说明合作内容，不超过 6 个字。"
+      },
+      "children": [
+        "block-slide-metrics-3-metric-grid-0"
+      ]
+    },
+    "block-slide-closing-4-hero-0": {
+      "type": "Hero",
+      "props": {
+        "eyebrow": "准备好了吗",
+        "title": "进入虚空，找到你自己。",
+        "body": "每一个伟大的品牌，都始于一次勇敢的对话。"
+      },
+      "children": []
+    },
+    "slide-closing-4": {
+      "type": "Slide",
+      "props": {
+        "purpose": "closing",
+        "narrativeRole": "cta",
+        "importance": "high",
+        "speakerNotes": "结尾页回扣封面的「负空间」概念——「虚空」是负空间的极致表达。不放联系方式、不放二维码、不放 CTA 按钮。只留一句话，让观众自己来找你。这种克制本身就是品牌态度的展示：我们不追你，你来找我们。"
+      },
+      "children": [
+        "block-slide-closing-4-hero-0"
+      ]
+    },
+    "deck": {
+      "type": "Deck",
+      "props": {
+        "totalPages": 5
+      },
+      "children": [
+        "slide-cover-0",
+        "slide-content-1",
+        "slide-comparison-2",
+        "slide-metrics-3",
+        "slide-closing-4"
+      ]
+    }
+  }
+}
