@@ -97,11 +97,11 @@ echo "OUTLINE: $OUTLINE_STATUS"
 >
 > 建议选 A，先规划再动手。
 
-- A) 先跑 `/codeck outline`
+- A) 先跑 `/codeck-outline`
 
 - B) 跳过，我直接告诉你要什么
 
-如果 `OUTLINE: stale`，提示：`⚠ 大纲已过期。建议重跑 /codeck outline。`
+如果 `OUTLINE: stale`，提示：`⚠ 大纲已过期。建议重跑 /codeck-outline。`
 
 如果选 B：把用户输入当作 outline，继续。
 
@@ -188,9 +188,9 @@ echo "OUTLINE: $OUTLINE_STATUS"
 
 ```bash
 # 将用户描述翻译为英文关键词查询（数据库是英文的）
-python3 ~/.claude/skills/codeck/skill/design/ui-ux-db/scripts/search.py "{英文关键词}" --domain style -n 3
-python3 ~/.claude/skills/codeck/skill/design/ui-ux-db/scripts/search.py "{英文关键词}" --domain color -n 3
-python3 ~/.claude/skills/codeck/skill/design/ui-ux-db/scripts/search.py "{英文关键词}" --domain typography -n 3
+python3 ~/.claude/skills/codeck/skill/codeck-design/ui-ux-db/scripts/search.py "{英文关键词}" --domain style -n 3
+python3 ~/.claude/skills/codeck/skill/codeck-design/ui-ux-db/scripts/search.py "{英文关键词}" --domain color -n 3
+python3 ~/.claude/skills/codeck/skill/codeck-design/ui-ux-db/scripts/search.py "{英文关键词}" --domain typography -n 3
 ```
 
 **ui-ux-db 翻译规则：** 数据库返回的是 Web UI 设计数据。提取设计意图（"高对比、大留白、几何感"），用演示文稿的尺度重新表达。不直接复制 Web CSS 值 — 演示文稿字号是 48-72px 不是 16-24px，间距是 64-80px 不是 8-16px。
@@ -300,7 +300,7 @@ Step 4 确认风格方向后，用 Write 工具创建 `$DECK_DIR/design-notes.md
 
 ### deck.draft.json 自审
 
-读取 `~/.claude/skills/codeck/skill/design/checklist.md` 的 Pass 1，逐项检查 `$DECK_DIR/deck.draft.json`。AUTO-FIX 直接改，ASK 问用户。输出：`自审 (deck.draft.json): N 个问题 (X 自动修复, Y 需确认)`
+读取 `~/.claude/skills/codeck/skill/codeck-design/checklist.md` 的 Pass 1，逐项检查 `$DECK_DIR/deck.draft.json`。AUTO-FIX 直接改，ASK 问用户。输出：`自审 (deck.draft.json): N 个问题 (X 自动修复, Y 需确认)`
 
 Block 类型的完整 JSON schema 和 HTML/CSS 渲染示例见 `references/block-types.md`。
 
@@ -450,7 +450,7 @@ design.json 顶层固定为：
 
 ### design.json 自审
 
-读取 `~/.claude/skills/codeck/skill/design/checklist.md` 的 Pass 2，逐项检查 `$DECK_DIR/design.json`。AUTO-FIX 直接改，ASK 问用户。输出：`自审 (design.json): N 个问题 (X 自动修复, Y 需确认)`
+读取 `~/.claude/skills/codeck/skill/codeck-design/checklist.md` 的 Pass 2，逐项检查 `$DECK_DIR/design.json`。AUTO-FIX 直接改，ASK 问用户。输出：`自审 (design.json): N 个问题 (X 自动修复, Y 需确认)`
 
 ## Step 6: 收束 deck.json + compiler 渲染
 
@@ -507,7 +507,7 @@ open *-r*.html
 
 ### HTML 自审
 
-读取 `~/.claude/skills/codeck/skill/design/checklist.md` 的 Pass 3，检查渲染后的 HTML。AUTO-FIX 直接改，ASK 问用户。输出：`自审 (HTML): N 个问题 (X 自动修复, Y 需确认)`
+读取 `~/.claude/skills/codeck/skill/codeck-design/checklist.md` 的 Pass 3，检查渲染后的 HTML。AUTO-FIX 直接改，ASK 问用户。输出：`自审 (HTML): N 个问题 (X 自动修复, Y 需确认)`
 
 显示：`$DECK_DIR/deck.json + $DECK_DIR/design.json + {title}-r{revision}.html 已就绪。按 F 全屏，左右箭头翻页，? 查看所有快捷键。`
 
@@ -532,7 +532,7 @@ open *-r*.html
 > {对设计质量的一句话评价——基于视觉层次和内容匹配度。比如"封面的留白很好，信息密度从第 3 页开始递增，节奏对了"或"深色配色配合你说的'焦虑感'，效果不错"。}
 >
 > 产出：`$DECK_DIR/deck.json` + `$DECK_DIR/design.json` + `{title}-r{revision}.html` \
-> 下一步：`/codeck review` — 审稿人会用截图逐页检查视觉质量。
+> 下一步：`/codeck-review` — 审稿人会用截图逐页检查视觉质量。
 
 **出口：更新 pipeline 状态 + 追加 intent 决策日志**
 
@@ -543,7 +543,7 @@ DECK_DIR="$DECK_DIR" npx tsx ~/.claude/skills/codeck/skill/pipeline.ts done desi
 显示简版 pipeline 进度：
 ```
 outline ✅ → design ✅ → review ▶ → export ○ → speech ○
-下一步：/codeck review
+下一步：/codeck-review
 ```
 
 如果 `$DECK_DIR/intent.md` 存在，用 Edit 工具在「决策日志」末尾追加本次 design 的关键决策：

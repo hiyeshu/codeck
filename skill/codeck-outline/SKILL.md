@@ -101,7 +101,7 @@ cp "{image_path}" "$DECK_DIR/assets/"
 - A) 我直接说主题和要点
 - B) 我先放文件进来，等下再跑
 
-如果选 B：提示"好，把文件放到当前目录后再跑 `/codeck outline`。"然后结束。
+如果选 B：提示"好，把文件放到当前目录后再跑 `/codeck-outline`。"然后结束。
 
 ## Step 1.5: 素材诊断
 
@@ -386,7 +386,7 @@ DECK_DIR="$DECK_DIR" npx tsx ~/.claude/skills/codeck/skill/intent-schema.ts crea
 > {对大纲质量的一句话评价——基于叙事弧的完整性和标题的锐利度。比如"这个叙事弧从焦虑到释然，节奏很好"或"9 页的信息密度刚好，每页都有存在的理由"。}
 >
 > 产出：`$DECK_DIR/outline.md` + `$DECK_DIR/outline.json` + `$DECK_DIR/intent.md` + `$DECK_DIR/intent.json`
-> 下一步：`/codeck design` — 设计师会读你的意图，把结构变成视觉。
+> 下一步：`/codeck-design` — 设计师会读你的意图，把结构变成视觉。
 
 ## Step 6: 编辑笔记（角色交接）
 
@@ -405,7 +405,7 @@ DECK_DIR="$DECK_DIR" npx tsx ~/.claude/skills/codeck/skill/intent-schema.ts crea
 
 ## 自审（出口前必做）
 
-读取 `~/.claude/skills/codeck/skill/outline/checklist.md`，逐项检查 `$DECK_DIR/outline.md`、`$DECK_DIR/outline.json`、`$DECK_DIR/intent.md` 和 `$DECK_DIR/intent.json`。
+读取 `~/.claude/skills/codeck/skill/codeck-outline/checklist.md`，逐项检查 `$DECK_DIR/outline.md`、`$DECK_DIR/outline.json`、`$DECK_DIR/intent.md` 和 `$DECK_DIR/intent.json`。
 
 - Pass 1（结构性问题）：AUTO-FIX 直接改，不问用户
 - Pass 2（内容质量）：AUTO-FIX 机械性问题，ASK 需要判断的
@@ -422,5 +422,5 @@ DECK_DIR="$DECK_DIR" npx tsx ~/.claude/skills/codeck/skill/pipeline.ts done outl
 显示简版 pipeline 进度：
 ```
 outline ✅ → design ▶ → review ○ → export ○ → speech ○
-下一步：/codeck design
+下一步：/codeck-design
 ```

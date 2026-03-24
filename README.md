@@ -13,7 +13,7 @@
 codeck 是一组 Claude Code 技能（Skill），安装后在 Claude Code 中用 `/codeck` 命令启动。六个角色接力完成从素材到成品的全流程。
 
 ```
-/codeck → /codeck outline → /codeck design → /codeck review → /codeck export → /codeck speech
+/codeck → /codeck-outline → /codeck-design → /codeck-review → /codeck-export → /codeck-speech
 ```
 
 ## 工作流程
@@ -21,11 +21,11 @@ codeck 是一组 Claude Code 技能（Skill），安装后在 Claude Code 中用
 | 命令 | 角色 | 做什么 | 产出 |
 |------|------|--------|------|
 | `/codeck` | 入口 | 扫描素材、恢复项目记忆、显示进度、推荐下一步 | pipeline 状态面板 |
-| `/codeck outline` | 编辑 | 素材诊断 → 叙事提问 → 大纲规划 → 标题锻造 | outline.json, intent.json |
-| `/codeck design` | 设计师 | 风格推荐 → 生成内容 spec + 设计参数 → 编译渲染 HTML | deck.json, design.json, HTML |
-| `/codeck review` | 审稿人 | 逐页截图审查 → 六维评分 → 溯源修复 | review.md |
-| `/codeck export` | 出版 | HTML → PDF / PPTX 多格式导出 | PDF, PPTX |
-| `/codeck speech` | 演讲教练 | 风格/时长对话 → 逐字演讲稿 + 舞台指示 + 时间预算 | speech.md |
+| `/codeck-outline` | 编辑 | 素材诊断 → 叙事提问 → 大纲规划 → 标题锻造 | outline.json, intent.json |
+| `/codeck-design` | 设计师 | 风格推荐 → 生成内容 spec + 设计参数 → 编译渲染 HTML | deck.json, design.json, HTML |
+| `/codeck-review` | 审稿人 | 逐页截图审查 → 六维评分 → 溯源修复 | review.md |
+| `/codeck-export` | 出版 | HTML → PDF / PPTX 多格式导出 | PDF, PPTX |
+| `/codeck-speech` | 演讲教练 | 风格/时长对话 → 逐字演讲稿 + 舞台指示 + 时间预算 | speech.md |
 
 ## 架构
 
@@ -53,8 +53,7 @@ PDF / PPTX
 需要 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) + Node.js 18+。
 
 ```bash
-git clone https://github.com/hiyeshu/codeck.git ~/.claude/skills/codeck
-cd ~/.claude/skills/codeck && npm install
+npx skills add hiyeshu/codeck
 ```
 
 在 Claude Code 中输入 `/codeck` 开始使用。
@@ -64,11 +63,11 @@ cd ~/.claude/skills/codeck && npm install
 ```
 skill/
 ├── codeck/          入口 dashboard
-├── outline/         编辑技能
-├── design/          设计师技能 + 参考案例库
-├── review/          审稿人技能
-├── export/          导出技能
-├── speech/          演讲稿技能
+├── codeck-outline/  编辑技能
+├── codeck-design/   设计师技能 + 参考案例库
+├── codeck-review/   审稿人技能
+├── codeck-export/   导出技能
+├── codeck-speech/   演讲稿技能
 ├── compiler/        spec 校验、迁移、渲染、HTML contract 检查
 ├── pipeline.ts      pipeline 状态追踪 + staleness 传播
 ├── intent-schema.ts 跨技能意图协议

@@ -69,11 +69,11 @@ ls *-r*.html >/dev/null 2>&1 && echo "HTML_FOUND" || echo "NO_HTML"
 [ -f "$DECK_DIR/default.html" ] && echo "DEFAULT_HTML_FOUND" || echo "NO_DEFAULT_HTML"
 ```
 
-如果 `DESIGN: stale`，提示：`⚠ 幻灯片已过期（上游更新过）。建议重跑 /codeck design。`
+如果 `DESIGN: stale`，提示：`⚠ 幻灯片已过期（上游更新过）。建议重跑 /codeck-design。`
 
-如果 `NO_DECK` 或 `NO_HTML`：提示先跑 `/codeck design`。
+如果 `NO_DECK` 或 `NO_HTML`：提示先跑 `/codeck-design`。
 
-如果 `NO_HTML` 但有 `$DECK_DIR/deck.json` + `$DECK_DIR/design.json` + `$DECK_DIR/default.html`：提示重跑 `/codeck design` 的 Step 6（渲染）。
+如果 `NO_HTML` 但有 `$DECK_DIR/deck.json` + `$DECK_DIR/design.json` + `$DECK_DIR/default.html`：提示重跑 `/codeck-design` 的 Step 6（渲染）。
 
 ## Step 2: 读取上下文 + 角色过渡
 
@@ -258,7 +258,7 @@ mkdir -p "$DECK_DIR/screenshots"
 
 流程：Edit HTML 文件中受影响的页面 → 截图验证。不需要重新渲染整个 deck。
 
-注意：路径 B 的修改在下次重新渲染时会丢失。如果问题是系统性的（比如某个 block type 的渲染逻辑有 bug），应该记录到 [review.md](http://review.md) 的"渲染债务"里，下次 `/codeck design` 时修复渲染逻辑。
+注意：路径 B 的修改在下次重新渲染时会丢失。如果问题是系统性的（比如某个 block type 的渲染逻辑有 bug），应该记录到 [review.md](http://review.md) 的"渲染债务"里，下次 `/codeck-design` 时修复渲染逻辑。
 
 ### 内容修复：改 $DECK_DIR/deck.json → 重新渲染
 
@@ -314,7 +314,7 @@ created: {ISO datetime}
 
 ## 渲染债务
 
-路径 B 的修改在重新渲染时会丢失。记录这些问题，下次 /codeck design 时修复：
+路径 B 的修改在重新渲染时会丢失。记录这些问题，下次 /codeck-design 时修复：
 
 - {block type / 页面}: {问题描述}
 
@@ -328,7 +328,7 @@ before/after 截图保存在 `$DECK_DIR/screenshots/`
 > {一句话总结——基于六维评分和修复路径。比如"叙事 9 分、视觉 8 分、零 AI 废话、交互全绿——直接上台"或"修了 2 个内容问题（deck.json）、1 个配色偏差（design.json → 重新渲染）、1 个布局跑偏（直接改 HTML，记为渲染债务）"。}
 >
 > 产出：`$DECK_DIR/review.md `\
-> 下一步：`/codeck export` — 导出 PDF 或 PPTX，或者直接用 HTML 全屏演讲。
+> 下一步：`/codeck-export` — 导出 PDF 或 PPTX，或者直接用 HTML 全屏演讲。
 
 **出口：更新 pipeline 状态 + 追加 intent 决策日志**
 
@@ -339,7 +339,7 @@ DECK_DIR="$DECK_DIR" npx tsx ~/.claude/skills/codeck/skill/pipeline.ts done revi
 显示简版 pipeline 进度：
 ```
 outline ✅ → design ✅ → review ✅ → export ▶ → speech ○
-下一步：/codeck export
+下一步：/codeck-export
 ```
 
 如果 `$DECK_DIR/intent.md` 存在，用 Edit 在「决策日志」末尾追加审查发现：

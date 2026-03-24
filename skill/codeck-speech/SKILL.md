@@ -57,11 +57,11 @@ echo "DESIGN: $DESIGN_STATUS"
 [ -f "$DECK_DIR/design.json" ] && echo "DESIGN_JSON_FOUND" || echo "NO_DESIGN_JSON"
 ```
 
-如果 `DESIGN: stale`，提示：`⚠ 幻灯片已过期。建议重跑 /codeck design。`
+如果 `DESIGN: stale`，提示：`⚠ 幻灯片已过期。建议重跑 /codeck-design。`
 
 如果 `NO_DECK`：
-> codeck speech，还没有幻灯片。建议先跑 `/codeck design`。
-- A) 先跑 `/codeck design`
+> codeck speech，还没有幻灯片。建议先跑 `/codeck-design`。
+- A) 先跑 `/codeck-design`
 
 ## Step 2: 读取 + 角色过渡
 

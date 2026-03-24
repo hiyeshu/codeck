@@ -30,11 +30,11 @@ const skills: SkillDef[] = [
 
 const skillPaths: Record<string, string> = {
   "codeck": "skill/codeck/SKILL.md",
-  "codeck-outline": "skill/outline/SKILL.md",
-  "codeck-design": "skill/design/SKILL.md",
-  "codeck-review": "skill/review/SKILL.md",
-  "codeck-speech": "skill/speech/SKILL.md",
-  "codeck-export": "skill/export/SKILL.md",
+  "codeck-outline": "skill/codeck-outline/SKILL.md",
+  "codeck-design": "skill/codeck-design/SKILL.md",
+  "codeck-review": "skill/codeck-review/SKILL.md",
+  "codeck-speech": "skill/codeck-speech/SKILL.md",
+  "codeck-export": "skill/codeck-export/SKILL.md",
 };
 
 /* 从 description 提取引号内的触发词 + 关键短语 */

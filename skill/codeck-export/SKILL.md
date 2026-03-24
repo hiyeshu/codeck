@@ -52,11 +52,11 @@ echo "DESIGN: $DESIGN_STATUS"
 ls *-r*.html >/dev/null 2>&1 && echo "HTML_FOUND: $(ls *-r*.html | head -1)" || echo "NO_HTML"
 ```
 
-如果 `DESIGN: stale`，提示：`⚠ 幻灯片已过期。建议重跑 /codeck design。`
+如果 `DESIGN: stale`，提示：`⚠ 幻灯片已过期。建议重跑 /codeck-design。`
 
 如果 `NO_HTML`：
-> codeck export，还没有渲染好的 HTML。建议先跑 `/codeck design`。
-- A) 先跑 `/codeck design`
+> codeck export，还没有渲染好的 HTML。建议先跑 `/codeck-design`。
+- A) 先跑 `/codeck-design`
 
 ## Step 2: 选格式
 
@@ -121,8 +121,8 @@ console.log(`✓ ${baseName}.pdf`);
 用 soffice 将 HTML → PDF → PPTX，保真度最高：
 
 ```bash
-python ~/.claude/skills/codeck/skill/export/pptx/scripts/office/soffice.py --headless --convert-to pdf *-r*.html
-python ~/.claude/skills/codeck/skill/export/pptx/scripts/office/soffice.py --headless --convert-to pptx *-r*.html
+python ~/.claude/skills/codeck/skill/codeck-export/pptx/scripts/office/soffice.py --headless --convert-to pdf *-r*.html
+python ~/.claude/skills/codeck/skill/codeck-export/pptx/scripts/office/soffice.py --headless --convert-to pptx *-r*.html
 ```
 
 **方案 B（备选）：截图嵌入**
@@ -150,13 +150,13 @@ open *-r*.pdf
 用 thumbnail.py 生成缩略图，然后用 subagent 视觉检查：
 
 ```bash
-python ~/.claude/skills/codeck/skill/export/pptx/scripts/thumbnail.py *-r*.pptx
+python ~/.claude/skills/codeck/skill/codeck-export/pptx/scripts/thumbnail.py *-r*.pptx
 ```
 
 转图片做详细检查：
 
 ```bash
-python ~/.claude/skills/codeck/skill/export/pptx/scripts/office/soffice.py --headless --convert-to pdf *-r*.pptx
+python ~/.claude/skills/codeck/skill/codeck-export/pptx/scripts/office/soffice.py --headless --convert-to pdf *-r*.pptx
 pdftoppm -jpeg -r 150 *.pdf slide-check
 ```
 
@@ -187,7 +187,7 @@ pdftoppm -jpeg -r 150 *.pdf slide-check
 
 > 导出完成。产出：`{baseName}.pdf` / `{baseName}.pptx`。
 >
-> 下一步：`/codeck speech` — 教练会帮你准备上台的每一句话。
+> 下一步：`/codeck-speech` — 教练会帮你准备上台的每一句话。
 
 **出口：更新 pipeline 状态**
 ```bash
@@ -197,5 +197,5 @@ DECK_DIR="$DECK_DIR" npx tsx ~/.claude/skills/codeck/skill/pipeline.ts done expo
 显示简版 pipeline 进度：
 ```
 outline ✅ → design ✅ → review ✅ → export ✅ → speech ▶
-下一步：/codeck speech
+下一步：/codeck-speech
 ```
