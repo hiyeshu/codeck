@@ -62,6 +62,13 @@ npx skills add hiyeshu/codeck
 
 > 破坏性变更：仓库目录已从 `skill/` 迁移到 `skills/`。升级后请重新运行 `./setup`，旧的基于 `skill/` 的本地脚本和软链不再兼容。
 
+## 更新
+
+- git 仓库安装：在仓库根目录运行 `git pull --ff-only && ./setup`
+- 非 git 的 repo-like 安装：在安装根目录运行 `node skills/update.mjs`
+
+`node skills/update.mjs` 这条显式升级命令目前只支持 macOS/Linux，依赖系统自带 `tar` 和 `cp`。
+
 ## 目录
 
 ```

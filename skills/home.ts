@@ -1,22 +1,36 @@
 /**
- * [INPUT]: 依赖 Node.js fs/child_process/path，管理 ~/.codeck/ 全局状态与当前项目的 deck 目录
- * [OUTPUT]: 对外提供可复用的 repoSlug/resolveDeckDirForCwd/resolveDeckDir/resolveFinalHtmlDir 以及 CLI：auto-update / snapshot / ensure-home / slug / deck-dir / final-html-dir
- * [POS]: skills/ 的全局目录管理层，负责自动更新、项目目录解析和项目数据备份
+ * [INPUT]: 依赖 Node.js fs/child_process/path，管理 ~/.codeck/ 全局状态、当前项目 deck 目录与最小更新链
+ * [OUTPUT]: 对外提供 repoSlug/resolveDeckDirForCwd/resolveDeckDir/resolveFinalHtmlDir/install 形态判断，以及 CLI：auto-update / snapshot / ensure-home / slug / deck-dir / final-html-dir
+ * [POS]: skills/ 的全局目录管理层，负责项目目录解析、repo 自动更新与非 git 安装的显式升级提示
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 
-import { execSync } from "child_process";
+import { execFileSync, execSync } from "child_process";
 import { basename, dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
 import {
   copyFileSync,
   existsSync,
   mkdirSync,
+  realpathSync,
   readFileSync,
   writeFileSync,
 } from "fs";
 
-const SKILL_DIR = resolve(dirname(new URL(import.meta.url).pathname), "..");
+const INSTALL_ROOT = resolve(dirname(new URL(import.meta.url).pathname), "..");
+const REMOTE_VERSION_URL = process.env.CODECK_REMOTE_URL || "https://raw.githubusercontent.com/hiyeshu/codeck/main/VERSION";
+
+type InstallKind = "repo" | "install" | "unknown";
+
+type AutoUpdateOptions = {
+  nowSeconds?: () => number;
+  fileExists?: (path: string) => boolean;
+  readFile?: (path: string, encoding: BufferEncoding) => string;
+  writeFile?: (path: string, content: string) => void;
+  gitPull?: (cwd: string) => string;
+  fetchRemoteVersion?: () => string;
+  installRoot?: string;
+};
 
 function homeDir(): string {
   return join(process.env.HOME || "~", ".codeck");
@@ -28,6 +42,18 @@ function projectsDir(): string {
 
 function lastCheckPath(): string {
   return join(homeDir(), "last-update-check");
+}
+
+function versionPath(root: string): string {
+  return join(root, "VERSION");
+}
+
+function setupPath(root: string): string {
+  return join(root, "setup");
+}
+
+function skillsPath(root: string): string {
+  return join(root, "skills");
 }
 
 /* ─── 目录初始化 ─── */
@@ -54,12 +80,36 @@ export function repoSlug(): string {
 function gitRoot(): string | null {
   try {
     return execSync("git rev-parse --show-toplevel", {
+      cwd: process.cwd(),
       encoding: "utf8",
       stdio: ["pipe", "pipe", "pipe"],
     }).trim();
   } catch {
     return null;
   }
+}
+
+function gitRootFor(dir: string): string | null {
+  try {
+    return execSync("git rev-parse --show-toplevel", {
+      cwd: dir,
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
+export function isInstallRoot(dir: string, fileExists = existsSync): boolean {
+  return fileExists(versionPath(dir)) && fileExists(setupPath(dir)) && fileExists(skillsPath(dir));
+}
+
+export function detectInstallKind(dir = INSTALL_ROOT, fileExists = existsSync): InstallKind {
+  if (!isInstallRoot(dir, fileExists)) return "unknown";
+  const root = gitRootFor(dir);
+  if (!root) return "install";
+  return realpathSync(root) === realpathSync(dir) ? "repo" : "install";
 }
 
 export function resolveDeckDirForCwd(): string {
@@ -86,33 +136,97 @@ export function resolveFinalHtmlDir(finalHtmlDir = process.env.FINAL_HTML_DIR): 
 
 /* ─── 自动更新 ─── */
 
-function autoUpdate(): void {
-  ensureHome();
-  const now = Math.floor(Date.now() / 1000);
-  const lastCheck = lastCheckPath();
+function defaultGitPull(cwd: string): string {
+  return execSync("git pull --ff-only", {
+    cwd,
+    encoding: "utf8",
+    stdio: ["pipe", "pipe", "pipe"],
+    timeout: 10000,
+  }).trim();
+}
 
-  if (existsSync(lastCheck)) {
-    const last = parseInt(readFileSync(lastCheck, "utf8").trim(), 10) || 0;
-    if (now - last < 86400) return; // 24h 内跳过
-  }
+function defaultFetchRemoteVersion(): string {
+  return execFileSync("curl", [
+    "-fsSL",
+    "--connect-timeout",
+    "3",
+    "--max-time",
+    "5",
+    REMOTE_VERSION_URL,
+  ], {
+    encoding: "utf8",
+    stdio: ["pipe", "pipe", "pipe"],
+  }).trim();
+}
 
-  writeFileSync(lastCheck, String(now));
+function readLastCheck(
+  path: string,
+  fileExists: (path: string) => boolean,
+  readFile: (path: string, encoding: BufferEncoding) => string,
+): number {
+  if (!fileExists(path)) return 0;
+  return parseInt(readFile(path, "utf8").trim(), 10) || 0;
+}
 
+function readVersion(
+  root: string,
+  fileExists: (path: string) => boolean,
+  readFile: (path: string, encoding: BufferEncoding) => string,
+): string {
+  const file = versionPath(root);
+  if (!fileExists(file)) return "";
+  return readFile(file, "utf8").trim();
+}
+
+function repoAutoUpdate(root: string, gitPull: (cwd: string) => string): string | null {
   try {
-    const result = execSync("git pull --ff-only", {
-      cwd: SKILL_DIR,
-      encoding: "utf8",
-      stdio: ["pipe", "pipe", "pipe"],
-      timeout: 10000,
-    }).trim();
-    if (result && !result.includes("Already up to date")) {
-      console.log(`CODECK_UPDATED: ${result.split("\n")[0]}`);
-    }
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    if (msg.includes("timed out") || msg.includes("Could not resolve")) return;
-    console.warn(`CODECK_UPDATE_WARN: ${msg.split("\n")[0]}`);
+    const result = gitPull(root);
+    if (!result || result.includes("Already up to date")) return null;
+    return `CODECK_UPDATED: ${result.split("\n")[0]}`;
+  } catch {
+    return null;
   }
+}
+
+function installUpdateNotice(
+  root: string,
+  fileExists: (path: string) => boolean,
+  readFile: (path: string, encoding: BufferEncoding) => string,
+  fetchRemoteVersion: () => string,
+): string | null {
+  try {
+    const localVersion = readVersion(root, fileExists, readFile);
+    const remoteVersion = fetchRemoteVersion().trim();
+    if (!localVersion || !remoteVersion || remoteVersion === localVersion) return null;
+    return `CODECK_UPDATE_AVAILABLE ${localVersion} ${remoteVersion}`;
+  } catch {
+    return null;
+  }
+}
+
+export function autoUpdate(options: AutoUpdateOptions = {}): string | null {
+  ensureHome();
+  const nowSeconds = options.nowSeconds || (() => Math.floor(Date.now() / 1000));
+  const fileExists = options.fileExists || existsSync;
+  const readFile = options.readFile || readFileSync;
+  const writeFile = options.writeFile || writeFileSync;
+  const gitPull = options.gitPull || defaultGitPull;
+  const fetchRemoteVersion = options.fetchRemoteVersion || defaultFetchRemoteVersion;
+  const root = resolve(options.installRoot || INSTALL_ROOT);
+  const lastCheck = lastCheckPath();
+  const now = nowSeconds();
+  const last = readLastCheck(lastCheck, fileExists, readFile);
+
+  if (last && now - last < 86400) return null;
+  writeFile(lastCheck, String(now));
+
+  if (detectInstallKind(root, fileExists) === "repo") {
+    return repoAutoUpdate(root, gitPull);
+  }
+  if (detectInstallKind(root, fileExists) === "install") {
+    return installUpdateNotice(root, fileExists, readFile, fetchRemoteVersion);
+  }
+  return null;
 }
 
 /* ─── 快照备份 ─── */
@@ -147,7 +261,10 @@ function runCli(): void {
   const cmd = process.argv[2];
   switch (cmd) {
     case "auto-update":
-      autoUpdate();
+      {
+        const output = autoUpdate();
+        if (output) console.log(output);
+      }
       return;
     case "snapshot":
       snapshotDeck();

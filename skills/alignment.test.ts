@@ -76,4 +76,12 @@ describe("skill alignment", () => {
     expect(claude).toContain("仓库根目录");
     expect(claude).toContain("FINAL_HTML_DIR");
   });
+
+  it("documents the minimal update contract at the entry skill", () => {
+    const entrySkill = read("skills/codeck/SKILL.md");
+
+    expect(entrySkill).toContain("CODECK_UPDATED");
+    expect(entrySkill).toContain("CODECK_UPDATE_AVAILABLE");
+    expect(entrySkill).not.toContain("bin/codeck-update-check");
+  });
 });

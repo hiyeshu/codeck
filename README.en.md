@@ -62,6 +62,13 @@ If you cloned this repository locally and want to run it from source, run `./set
 
 > Breaking change: the repository layout moved from `skill/` to `skills/`. Re-run `./setup` after upgrading; old local scripts or symlinks that still point at `skill/` are no longer supported.
 
+## Updating
+
+- Git repo install: run `git pull --ff-only && ./setup` from the repo root
+- Non-git repo-like install: run `node skills/update.mjs` from the install root
+
+`node skills/update.mjs` is currently macOS/Linux only and depends on the system `tar` and `cp` commands.
+
 ## Repository Layout
 
 ```

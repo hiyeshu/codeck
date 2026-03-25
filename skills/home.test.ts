@@ -1,7 +1,7 @@
 /**
- * [INPUT]: 依赖 Vitest、临时目录与 git CLI，覆盖 deck/final 输出目录解析和 repo slug 回退逻辑
- * [OUTPUT]: 保证 home.ts 在有无环境变量、git/non-git 目录场景下行为稳定
- * [POS]: skills/ 的 home 测试层，保护全局 deck 工作区解析
+ * [INPUT]: 依赖 Vitest、临时目录与 git CLI，覆盖 deck/final 目录解析与最小更新链的 repo/install 分流
+ * [OUTPUT]: 保证 home.ts 在有无环境变量、git/non-git 目录场景下行为稳定，且 auto-update 不会误改非 git 安装
+ * [POS]: skills/ 的 home 测试层，保护全局 deck 工作区解析和入口更新提示
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 
@@ -9,8 +9,9 @@ import { execFileSync } from "child_process";
 import { mkdirSync, mkdtempSync, realpathSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { repoSlug, resolveDeckDir, resolveFinalHtmlDir } from "./home";
+import { writeFileSync } from "fs";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { autoUpdate, repoSlug, resolveDeckDir, resolveFinalHtmlDir } from "./home";
 
 function makeTempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix));
@@ -18,6 +19,12 @@ function makeTempDir(prefix: string): string {
 
 function initGitRepo(dir: string): void {
   execFileSync("git", ["init", "-q"], { cwd: dir });
+}
+
+function seedInstallRoot(dir: string, version = "0.1.0"): void {
+  mkdirSync(join(dir, "skills"), { recursive: true });
+  writeFileSync(join(dir, "VERSION"), `${version}\n`);
+  writeFileSync(join(dir, "setup"), "#!/bin/bash\n");
 }
 
 describe("home", () => {
@@ -88,5 +95,37 @@ describe("home", () => {
     process.chdir(cwd);
 
     expect(resolveFinalHtmlDir()).toBe(realpathSync(cwd));
+  });
+
+  it("autoUpdate keeps repo installs on git pull", () => {
+    const home = makeTempDir("codeck-home-update-home-");
+    const repo = makeTempDir("codeck-home-update-repo-");
+    const gitPull = vi.fn(() => "Updating 123..456");
+    process.env.HOME = home;
+    seedInstallRoot(repo);
+    initGitRepo(repo);
+
+    expect(autoUpdate({
+      installRoot: repo,
+      nowSeconds: () => 100,
+      gitPull,
+    })).toBe("CODECK_UPDATED: Updating 123..456");
+    expect(gitPull).toHaveBeenCalledWith(repo);
+  });
+
+  it("autoUpdate only surfaces a manual upgrade hint for non-git installs", () => {
+    const home = makeTempDir("codeck-home-update-home-");
+    const installRoot = makeTempDir("codeck-home-install-");
+    const gitPull = vi.fn(() => "should not run");
+    process.env.HOME = home;
+    seedInstallRoot(installRoot, "0.1.0");
+
+    expect(autoUpdate({
+      installRoot,
+      nowSeconds: () => 100,
+      gitPull,
+      fetchRemoteVersion: () => "0.2.0",
+    })).toBe("CODECK_UPDATE_AVAILABLE 0.1.0 0.2.0");
+    expect(gitPull).not.toHaveBeenCalled();
   });
 });

@@ -29,12 +29,10 @@ COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
 
 # ─── 自动更新 ───
 [ "$COMPILER_STATUS" = "READY" ] && npx tsx "$CODECK_SKILLS/home.ts" auto-update 2>/dev/null || true
-
-_UPD=$("$CODECK_SKILLS/bin/codeck-update-check" 2>/dev/null || true)
-[ -n "$_UPD" ] && echo "$_UPD" || true
 ```
 
 如果输出 `CODECK_UPDATED`：告诉用户 "codeck 已自动更新。"
+如果输出 `CODECK_UPDATE_AVAILABLE`：告诉用户 `检测到新版本。当前安装不是 git repo；请运行 node "$CODECK_SKILLS/update.mjs" 升级。`
 如果 `STATUS=NOT_READY`：告诉用户 `当前仓库未完成 codeck 初始化。请先在仓库根目录运行 ./setup，然后重试 /codeck。`
 
 ## AskUserQuestion 格式（所有 codeck skill 通用）
