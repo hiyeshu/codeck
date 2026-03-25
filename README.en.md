@@ -46,7 +46,7 @@ Three-layer separation:
 - **Design layer** `design.json` — colors, typography, spacing, mood (design_system / design_style / visual_effects).
 - **Interaction layer** `default.html` — compiler-generated navigation, fullscreen, notes panel, a11y.
 
-All intermediates stored under `~/.codeck/projects/{slug}/`. Project directory stays clean.
+All intermediates stay under `~/.codeck/projects/{slug}/`; final HTML defaults to the current repo root and can be overridden with `FINAL_HTML_DIR`.
 
 ## Install
 
@@ -57,6 +57,8 @@ npx skills add hiyeshu/codeck
 ```
 
 Type `/codeck` inside Claude Code to get started.
+
+If you cloned this repository locally and want to run it from source, run `./setup` from the repo root first so dependencies, symlinks, and compiler entrypoints are ready.
 
 > Breaking change: the repository layout moved from `skill/` to `skills/`. Re-run `./setup` after upgrading; old local scripts or symlinks that still point at `skill/` are no longer supported.
 

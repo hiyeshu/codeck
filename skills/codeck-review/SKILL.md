@@ -39,6 +39,8 @@ description: |
 
 ## AskUserQuestion 格式
 
+只陈述已经验证过的事实。未执行的修复、重渲染、截图和写文件只能说"建议 / 将要 / 计划"，不能提前说成"已完成 / 正在写入 / 已处理"。
+
 1. **Re-ground** — "codeck review,{当前维度}"
 
 2. **Simplify** — 用人话说问题，假设用户 20 分钟没看屏幕
@@ -51,8 +53,7 @@ description: |
 
 ```bash
 # ─── 定位 codeck repo ───
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 
 # ─── 解析项目目录 ───
@@ -224,10 +225,9 @@ mkdir -p "$DECK_DIR/screenshots"
 | 功能 | 检查方法 | 通过标准 |
 | --- | --- | --- |
 | 翻页 | 按 ← → 或 Space | 页面切换，进度条同步 |
-| 全屏 | 按 F | 进入全屏，导航栏和页码隐藏 |
-| 全览 | 按 Esc | 所有页面平铺，点击可跳转 |
+| 全屏 | 按 F | 进入全屏后导航栏和页码默认隐藏；鼠标移到底部时浮出 |
+| 全览 | 按 Esc（非全屏） | 非全屏时所有页面平铺，点击可跳转 |
 | 演讲备注 | 按 S | 显示当前页的 speakerNotes |
-| 帮助 | 按 ? | 快捷键帮助面板弹出 |
 | 触摸手势 | （如有触摸设备）左右滑动 | 翻页响应 |
 | 进度条 | 翻页后观察 | 进度与当前页同步 |
 | 分页指示器 | 观察 | 显示正确的 N / Total |
@@ -241,7 +241,7 @@ mkdir -p "$DECK_DIR/screenshots"
 
 - Claude 生成的内容区有溢出，遮挡了导航栏或进度条
 
-溯源：交互问题几乎都是渲染偏差（路径 B）——default.html 的 shell 本身是固定模板，问题出在 Claude 生成的最终内容与 shell 的 CSS/JS 冲突。
+溯源：交互问题先判断 default.html 的壳本身是否支持这项能力。只有"壳原本支持，但最终 HTML 把它破坏了"才算路径 B；如果默认壳本身就没有这项能力，这是 base shell / compiler 的缺口，不归到单 deck 的渲染偏差。
 
 ---
 
@@ -338,8 +338,7 @@ before/after 截图保存在 `$DECK_DIR/screenshots/`
 **出口：更新 pipeline 状态 + 追加 intent 决策日志**
 
 ```bash
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/pipeline.ts" done review
 ```
@@ -366,7 +365,7 @@ outline ✅ → design ✅ → review ✅ → export ▶ → speech ○
 ## 审稿人笔记 — {ISO datetime}
 
 **关键决策：**
-- {审查中的关键发现，如"第 4 页的数据图表标签太小，已修复"}
+- {审查中的关键发现与修复，如"第 4 页数据图表标签过小 → 放大至 14px"}
 - {修复路径选择，如"3 处改了 design.json，1 处直接改了 HTML（渲染债务）"}
 
 **给下游的建议：**

@@ -14,7 +14,7 @@ CONVENTIONS.md: 技能编写规范（frontmatter / pushy description / 目录结
 evals/: 技能触发准确率测试，含 evals.json + trigger-test.ts（90% 准确率）。
 codeck/SKILL.md: 入口 dashboard，自动更新 + 诊断式重构——扫描缓存 + 项目记忆恢复 + 时间戳偏差检测 + 智能 NEXT 推荐。
 codeck-outline/SKILL.md: 编辑角色，素材诊断 + 叙事提问 + 大纲规划 + 标题锻造 + intent.md 生成。
-codeck-design/SKILL.md: 设计师角色，三层架构（`$DECK_DIR/deck.json` 内容 + `$DECK_DIR/design.json` 三层设计层 + `$DECK_DIR/default.html` 结构基底），先 render-default，再由 Claude 基于 Lisp prompt 直出最终 HTML。
+codeck-design/SKILL.md: 设计师角色，三层架构（`$DECK_DIR/deck.json` 内容 + `$DECK_DIR/design.json` 三层设计层 + `$DECK_DIR/default.html` 结构基底），先 render-default，再由 Claude 基于 Lisp prompt 直出最终 HTML，并由 write-final 默认写回仓库根目录。
 codeck-design/references/: 设计参考库，含 8 个完整 DeckSpec 案例 + block-types.md（所有 block 类型的 JSON schema 和 HTML 渲染示例）。
 codeck-design/ui-ux-db/: UI/UX 设计智能数据库（styles/colors/typography/charts/ux-guidelines CSV + BM25 搜索引擎），design skill 生成 design.json 时查询风格、配色、字体数据。
 codeck-review/SKILL.md: 审稿人角色，HTML 驱动逐页审查——六维评分（叙事/内容/AI废话/视觉层级/一致性/交互）+ 路径 A（改 `$DECK_DIR/design.json` 三层设计层重渲染）/ 路径 B（直接改 HTML）修复模型 + 渲染债务追踪。
@@ -25,6 +25,6 @@ codeck-speech/SKILL.md: 演讲稿撰写，观众/风格/时长提问 + 生成完
 下游: Claude skill 运行时、本地 deck 预览流程；安装目录 `~/.claude/skills/<name>` 只做入口，真实共享代码在仓库 `skills/` 下
 
 变更日志
-- 2026-03-24: 仓库目录从 `skill/` 硬切到 `skills/`，安装后需要重新运行 `./setup`；`SKILL.md` 中的共享脚本改为先解析真实 repo 根，再调用 `skills/` 代码
+- 2026-03-24: 仓库目录从 `skill/` 硬切到 `skills/`，首次 clone 或升级后需要重新运行 `./setup`；`SKILL.md` 中的共享脚本改为先解析当前本地 repo 根，再调用 `skills/` 代码
 
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

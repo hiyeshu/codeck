@@ -21,18 +21,21 @@ description: |
 
 ```bash
 # ─── 定位 codeck repo ───
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
+PREFLIGHT=$(node "$CODECK_SKILLS/preflight.mjs" compiler-ready "$CODECK_REPO")
+echo "$PREFLIGHT"
+COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
 
 # ─── 自动更新 ───
-npx tsx "$CODECK_SKILLS/home.ts" auto-update 2>/dev/null || true
+[ "$COMPILER_STATUS" = "READY" ] && npx tsx "$CODECK_SKILLS/home.ts" auto-update 2>/dev/null || true
 
 _UPD=$("$CODECK_SKILLS/bin/codeck-update-check" 2>/dev/null || true)
 [ -n "$_UPD" ] && echo "$_UPD" || true
 ```
 
 如果输出 `CODECK_UPDATED`：告诉用户 "codeck 已自动更新。"
+如果 `STATUS=NOT_READY`：告诉用户 `当前仓库未完成 codeck 初始化。请先在仓库根目录运行 ./setup，然后重试 /codeck。`
 
 ## AskUserQuestion 格式（所有 codeck skill 通用）
 
@@ -43,15 +46,22 @@ _UPD=$("$CODECK_SKILLS/bin/codeck-update-check" 2>/dev/null || true)
 3. **Recommend** — `建议选 [X]，因为 【一句话原因】`。
 4. **Options** — A) B) C) 选项，用户点一下就行。
 
+只能陈述已经验证过的事实。未执行的修复、写文件、渲染结果和状态推进只能说"建议 / 将要 / 计划"，不能提前说成"已完成 / 正在写入 / 已反映"。
+
 ---
 
 ## Phase 1: 扫描与缓存
 
 ```bash
 # ─── 定位 codeck repo ───
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
+PREFLIGHT=$(node "$CODECK_SKILLS/preflight.mjs" compiler-ready "$CODECK_REPO")
+echo "$PREFLIGHT"
+COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
+if [ "$COMPILER_STATUS" != "READY" ]; then
+  exit 0
+fi
 
 # ─── 解析项目目录 ───
 DECK_DIR=$(npx tsx "$CODECK_SKILLS/home.ts" deck-dir 2>/dev/null || {
@@ -86,7 +96,7 @@ eval find . -maxdepth 4 -type f \\\( -name '"*.mp4"' -o -name '"*.mov"' -o -name
 
 # ─── HTML 素材（已有内容 / 网页截取） ───
 echo "=== HTML ==="
-eval find . -maxdepth 4 -type f -name '"*.html"' $EXCLUDE ! -name '"deck.html"' 2>/dev/null | head -10
+eval find . -maxdepth 4 -type f -name '"*.html"' $EXCLUDE ! -name '"default.html"' ! -name '"*-r*.html"' 2>/dev/null | head -10
 
 echo "=== PIPELINE ==="
 PIPELINE="$DECK_DIR/pipeline.json"

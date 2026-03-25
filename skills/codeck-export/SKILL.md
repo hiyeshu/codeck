@@ -38,8 +38,7 @@ allowed-tools: Bash, Read, Write, Agent, AskUserQuestion
 
 ```bash
 # ─── 定位 codeck repo ───
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 
 # ─── 解析项目目录 ───
@@ -82,7 +81,7 @@ ls *-r*.html >/dev/null 2>&1 && echo "HTML_FOUND: $(ls *-r*.html | head -1)" || 
 
 ### HTML（已经有了）
 
-> {baseName}.html 已就绪。浏览器打开后按 F 键全屏，左右箭头翻页，直接投屏。
+> 已找到 `{baseName}.html`。浏览器打开后按 F 键全屏，左右箭头翻页，直接投屏。
 ```bash
 open *-r*.html
 ```
@@ -126,8 +125,7 @@ console.log(`✓ ${baseName}.pdf`);
 用 soffice 将 HTML → PDF → PPTX，保真度最高：
 
 ```bash
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 python "$CODECK_SKILLS/codeck-export/pptx/scripts/office/soffice.py" --headless --convert-to pdf *-r*.html
 python "$CODECK_SKILLS/codeck-export/pptx/scripts/office/soffice.py" --headless --convert-to pptx *-r*.html
@@ -158,8 +156,7 @@ open *-r*.pdf
 用 thumbnail.py 生成缩略图，然后用 subagent 视觉检查：
 
 ```bash
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 python "$CODECK_SKILLS/codeck-export/pptx/scripts/thumbnail.py" *-r*.pptx
 ```
@@ -167,8 +164,7 @@ python "$CODECK_SKILLS/codeck-export/pptx/scripts/thumbnail.py" *-r*.pptx
 转图片做详细检查：
 
 ```bash
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 python "$CODECK_SKILLS/codeck-export/pptx/scripts/office/soffice.py" --headless --convert-to pdf *-r*.pptx
 pdftoppm -jpeg -r 150 *.pdf slide-check
@@ -205,8 +201,7 @@ pdftoppm -jpeg -r 150 *.pdf slide-check
 
 **出口：更新 pipeline 状态**
 ```bash
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/pipeline.ts" done export
 ```

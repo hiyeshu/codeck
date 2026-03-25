@@ -45,8 +45,7 @@ allowed-tools: Bash, Read, Glob, Write, AskUserQuestion
 
 ```bash
 # ─── 定位 codeck repo ───
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 
 # ─── 解析项目目录 ───
@@ -377,8 +376,7 @@ created: {ISO datetime}
 然后先用 Write 工具创建 `$DECK_DIR/intent-input.json`，再通过 CLI 创建 `$DECK_DIR/intent.json`：
 
 ```bash
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/intent-schema.ts" create "$DECK_DIR/intent-input.json"
 ```
@@ -424,8 +422,7 @@ DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/intent-schema.ts" create "$DECK_DIR
 
 **出口：更新 pipeline 状态 + 显示进度**
 ```bash
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/pipeline.ts" done outline
 ```

@@ -273,6 +273,16 @@ export function renderDeckDocument(
       transform: translateX(-50%) translateY(0);
       opacity: 1;
     }
+    .deck-app.is-fullscreen .deck-nav {
+      transform: translateX(-50%) translateY(8px);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .deck-app.is-fullscreen .deck-nav.nav-revealed {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
     .deck-counter {
       font-size: 12px;
       color: rgba(255,255,255,0.6);
@@ -345,7 +355,7 @@ export function renderDeckDocument(
       body { background: #fff; }
       .deck-app { padding: 0; display: block; }
       .deck-stage, .deck-slides { width: auto; min-height: 0; display: block !important; }
-      .deck-nav, .deck-panel, .deck-help, .skip-link { display: none !important; }
+      .deck-nav, .deck-panel, .skip-link { display: none !important; }
       .slide {
         display: block !important;
         width: var(--slide-width);
@@ -398,6 +408,7 @@ export function renderDeckDocument(
       let overview = false;
       let notesOpen = false;
       let touchStartX = 0;
+      let hideNavTimer = 0;
 
       /* ─── 视口自适应缩放 ─── */
       const fit = () => {
@@ -416,12 +427,38 @@ export function renderDeckDocument(
       window.addEventListener('resize', fit);
 
       const clamp = (value) => Math.max(0, Math.min(slides.length - 1, value));
+      const clearNavHideTimer = () => {
+        if (!hideNavTimer) return;
+        window.clearTimeout(hideNavTimer);
+        hideNavTimer = 0;
+      };
+      const syncFullscreenState = () => {
+        app.classList.toggle('is-fullscreen', !!document.fullscreenElement);
+        if (!document.fullscreenElement || overview) {
+          clearNavHideTimer();
+          document.querySelector('.deck-nav')?.classList.remove('nav-revealed');
+        }
+      };
+      const revealNav = () => {
+        clearNavHideTimer();
+        if (!document.fullscreenElement || overview) return;
+        document.querySelector('.deck-nav')?.classList.add('nav-revealed');
+      };
+      const scheduleNavHide = () => {
+        clearNavHideTimer();
+        if (!document.fullscreenElement) return;
+        hideNavTimer = window.setTimeout(() => {
+          document.querySelector('.deck-nav')?.classList.remove('nav-revealed');
+          hideNavTimer = 0;
+        }, 400);
+      };
       const update = () => {
         slides.forEach((slide, slideIndex) => {
           slide.classList.toggle('is-active', !overview && slideIndex === index);
           slide.setAttribute('aria-hidden', overview ? 'false' : String(slideIndex !== index));
         });
         app.classList.toggle('is-overview', overview);
+        syncFullscreenState();
         const active = slides[index];
         if (counter) counter.textContent = (index + 1) + ' / ' + slides.length;
         if (progress) progress.style.width = (((index + 1) / slides.length) * 100) + '%';
@@ -439,18 +476,33 @@ export function renderDeckDocument(
         if (!document.fullscreenElement) await document.documentElement.requestFullscreen?.();
         else await document.exitFullscreen?.();
       };
+      document.addEventListener('fullscreenchange', () => {
+        syncFullscreenState();
+        update();
+      });
+      document.addEventListener('mousemove', (event) => {
+        if (!document.fullscreenElement || overview) return;
+        if (event.clientY > window.innerHeight - 48) {
+          revealNav();
+          return;
+        }
+        scheduleNavHide();
+      });
 
       document.addEventListener('keydown', async (event) => {
         if (event.key === 'ArrowRight' || event.key === ' ') {
+          event.preventDefault();
           if (!overview) index = clamp(index + 1);
           update();
         }
         if (event.key === 'ArrowLeft') {
+          event.preventDefault();
           if (!overview) index = clamp(index - 1);
           update();
         }
         if (event.key.toLowerCase() === 'f') await toggleFullscreen();
         if (event.key === 'Escape') {
+          if (document.fullscreenElement) return;
           overview = !overview;
           update();
         }
@@ -483,9 +535,12 @@ export function renderDeckDocument(
       const btnOverview = document.querySelector('[data-action="overview"]');
       const btnFullscreen = document.querySelector('[data-action="fullscreen"]');
       const btnNotes = document.querySelector('[data-action="notes"]');
+      const nav = document.querySelector('.deck-nav');
       btnOverview?.addEventListener('click', () => { overview = !overview; update(); });
       btnFullscreen?.addEventListener('click', () => toggleFullscreen());
       btnNotes?.addEventListener('click', () => { notesOpen = !notesOpen; update(); });
+      nav?.addEventListener('mouseenter', () => revealNav());
+      nav?.addEventListener('mouseleave', () => scheduleNavHide());
 
       const syncBtnState = () => {
         btnOverview?.classList.toggle('is-active', overview);

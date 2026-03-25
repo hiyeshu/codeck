@@ -9,12 +9,12 @@ TypeScript + Vitest + Zod + Playwright + PptxGenJS
 | 设计层 | `$DECK_DIR/design.json` | Claude | 三层视觉参数：design_system（可量化规则）/ design_style（主观方向）/ visual_effects（表现层）。每层带 description 字段。 |
 | 交互层 | `$DECK_DIR/default.html` | compiler 生成 | render-default 产出的结构基底。翻页、全屏、全览、备注面板、触摸手势、进度条、无障碍。Claude 读取不改根 contract。 |
 
-最终 HTML = compiler render-default 生成 default.html → Claude 读取 default.html + design.json → 直出最终自包含 HTML。
+最终 HTML = compiler render-default 生成 default.html → Claude 读取 default.html + design.json → 直出最终自包含 HTML → write-final 默认写回仓库根目录（可被 `FINAL_HTML_DIR` 覆盖）。
 
 <config>
 package.json - 项目依赖（zod, playwright, pptxgenjs, vitest）
 vitest.config.ts - 测试配置，覆盖 skills/**/*.test.ts
-setup - 安装脚本（npm install）
+setup - 初始化脚本（首次 clone / 升级后运行，含 npm install）
 skills/CONVENTIONS.md - 技能编写规范（frontmatter / pushy description / evals）
 </config>
 
@@ -52,12 +52,12 @@ compiler prompt-only → Lisp 约束 prompt（default.html + design.json）
     ↓
 Claude 读取 prompt，直出最终 HTML（保持 default.html 的 slide/block/shell contract）
     ↓
-compiler write-final → 校验 HTML contract → 命名为 {title}-r{revision}.html
+compiler write-final → 校验 HTML contract → 写到仓库根目录/{title}-r{revision}.html（可被 FINAL_HTML_DIR 覆盖）
 ```
 
 CLI：`npx tsx skills/compiler/index.ts <validate|migrate|render-default|prompt-only|validate-html|write-final>`
 
-迁移说明：仓库已从 `skill/` 硬切到 `skills/`。升级后必须重新运行 `./setup`，旧路径不再兼容。
+迁移说明：仓库已从 `skill/` 硬切到 `skills/`。首次 clone 或升级后必须重新运行 `./setup`，旧路径不再兼容。
 
 ## 2.x 远期目标
 

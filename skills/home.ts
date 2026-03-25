@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 Node.js fs/child_process/path，管理 ~/.codeck/ 全局状态与当前项目的 deck 目录
- * [OUTPUT]: 对外提供可复用的 repoSlug/resolveDeckDirForCwd/resolveDeckDir 以及 CLI：auto-update / snapshot / ensure-home / deck-dir
+ * [OUTPUT]: 对外提供可复用的 repoSlug/resolveDeckDirForCwd/resolveDeckDir/resolveFinalHtmlDir 以及 CLI：auto-update / snapshot / ensure-home / slug / deck-dir / final-html-dir
  * [POS]: skills/ 的全局目录管理层，负责自动更新、项目目录解析和项目数据备份
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
@@ -39,6 +39,7 @@ export function ensureHome(): void {
 /* ─── 项目标识 ─── */
 
 export function repoSlug(): string {
+  if (!gitRoot()) return basename(process.cwd());
   try {
     const remote = execSync("git remote get-url origin", {
       encoding: "utf8",
@@ -48,6 +49,17 @@ export function repoSlug(): string {
     if (match) return match[1].replace("/", "-");
   } catch { /* 非 git 目录 */ }
   return basename(process.cwd());
+}
+
+function gitRoot(): string | null {
+  try {
+    return execSync("git rev-parse --show-toplevel", {
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+    }).trim();
+  } catch {
+    return null;
+  }
 }
 
 export function resolveDeckDirForCwd(): string {
@@ -64,6 +76,12 @@ export function resolveDeckDir(deckDir = process.env.DECK_DIR): string {
     return dir;
   }
   return resolveDeckDirForCwd();
+}
+
+export function resolveFinalHtmlDir(finalHtmlDir = process.env.FINAL_HTML_DIR): string {
+  const dir = resolve(finalHtmlDir || gitRoot() || process.cwd());
+  mkdirSync(dir, { recursive: true });
+  return dir;
 }
 
 /* ─── 自动更新 ─── */
@@ -145,8 +163,11 @@ function runCli(): void {
     case "deck-dir":
       console.log(resolveDeckDir());
       return;
+    case "final-html-dir":
+      console.log(resolveFinalHtmlDir());
+      return;
     default:
-      console.error("Usage: home.ts <auto-update|snapshot|ensure-home|slug|deck-dir>");
+      console.error("Usage: home.ts <auto-update|snapshot|ensure-home|slug|deck-dir|final-html-dir>");
       process.exit(1);
   }
 }

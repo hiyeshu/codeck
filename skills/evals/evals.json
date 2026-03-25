@@ -86,8 +86,8 @@
       "id": 9,
       "skill": "codeck-export",
       "prompt": "导出 PDF",
-      "expected_output": "检测 deck.json + deck.html，直接导出 PDF 格式",
-      "files": ["deck.json", "deck.html"],
+      "expected_output": "检测 deck.json + {title}-r{revision}.html，直接导出 PDF 格式",
+      "files": ["deck.json", "{title}-r{revision}.html"],
       "assertions": [
         { "type": "skill_triggered", "skill": "codeck-export", "description": "应触发 export 技能" },
         { "type": "contains", "field": "output", "value": "PDF", "description": "应识别 PDF 格式需求" }

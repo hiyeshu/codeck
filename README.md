@@ -46,7 +46,7 @@ PDF / PPTX
 - **设计层** `design.json` — 配色、字体、间距、情绪（design_system / design_style / visual_effects 三层）
 - **交互层** `default.html` — compiler 生成的翻页、全屏、备注面板、无障碍
 
-所有中间产物存在 `~/.codeck/projects/{slug}/`，项目目录保持干净。
+所有中间产物存在 `~/.codeck/projects/{slug}/`；最终 HTML 默认输出到当前仓库根目录，必要时可用 `FINAL_HTML_DIR` 覆盖。
 
 ## 安装
 
@@ -57,6 +57,8 @@ npx skills add hiyeshu/codeck
 ```
 
 在 Claude Code 中输入 `/codeck` 开始使用。
+
+如果你是从本仓库本地 clone 后直接运行，请先在仓库根目录执行 `./setup`，确保依赖、软链和 compiler 入口都已就绪。
 
 > 破坏性变更：仓库目录已从 `skill/` 迁移到 `skills/`。升级后请重新运行 `./setup`，旧的基于 `skill/` 的本地脚本和软链不再兼容。
 

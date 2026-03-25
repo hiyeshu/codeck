@@ -31,6 +31,7 @@ import {
   deckCandidateHtmlFileName,
   deckFinalHtmlFileName,
 } from "../deck-filename";
+import { resolveFinalHtmlDir } from "../home";
 import { exitWith, readJson } from "../cli-util";
 
 type Renderer = (id: string, props: Record<string, unknown>, children: string) => string;
@@ -160,10 +161,8 @@ function runWriteFinal(deckPath?: string, candidateHtmlPath?: string, defaultHtm
     console.log(JSON.stringify(report, null, 2));
     process.exit(1);
   }
-  const outPath = join(
-    dirname(resolve(deckPath)),
-    deckFinalHtmlFileName(deck.meta.title, deck.meta.revision ?? 0),
-  );
+  const finalDir = resolveFinalHtmlDir();
+  const outPath = join(finalDir, deckFinalHtmlFileName(deck.meta.title, deck.meta.revision ?? 0));
   const candidate = readFileSync(resolve(candidateHtmlPath), "utf8");
   writeFileSync(outPath, candidate);
   console.log(outPath);

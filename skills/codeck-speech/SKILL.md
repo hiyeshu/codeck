@@ -42,8 +42,7 @@ allowed-tools: Bash, Read, Edit, Write, AskUserQuestion
 
 ```bash
 # ─── 定位 codeck repo ───
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 
 # ─── 解析项目目录 ───
@@ -280,8 +279,7 @@ totalEstimate: "{预估总时长}"
 
 **出口：更新 pipeline 状态**
 ```bash
-CODECK_SKILL_DIR=$(node -p "require('fs').realpathSync(process.env.HOME + '/.claude/skills/codeck')")
-CODECK_REPO=$(cd "$(dirname "$CODECK_SKILL_DIR")/.." && pwd)
+CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/pipeline.ts" done speech
 ```
