@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 接收 compiler CLI 命令与 deck/design 文件路径
  * [OUTPUT]: 提供 validate / validate-design / upgrade-design / migrate / render-default / prompt-only / validate-html / candidate-filename / write-final / design-compile 十个命令
- * [POS]: skills/compiler 的入口层，串联 catalog、migrate、registry 和 design compiler
+ * [POS]: codeck-design/compiler 的入口层，串联 catalog、migrate、registry 和 design compiler
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 
@@ -21,18 +21,18 @@ import { renderMetricGrid } from "./registry/blocks/metric-grid";
 import { renderTree } from "./traverse";
 import { compileDesign } from "./design-compiler";
 import { validateFinalHtmlContract } from "./html-contract";
-import { buildFinalHtmlLispPrompt } from "../codeck-design/final-html-prompt";
+import { buildFinalHtmlLispPrompt } from "../final-html-prompt";
 import {
   normalizeDesignJson,
   upgradeLegacyDesignJson,
   validateDesignJson,
-} from "../codeck-design/design-schema";
+} from "../design-schema";
 import {
   deckCandidateHtmlFileName,
   deckFinalHtmlFileName,
-} from "../deck-filename";
-import { resolveFinalHtmlDir } from "../home";
-import { exitWith, readJson } from "../cli-util";
+} from "../../codeck/deck-filename";
+import { resolveFinalHtmlDir } from "../../codeck/home";
+import { exitWith, readJson } from "../../codeck/cli-util";
 
 type Renderer = (id: string, props: Record<string, unknown>, children: string) => string;
 

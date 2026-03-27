@@ -6,9 +6,9 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { buildFinalHtmlLispPrompt } from "../codeck-design/final-html-prompt";
+import { buildFinalHtmlLispPrompt } from "../final-html-prompt";
 import { validateFinalHtmlContract } from "./html-contract";
-import type { DesignJson } from "../codeck-design/design-schema";
+import type { DesignJson } from "../design-schema";
 
 const DEFAULT_HTML = `<!DOCTYPE html>
 <html>

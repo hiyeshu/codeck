@@ -2,29 +2,39 @@
 > L2 | 父级: /CLAUDE.md
 
 成员清单
-deck-filename.ts: 文件名工具函数，从 meta.title + revision 生成安全文件名，并统一 final/candidate HTML 的命名。
-home.ts: 全局目录管理器，管理 `~/.codeck/`（自动更新 + 项目快照备份）。
-codeck-export/SKILL.md: 导出角色，HTML 为单一真相源，PDF（Playwright 打印）/ PPTX（LibreOffice 转换）多格式导出 + QA 验证。
-codeck-export/pptx/: 官方 PPTX 工具库（PptxGenJS 教程、编辑工作流、thumbnail.py、soffice.py）。
-codeck-export/pdf/: 官方 PDF 工具库（pypdf/reportlab/pdfplumber 参考、表单填写、OCR）。
-pipeline.ts: Pipeline 状态追踪器，管理 outline → design → review → export → speech 的依赖关系和 staleness 检测。
-tsconfig.json: skills 子树 TypeScript 编译配置，映射 core/ai 源码入口。
-LICENSE: skills 发布许可证文本（Apache-2.0）。
+codeck/: 入口 skill + 共享工具层。SKILL.md 是 dashboard（扫描缓存 + 偏差检测 + 智能 NEXT），同目录放所有 skill 共享的 CLI 工具。
+codeck/home.ts: 全局目录管理器，管理 `~/.codeck/`（自动更新 + 项目快照备份）。
+codeck/cli-util.ts: 共享 CLI 工具（readJson / exitWith）。
+codeck/pipeline.ts: Pipeline 状态追踪器，管理 outline → design → review → export → speech 的依赖与 staleness。
+codeck/intent-schema.ts: 意图协议层，zod schema + create/read/append-log CLI。
+codeck/deck-filename.ts: 文件名工具，从 meta.title + revision 生成安全文件名。
+codeck/preflight.mjs: 仓库初始化预检，检测 compiler 可执行状态。
+codeck/update.mjs: 显式升级入口，repo 走 git pull，非 git 走 tarball 覆盖。
+codeck-outline/: 编辑角色，素材诊断 + 叙事提问 + 大纲规划 + 标题锻造 + intent.md 生成。
+codeck-outline/outline-spec.ts: 大纲 JSON schema（zod）。
+codeck-design/: 设计师角色，三层架构（deck.json 内容 + design.json 设计层 + default.html 结构基底）。
+codeck-design/design-schema.ts: design.json 三层 schema + 校验 + legacy 升级。
+codeck-design/final-html-prompt.ts: Lisp prompt builder，组装 default.html + design.json 约束。
+codeck-design/compiler/: DeckSpec v2 compiler，render-default + validate + write-final + design-compile。
+codeck-design/references/: 设计参考库，8 个 DeckSpec 案例 + block-types.md。
+codeck-design/ui-ux-db/: UI/UX 设计数据库（CSV + BM25 搜索引擎）。
+codeck-review/: 审稿人角色，六维评分 + 路径 A/B 修复 + 渲染债务追踪。
+codeck-export/: 导出角色，PDF（Playwright 打印）/ PPTX（LibreOffice 转换）+ QA 验证。
+codeck-export/pptx/: PPTX 工具库（PptxGenJS、thumbnail.py、soffice.py）。
+codeck-export/pdf/: PDF 工具库（pypdf/reportlab/pdfplumber、表单填写、OCR）。
+codeck-speech/: 演讲稿撰写，逐字稿 + 舞台指示 + 时间预算。
+tsconfig.json: skills 子树 TypeScript 编译配置。
+LICENSE: Apache-2.0。
 CONVENTIONS.md: 技能编写规范（frontmatter / pushy description / 目录结构 / evals）。
-evals/: 技能触发准确率测试，含 evals.json + trigger-test.ts（90% 准确率）。
-codeck/SKILL.md: 入口 dashboard，自动更新 + 诊断式重构——扫描缓存 + 项目记忆恢复 + 时间戳偏差检测 + 智能 NEXT 推荐。
-codeck-outline/SKILL.md: 编辑角色，素材诊断 + 叙事提问 + 大纲规划 + 标题锻造 + intent.md 生成。
-codeck-design/SKILL.md: 设计师角色，三层架构（`$DECK_DIR/deck.json` 内容 + `$DECK_DIR/design.json` 三层设计层 + `$DECK_DIR/default.html` 结构基底），先 render-default，再由 Claude 基于 Lisp prompt 直出最终 HTML，并由 write-final 默认写回仓库根目录。
-codeck-design/references/: 设计参考库，含 8 个完整 DeckSpec 案例 + block-types.md（所有 block 类型的 JSON schema 和 HTML 渲染示例）。
-codeck-design/ui-ux-db/: UI/UX 设计智能数据库（styles/colors/typography/charts/ux-guidelines CSV + BM25 搜索引擎），design skill 生成 design.json 时查询风格、配色、字体数据。
-codeck-review/SKILL.md: 审稿人角色，HTML 驱动逐页审查——六维评分（叙事/内容/AI废话/视觉层级/一致性/交互）+ 路径 A（改 `$DECK_DIR/design.json` 三层设计层重渲染）/ 路径 B（直接改 HTML）修复模型 + 渲染债务追踪。
-codeck-speech/SKILL.md: 演讲稿撰写，观众/风格/时长提问 + 生成完整逐字稿 + 舞台指示 + 时间预算 + `$DECK_DIR/design.json` 的 design_style / design_system 情绪感知。
+evals/: 技能触发准确率测试，含 evals.json + trigger-test.ts + alignment.test.ts。
 
 依赖关系
 上游: zod、tsx/vitest、playwright、pptxgenjs
-下游: Claude skill 运行时、本地 deck 预览流程；安装目录 `~/.claude/skills/<name>` 只做入口，真实共享代码在仓库 `skills/` 下
+下游: Claude skill 运行时、本地 deck 预览流程
+共享代码归属: 所有 skill 共享的 CLI 工具（home/pipeline/intent-schema/cli-util/deck-filename/preflight/update）统一放在 codeck/ 目录，随 `npx skills add` 一起安装；compiler 放在 codeck-design/ 目录
 
 变更日志
-- 2026-03-24: 仓库目录从 `skill/` 硬切到 `skills/`，首次 clone 或升级后需要重新运行 `./setup`；`SKILL.md` 中的共享脚本改为先解析当前本地 repo 根，再调用 `skills/` 代码
+- 2026-03-27: 共享工具从 skills/ 根迁入 codeck/，compiler 从 skills/compiler/ 迁入 codeck-design/compiler/，解决 `npx skills add` 安装时散落文件丢失问题
+- 2026-03-24: 仓库目录从 `skill/` 硬切到 `skills/`
 
 [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

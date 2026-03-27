@@ -20,8 +20,8 @@ function makeRepo(prefix: string): string {
 }
 
 function addCompiler(repoRoot: string): void {
-  mkdirSync(join(repoRoot, "skills", "compiler"), { recursive: true });
-  writeFileSync(join(repoRoot, "skills", "compiler", "index.ts"), "export {};\n");
+  mkdirSync(join(repoRoot, "skills", "codeck-design", "compiler"), { recursive: true });
+  writeFileSync(join(repoRoot, "skills", "codeck-design", "compiler", "index.ts"), "export {};\n");
 }
 
 describe("preflight", () => {

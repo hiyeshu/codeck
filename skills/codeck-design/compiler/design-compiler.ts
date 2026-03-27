@@ -1,12 +1,12 @@
 /**
  * [INPUT]: 接收 default HTML 字符串和 design.json 对象（新三层 schema 或 legacy schema）
  * [OUTPUT]: 返回注入 fallback CSS 后的最终 HTML，供 legacy/对照渲染使用
- * [POS]: skills/compiler 的确定性 fallback design compiler，负责兼容旧的 CSS 注入路径
+ * [POS]: codeck-design/compiler 的确定性 fallback design compiler，负责兼容旧的 CSS 注入路径
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 
 import { escapeAttribute } from "./escape";
-import { projectLegacyCompileInput } from "../codeck-design/design-schema";
+import { projectLegacyCompileInput } from "../design-schema";
 
 export function compileDesign(defaultHtml: string, design: any): string {
   const legacy = projectLegacyCompileInput(design);

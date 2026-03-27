@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 Node.js fs/path/module/child_process，在当前本地仓库内检查 compiler 文件、关键依赖与 render-default 启动能力
  * [OUTPUT]: 对外提供 compiler preflight 检测函数与 CLI，返回 READY / NOT_READY、原因和推荐命令
- * [POS]: skills/ 的仓库初始化预检层，保护首次 clone 后的 design 渲染入口
+ * [POS]: codeck/ 的仓库初始化预检层，保护首次 clone 后的 design 渲染入口
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 
@@ -26,7 +26,7 @@ export function resolveRepoRoot(start = process.cwd(), fileExists = fs.existsSyn
 }
 
 function isRepoRoot(dir, fileExists) {
-  return fileExists(join(dir, "package.json")) && fileExists(join(dir, "skills", "compiler", "index.ts"));
+  return fileExists(join(dir, "package.json")) && fileExists(join(dir, "skills", "codeck-design", "compiler", "index.ts"));
 }
 
 function defaultResolveModule(repoRoot, name) {
@@ -40,7 +40,7 @@ function buildSetupHint(repoRoot, fileExists) {
 }
 
 function resolveCompilerPath(repoRoot) {
-  return join(repoRoot, "skills", "compiler", "index.ts");
+  return join(repoRoot, "skills", "codeck-design", "compiler", "index.ts");
 }
 
 function createProbeDeck(repoRoot) {
@@ -101,7 +101,7 @@ function checkCompilerFile(repoRoot, fileExists) {
   if (fileExists(compilerPath)) return { ok: true, compilerPath };
   return {
     ok: false,
-    result: notReady(repoRoot, "compiler_missing", ["skills/compiler/index.ts is missing"], fileExists),
+    result: notReady(repoRoot, "compiler_missing", ["skills/codeck-design/compiler/index.ts is missing"], fileExists),
   };
 }
 

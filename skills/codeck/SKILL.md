@@ -23,16 +23,16 @@ description: |
 # ─── 定位 codeck repo ───
 CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
-PREFLIGHT=$(node "$CODECK_SKILLS/preflight.mjs" compiler-ready "$CODECK_REPO")
+PREFLIGHT=$(node "$CODECK_SKILLS/codeck/preflight.mjs" compiler-ready "$CODECK_REPO")
 echo "$PREFLIGHT"
 COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
 
 # ─── 自动更新 ───
-[ "$COMPILER_STATUS" = "READY" ] && npx tsx "$CODECK_SKILLS/home.ts" auto-update 2>/dev/null || true
+[ "$COMPILER_STATUS" = "READY" ] && npx tsx "$CODECK_SKILLS/codeck/home.ts" auto-update 2>/dev/null || true
 ```
 
 如果输出 `CODECK_UPDATED`：告诉用户 "codeck 已自动更新。"
-如果输出 `CODECK_UPDATE_AVAILABLE`：告诉用户 `检测到新版本。当前安装不是 git repo；请运行 node "$CODECK_SKILLS/update.mjs" 升级。`
+如果输出 `CODECK_UPDATE_AVAILABLE`：告诉用户 `检测到新版本。当前安装不是 git repo；请运行 node "$CODECK_SKILLS/codeck/update.mjs" 升级。`
 如果 `STATUS=NOT_READY`：告诉用户 `当前仓库未完成 codeck 初始化。请先在仓库根目录运行 ./setup，然后重试 /codeck。`
 
 ## AskUserQuestion 格式（所有 codeck skill 通用）
@@ -54,7 +54,7 @@ COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
 # ─── 定位 codeck repo ───
 CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
-PREFLIGHT=$(node "$CODECK_SKILLS/preflight.mjs" compiler-ready "$CODECK_REPO")
+PREFLIGHT=$(node "$CODECK_SKILLS/codeck/preflight.mjs" compiler-ready "$CODECK_REPO")
 echo "$PREFLIGHT"
 COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
 if [ "$COMPILER_STATUS" != "READY" ]; then
@@ -62,8 +62,8 @@ if [ "$COMPILER_STATUS" != "READY" ]; then
 fi
 
 # ─── 解析项目目录 ───
-DECK_DIR=$(npx tsx "$CODECK_SKILLS/home.ts" deck-dir 2>/dev/null || {
-  SLUG=$(npx tsx "$CODECK_SKILLS/home.ts" slug 2>/dev/null || basename "$(pwd)")
+DECK_DIR=$(npx tsx "$CODECK_SKILLS/codeck/home.ts" deck-dir 2>/dev/null || {
+  SLUG=$(npx tsx "$CODECK_SKILLS/codeck/home.ts" slug 2>/dev/null || basename "$(pwd)")
   echo "$HOME/.codeck/projects/$SLUG"
 })
 mkdir -p "$DECK_DIR"

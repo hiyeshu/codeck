@@ -46,8 +46,8 @@ CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
 
 # ─── 解析项目目录 ───
-DECK_DIR=$(npx tsx "$CODECK_SKILLS/home.ts" deck-dir 2>/dev/null || {
-  SLUG=$(npx tsx "$CODECK_SKILLS/home.ts" slug 2>/dev/null || basename "$(pwd)")
+DECK_DIR=$(npx tsx "$CODECK_SKILLS/codeck/home.ts" deck-dir 2>/dev/null || {
+  SLUG=$(npx tsx "$CODECK_SKILLS/codeck/home.ts" slug 2>/dev/null || basename "$(pwd)")
   echo "$HOME/.codeck/projects/$SLUG"
 })
 mkdir -p "$DECK_DIR"
@@ -281,7 +281,7 @@ totalEstimate: "{预估总时长}"
 ```bash
 CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 CODECK_SKILLS="$CODECK_REPO/skills"
-DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/pipeline.ts" done speech
+DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/codeck/pipeline.ts" done speech
 ```
 
 显示简版 pipeline 进度：

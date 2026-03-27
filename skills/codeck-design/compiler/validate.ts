@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 接收 deck.json 路径和可选 design.json 路径
  * [OUTPUT]: 提供 validateDeckAndDesign 与 writeValidationReport，分别负责纯校验与报告落盘
- * [POS]: skills/compiler 的校验层，负责 schemaVersion 检测、catalog 校验、遍历合同和 design.json schema 校验
+ * [POS]: codeck-design/compiler 的校验层，负责 schemaVersion 检测、catalog 校验、遍历合同和 design.json schema 校验
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 
@@ -14,8 +14,8 @@ import {
   type CatalogIssue,
 } from "./catalog";
 import { analyzeTraversal } from "./traverse";
-import { validateDesignJson } from "../codeck-design/design-schema";
-import { readJson } from "../cli-util";
+import { validateDesignJson } from "../design-schema";
+import { readJson } from "../../codeck/cli-util";
 
 export interface ValidationMessage {
   path: string;
