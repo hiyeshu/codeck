@@ -146,7 +146,7 @@ ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "ASSEMBLED_HTML: FOUND" || echo "AS
 3. 重新运行 assemble.sh 拼装
 
 ```bash
-ENGINE_DIR="$HOME/.claude/skills/codeck-design/engine"
+ENGINE_DIR="$HOME/.claude/skills/codeck-design/scripts"
 REV=$(ls "$DECK_DIR"/*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
 bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
   > "$DECK_DIR/{title}-r${REV}.html"

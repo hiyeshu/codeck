@@ -121,7 +121,7 @@ ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "EXISTING_HTML: FOUND" || echo "EXI
 
 ### 架构：引擎固定，AI 只写内容和样式
 
-翻页引擎（导航、fragment、overview、演讲者模式、进度条、FOUC 防护）是预写好的固定代码，存在 `engine/engine.js` 和 `engine/engine.css`。每个 deck 用同一套引擎，行为完全一致。
+翻页引擎（导航、fragment、overview、演讲者模式、进度条、FOUC 防护）是预写好的固定代码，存在 `scripts/engine.js` 和 `scripts/engine.css`。每个 deck 用同一套引擎，行为完全一致。
 
 **AI 写两个文件：**
 
@@ -133,7 +133,7 @@ ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "EXISTING_HTML: FOUND" || echo "EXI
 **Bash 拼装最终 HTML：**
 
 ```bash
-ENGINE_DIR="$HOME/.claude/skills/codeck-design/engine"
+ENGINE_DIR="$HOME/.claude/skills/codeck-design/scripts"
 
 # 确定版本号
 REV=$(ls "$DECK_DIR"/*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
