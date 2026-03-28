@@ -192,7 +192,7 @@ bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
 > {一句话总结——基于六维评分。}
 >
 > 产出：`$DECK_DIR/review.md`
-> 下一步：`/codeck export` 或 `/codeck speech`
+> 下一步：`/codeck-export` 或 `/codeck-speech`
 
 如果 `intent.md` 存在，追加决策日志：
 ```

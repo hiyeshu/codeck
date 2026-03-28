@@ -23,7 +23,7 @@ description: |
 ```markdown
 <!-- codeck metadata
 version: 0.2.0
-triggers: /codeck outline
+triggers: /codeck-outline
 benefits-from: codeck-outline
 allowed-tools: Bash, Read, Write, AskUserQuestion
 -->

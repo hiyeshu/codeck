@@ -49,7 +49,7 @@ ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "HTML: FOUND" || echo "HTML: MISSIN
 - **review.md** — 审稿人的"给演讲稿的话"
 - **design-notes.md** — 设计师的视觉意图（演讲稿节奏应匹配视觉节奏）
 
-如果没有 HTML 文件也没有 outline.md，提示先跑 `/codeck design` 或 `/codeck outline`。
+如果没有 HTML 文件也没有 outline.md，提示先跑 `/codeck-design` 或 `/codeck-outline`。
 
 如果只有 outline.md 没有 HTML，可以基于大纲写稿——提示用户稿子基于大纲而非最终视觉。
 

@@ -54,7 +54,7 @@ ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "EXISTING_HTML: FOUND" || echo "EXI
 读取 `$DECK_DIR/intent.md` — 用户意图、偏好、情绪基调。
 
 如果 outline.md 不存在，用 AskUserQuestion：
-- A) 先跑 `/codeck outline`
+- A) 先跑 `/codeck-outline`
 - B) 跳过，我直接说要什么
 
 ## 角色过渡
@@ -335,7 +335,7 @@ slides.html 可能很长。如果单次写入失败，先写前几页，再用 E
 > {一句话评价——引用 design-dna 的同构映射}
 >
 > 产出：`$DECK_DIR/{title}-r{revision}.html` + `$DECK_DIR/design-dna.json` + `$DECK_DIR/design-notes.md`
-> 下一步：`/codeck review`
+> 下一步：`/codeck-review`
 
 如果 `intent.md` 存在，追加决策日志：
 ```

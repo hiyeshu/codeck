@@ -6,7 +6,7 @@
       "id": 1,
       "skill": "codeck",
       "prompt": "我有几个 markdown 文件想做成演示文稿，帮我看看",
-      "expected_output": "显示 pipeline dashboard，列出扫描到的素材文件数量，推荐下一步 /codeck outline",
+      "expected_output": "显示 pipeline dashboard，列出扫描到的素材文件数量，推荐下一步 /codeck-outline",
       "assertions": [
         { "type": "contains", "field": "output", "value": "素材", "description": "dashboard 应显示素材统计" },
         { "type": "contains", "field": "output", "value": "outline", "description": "应推荐下一步为 outline" }

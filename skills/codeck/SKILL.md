@@ -156,11 +156,11 @@ done
 +======================================================+
 | Role               | Status    | Output              |
 |--------------------|-----------|----------------------|
-| /codeck outline    | {status}  | outline.md           |
-| /codeck design     | {status}  | {title}-r{N}.html    |
-| /codeck review     | {status}  | review.md            |
-| /codeck export     | {status}  | .pdf / .pptx         |
-| /codeck speech     | {status}  | speech.md            |
+| /codeck-outline    | {status}  | outline.md           |
+| /codeck-design     | {status}  | {title}-r{N}.html    |
+| /codeck-review     | {status}  | review.md            |
+| /codeck-export     | {status}  | .pdf / .pptx         |
+| /codeck-speech     | {status}  | speech.md            |
 +------------------------------------------------------+
 | 素材: {动态列出扫到的类型和数量} |
 +------------------------------------------------------+
@@ -179,13 +179,13 @@ Status 标记：
 
 ### NEXT 智能推荐
 
-- 没有 outline.md → `NEXT: /codeck outline` — "还没有大纲，先规划结构"
-- 有 outline 没 HTML → `NEXT: /codeck design` — "大纲就绪，可以生成了"
-- 有 HTML 没 review.md → `NEXT: /codeck review` — "成品出来了，该审稿了"
-- outline 比 HTML 新（⚠ STALE）→ `NEXT: /codeck design` — "大纲改过了，幻灯片需要同步"
-- HTML 比 review 新（⚠ STALE）→ `NEXT: /codeck review` — "幻灯片改过了，审稿需要重跑"
-- 有 review 没导出 → `NEXT: /codeck export` — "审稿通过，可以导出了"
-- 全部 DONE → `NEXT: /codeck speech` — "可以准备演讲稿了"
+- 没有 outline.md → `NEXT: /codeck-outline` — "还没有大纲，先规划结构"
+- 有 outline 没 HTML → `NEXT: /codeck-design` — "大纲就绪，可以生成了"
+- 有 HTML 没 review.md → `NEXT: /codeck-review` — "成品出来了，该审稿了"
+- outline 比 HTML 新（⚠ STALE）→ `NEXT: /codeck-design` — "大纲改过了，幻灯片需要同步"
+- HTML 比 review 新（⚠ STALE）→ `NEXT: /codeck-review` — "幻灯片改过了，审稿需要重跑"
+- 有 review 没导出 → `NEXT: /codeck-export` — "审稿通过，可以导出了"
+- 全部 DONE → `NEXT: /codeck-speech` — "可以准备演讲稿了"
 
 ---
 
@@ -198,10 +198,10 @@ Status 标记：
 
 每个下游 skill 启动时检测上游产出是否存在：
 
-- `/codeck design` 需要 `$DECK_DIR/outline.md`
-- `/codeck review` 需要 `$DECK_DIR/*-r*.html`（拼装后的 HTML）
-- `/codeck export` 需要 `$DECK_DIR/*-r*.html`
-- `/codeck speech` 需要 `$DECK_DIR/*-r*.html`
+- `/codeck-design` 需要 `$DECK_DIR/outline.md`
+- `/codeck-review` 需要 `$DECK_DIR/*-r*.html`（拼装后的 HTML）
+- `/codeck-export` 需要 `$DECK_DIR/*-r*.html`
+- `/codeck-speech` 需要 `$DECK_DIR/*-r*.html`
 
 提示方式不是报错停止，而是用 AskUserQuestion：
 
