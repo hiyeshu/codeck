@@ -1,4 +1,4 @@
-/* ─── codeck engine v1.0 ─── */
+/* ─── codeck engine v2.1 ─── */
 /* 引擎基础样式。AI 不修改此文件 */
 
 /* ─── 重置 ─── */
@@ -8,6 +8,18 @@ html, body {
   background: var(--bg, #111);
   color: var(--fg, #eee);
   font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+}
+
+/* ─── 响应式基准 ─── */
+:root {
+  --slide-padding: clamp(1rem, 4vw, 4rem);
+  --content-gap: clamp(0.5rem, 2vw, 2rem);
+  --element-gap: clamp(0.25rem, 1vw, 1rem);
+  --title-size: clamp(1.5rem, 5vw, 4rem);
+  --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+  --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+  --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+  --small-size: clamp(0.65rem, 1vw, 0.875rem);
 }
 
 /* ─── FOUC 防护 ─── */
@@ -26,20 +38,31 @@ html, body {
   display: none;
   flex-direction: column;
   justify-content: center;
-  padding: 64px 80px;
+  padding: var(--slide-padding);
   overflow: hidden;
 }
 .slide.active { display: flex; }
+
+/* ─── 通用元素约束 ─── */
+img, .image-container {
+  max-width: 100%;
+  max-height: min(50vh, 400px);
+  object-fit: contain;
+}
 
 /* ─── Fragment ─── */
 [data-f] {
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
 }
+[data-f-type="scale"] { transform: scale(0.92); }
+[data-f-type="blur"]  { transform: none; filter: blur(8px); }
+[data-f-type="slide"]  { transform: translateX(-24px); }
 [data-f].visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+  filter: none;
 }
 
 /* ─── Overview ─── */
@@ -201,6 +224,32 @@ html, body {
 .presenter-empty {
   display: flex; align-items: center; justify-content: center;
   height: 100%; opacity: 0.3; font-size: 24px;
+}
+
+/* ─── 响应式断点 ─── */
+@media (max-height: 700px) {
+  :root {
+    --slide-padding: clamp(0.75rem, 3vw, 2rem);
+    --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+    --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+    --h2-size: clamp(1rem, 3vw, 1.75rem);
+  }
+}
+@media (max-height: 600px) {
+  :root {
+    --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+    --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+    --title-size: clamp(1.1rem, 4vw, 2rem);
+    --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+  }
+}
+@media (max-height: 500px) {
+  :root {
+    --slide-padding: clamp(0.4rem, 2vw, 1rem);
+    --title-size: clamp(1rem, 3.5vw, 1.5rem);
+    --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+    --body-size: clamp(0.65rem, 1vw, 0.85rem);
+  }
 }
 
 /* ─── 无障碍 ─── */
