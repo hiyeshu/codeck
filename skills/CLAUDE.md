@@ -4,7 +4,8 @@
 codeck/SKILL.md: 入口 dashboard，素材扫描 + 内容诊断（三信号：领域属性、表达挑战、听众认知起点）+ 动态角色推荐 + pipeline 状态面板。
 codeck-outline/SKILL.md: 大纲角色，角色激活 → 叙事提问 → 大纲规划 → 标题锻造。产出 outline.md + intent.md。
 codeck-outline/checklist.md: 大纲自审清单。
-codeck-design/SKILL.md: 设计角色，角色激活 → design-dna 同构映射 → AI 写 custom.css + slides.html → assemble.sh 拼装单 HTML。
+codeck-design/SKILL.md: 设计角色，角色激活 → design-dna 同构映射 → 结构化设计档案 → AI 写 custom.css + slides.html → assemble.sh 拼装单 HTML。
+codeck-design/design-dna/: 三维设计档案规格（schema.md 字段定义 + generation-guide.md 从 design-dna.json → custom.css 的映射规则）。
 codeck-design/checklist.md: 设计自审清单（CSS 审查 + slides 审查 + 拼装后审查）。
 codeck-design/engine/: 固定翻页引擎（engine.js + engine.css + assemble.sh）。导航、fragment、overview、演讲者模式、进度条，每个 deck 行为一致。
 codeck-design/ui-ux-db/: UI/UX 设计数据库（styles/colors/typography CSV + BM25 搜索），设计时可查询风格参考。
