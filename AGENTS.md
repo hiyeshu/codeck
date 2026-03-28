@@ -1,66 +1,56 @@
 # codeck — 对话式 AI 演示文稿技能
-TypeScript + Vitest + Zod + Playwright + PptxGenJS
 
-## 三层架构
+## 架构
 
-| 层 | 文件 | 谁写 | 职责 |
-|---|---|---|---|
-| 内容层 | `$DECK_DIR/deck.json` | Claude | 页面结构、文本、数据、speakerNotes。纯内容，不含视觉。schemaVersion 2，flat element tree。 |
-| 设计层 | `$DECK_DIR/design.json` | Claude | 三层视觉参数：design_system（可量化规则）/ design_style（主观方向）/ visual_effects（表现层）。每层带 description 字段。 |
-| 交互层 | `$DECK_DIR/default.html` | compiler 生成 | render-default 产出的结构基底。翻页、全屏、全览、备注面板、触摸手势、进度条、无障碍。Claude 读取不改根 contract。 |
+codeck 产出一个**单 HTML 文件**，由 `assemble.sh` 拼装：
 
-最终 HTML = compiler render-default 生成 default.html → Claude 读取 default.html + design.json → 直出最终自包含 HTML → write-final 默认写回仓库根目录（可被 `FINAL_HTML_DIR` 覆盖）。
+| 谁写 | 文件 | 职责 |
+|---|---|---|
+| 人（固定） | `engine.js` + `engine.css` | 翻页导航、fragment 步进、overview、演讲者模式、进度条 |
+| AI（每次） | `custom.css` | `:root` 变量 + 布局原语 + 每页特定样式 + 移动适配 |
+| AI（每次） | `slides.html` | `<section class="slide" data-notes="...">` 自由 HTML |
 
-<config>
-package.json - 项目依赖（zod, playwright, pptxgenjs, vitest）
-vitest.config.ts - 测试配置，覆盖 skills/**/*.test.ts
-setup - 初始化脚本（首次 clone / 升级后运行，含 npm install）
-skills/CONVENTIONS.md - 技能编写规范（frontmatter / pushy description / evals）
-</config>
+引擎代码写好后不变，每个 deck 行为一致。AI 只管内容和视觉，不写 JS。
+
+## 流程
+
+```
+素材 → 内容诊断（三信号）→ 动态角色选择
+  ↓
+outline.md（叙事结构）+ intent.md（用户意图）
+  ↓
+custom.css + slides.html → assemble.sh → 单 HTML 文件
+  ↓
+review → export（PDF/PPTX）→ speech
+```
+
+核心理念：skill 只管流程和格式，知识来自动态请来的"人"。每个阶段根据内容诊断选择角色——角色名激活 AI 参数里的知识网络。
+
+## 内容诊断三信号
+
+1. **领域属性** — 决定大纲阶段请谁
+2. **表达挑战** — 决定设计阶段请谁
+3. **听众认知起点** — 决定审稿阶段请谁（反向选择：最可能翻车的听众）
 
 ## 目录结构
 
-- `skills/` — 仓库内的技能源码与共享运行时代码；安装到客户端后的入口目录仍是 `~/.claude/skills/{name}/`
-- `~/.codeck/projects/{slug}/` — 项目中间产物（deck.json、design.json、outline.json、intent.json、pipeline.json、intent.md 等）
-- `~/.codeck/` — 用户全局状态（自动更新、项目历史快照）
-- 最终产出（HTML/PDF/PPTX）输出到项目根目录
+skill 文件安装在 `~/.claude/skills/codeck*/`，项目产物在 `~/.codeck/projects/{slug}/`。
 
-## 核心约束
+关键产物：
+- `diagnosis.md` — 内容诊断 + 角色推荐
+- `outline.md` — 大纲
+- `intent.md` — 用户意图、偏好、决策日志
+- `{title}-r{n}.html` — 设计产出（修订版本号递增）
+- `design-notes.md` — 设计过程 + design-dna 同构映射
+- `review.md` — 审稿记录
+- `speech.md` — 演讲稿
 
-1. deck.json 是内容的唯一真相源 — 文字、结构、speakerNotes
-2. design.json 是视觉的唯一真相源 — 颜色、字体、间距、情绪
-3. default.html 是交互层的结构 contract — Claude 生成最终 HTML 时不删除/重排 slide/block 根节点
-4. intent.json + intent.md 是跨 skill 记忆载体 — outline 创建，design/review/speech 读取和追加 decision_log
-5. design skill 内部用 deck.draft.json 工作，校验通过后原子替换为 deck.json
+## design-dna
+
+设计阶段的核心工具。从大纲提取形式结构（张力曲线、信息密度、论证拓扑、情绪色谱），在其他领域找同构映射，翻译成视觉策略。
 
 ## 开发规范
 
-1. 每文件不超过 800 行，超出则拆分
-2. 单函数不超过 20 行，超出则提取
+1. 每文件不超过 800 行
+2. 单函数不超过 20 行
 3. 注释：中文 + ASCII 分块 `/* ─── 标题 ─── */`
-4. 所有业务文件必须有 L3 头部契约
-5. 包边界：只通过 `exports` 字段声明的入口互引
-
-## 渲染管线
-
-```
-deck.json（schemaVersion 2，flat element tree）
-    ↓
-compiler render-default → default.html（白底、系统字体、完整结构）
-    ↓
-compiler prompt-only → Lisp 约束 prompt（default.html + design.json）
-    ↓
-Claude 读取 prompt，直出最终 HTML（保持 default.html 的 slide/block/shell contract）
-    ↓
-compiler write-final → 校验 HTML contract → 写到仓库根目录/{title}-r{revision}.html（可被 FINAL_HTML_DIR 覆盖）
-```
-
-CLI：`npx tsx skills/compiler/index.ts <validate|migrate|render-default|prompt-only|validate-html|write-final>`
-
-迁移说明：仓库已从 `skill/` 硬切到 `skills/`。首次 clone 或升级后必须重新运行 `./setup`，旧路径不再兼容。
-
-## 2.x 远期目标
-
-- HTML 双向编辑：用户在 HTML 上改文字 → 写回 deck.json → 重新渲染
-
-[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

@@ -1,0 +1,211 @@
+/* ─── codeck engine v1.0 ─── */
+/* 引擎基础样式。AI 不修改此文件 */
+
+/* ─── 重置 ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  background: var(--bg, #111);
+  color: var(--fg, #eee);
+  font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+}
+
+/* ─── FOUC 防护 ─── */
+#app {
+  position: relative;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+#app.ready { opacity: 1 !important; }
+
+/* ─── 页面 ─── */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px 80px;
+  overflow: hidden;
+}
+.slide.active { display: flex; }
+
+/* ─── Fragment ─── */
+[data-f] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+[data-f].visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Overview ─── */
+#app.overview {
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 24px;
+  align-content: flex-start;
+}
+#app.overview .slide {
+  position: relative;
+  display: flex;
+  flex: 0 0 calc(25% - 12px);
+  aspect-ratio: 16/9;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  padding: 16px 20px;
+  font-size: 0.35em;
+}
+#app.overview .slide:hover {
+  border-color: var(--accent, #4af);
+  transform: scale(1.02);
+}
+#app.overview .slide.active {
+  border-color: var(--accent, #4af);
+}
+#app.overview #progress,
+#app.overview #slide-counter,
+#app.overview .mobile-nav { display: none; }
+
+/* ─── 进度条 ─── */
+#progress {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%; height: 3px;
+  background: rgba(255,255,255,0.1);
+  z-index: 100;
+}
+#progress-bar {
+  height: 100%;
+  background: var(--accent, #4af);
+  transition: width 0.3s ease;
+}
+
+/* ─── 页码 ─── */
+#slide-counter {
+  position: fixed;
+  bottom: 8px; right: 16px;
+  font-size: 14px;
+  opacity: 0.5;
+  z-index: 100;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── 移动端导航 ─── */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 12px; left: 50%;
+  transform: translateX(-50%);
+  gap: 12px;
+  z-index: 100;
+}
+.mnav-btn {
+  width: 44px; height: 44px;
+  border: none; border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  color: var(--fg, #eee);
+  font-size: 18px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.mnav-btn:active { background: rgba(255,255,255,0.3); }
+
+@media (max-width: 768px) {
+  .mobile-nav { display: flex; }
+  .slide { padding: 32px 24px; }
+  #slide-counter { bottom: 64px; }
+}
+
+/* ─── 演讲者模式 ─── */
+#app.presenter-mode #progress,
+#app.presenter-mode #slide-counter,
+#app.presenter-mode .mobile-nav { display: none; }
+
+.presenter-grid {
+  position: absolute; inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto auto;
+  grid-template-areas:
+    'main next'
+    'notes notes'
+    'timer timer';
+  gap: 8px;
+  padding: 8px;
+  background: #1a1a1a;
+  z-index: 200;
+}
+@media (min-aspect-ratio: 1/1) {
+  .presenter-grid {
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 1fr 1fr auto;
+    grid-template-areas:
+      'main next'
+      'main notes'
+      'timer timer';
+  }
+}
+.presenter-panel { min-width: 0; min-height: 0; }
+.presenter-main { grid-area: main; }
+.presenter-next { grid-area: next; }
+.presenter-notes { grid-area: notes; overflow-y: auto; max-height: 30vh; }
+.presenter-timer {
+  grid-area: timer;
+  display: flex; align-items: center;
+  gap: 12px; padding: 8px 12px;
+}
+
+.presenter-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.5;
+  margin-bottom: 4px;
+}
+.presenter-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  background: var(--bg, #111);
+  border-radius: 4px;
+}
+.presenter-notes-body {
+  padding: 8px 12px;
+  font-size: 16px; line-height: 1.6;
+  white-space: pre-wrap;
+  color: #ccc;
+}
+.presenter-time {
+  font-size: 32px;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+.presenter-btn {
+  padding: 6px 16px;
+  border: 1px solid #555; border-radius: 4px;
+  background: transparent;
+  color: #ccc; cursor: pointer;
+  font-size: 14px;
+}
+.presenter-btn:hover { background: #333; }
+.presenter-empty {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; opacity: 0.3; font-size: 24px;
+}
+
+/* ─── 无障碍 ─── */
+@media (prefers-reduced-motion: reduce) {
+  [data-f] { transition: none; }
+  #progress-bar { transition: none; }
+  #app { transition: none; }
+}

@@ -10,7 +10,7 @@ English · [中文](README.md)
 
 Turn a folder of notes, docs, data, and images into a complete presentation by chatting with Claude.
 
-codeck is a set of Claude Code skills. Install it, then type `/codeck` inside Claude Code to start. Six roles work in relay to take you from raw materials to a finished deck.
+codeck is a set of Claude Code skills. Install it, then type `/codeck` inside Claude Code to start.
 
 ```
 /codeck → /codeck-outline → /codeck-design → /codeck-review → /codeck-export → /codeck-speech
@@ -18,35 +18,33 @@ codeck is a set of Claude Code skills. Install it, then type `/codeck` inside Cl
 
 ## Workflow
 
-| Command | Role | What it does | Output |
-|---------|------|-------------|--------|
-| `/codeck` | Entry | Scan materials, restore project memory, show progress, recommend next step | Pipeline status |
-| `/codeck-outline` | Editor | Diagnose materials → narrative questions → story arc → title smithing | outline.json, intent.json |
-| `/codeck-design` | Designer | Style recommendation → generate content spec + design params → compile HTML | deck.json, design.json, HTML |
-| `/codeck-review` | Reviewer | Screenshot every slide → six-dimension scoring → source-traced fixes | review.md |
-| `/codeck-export` | Publisher | HTML → PDF / PPTX | PDF, PPTX |
-| `/codeck-speech` | Speech coach | Style/duration dialog → verbatim script + stage directions + time budget | speech.md |
+| Command | What it does | Output |
+|---------|-------------|--------|
+| `/codeck` | Scan materials, content diagnosis (three signals), dynamic role recommendation | diagnosis.md |
+| `/codeck-outline` | Role activation → narrative questions → story arc → title smithing | outline.md, intent.md |
+| `/codeck-design` | Role activation → design-dna isomorphic mapping → single HTML output | {title}-r{n}.html |
+| `/codeck-review` | Inverse role (audience most likely to struggle) → six-dimension review → direct HTML fixes | review.md |
+| `/codeck-export` | HTML → PDF / PPTX | PDF, PPTX |
+| `/codeck-speech` | Role activation → verbatim script + stage directions + time budget | speech.md |
 
 ## Architecture
 
 ```
 Materials
   ↓
-outline.json (narrative structure) + intent.json (user intent)
+Content diagnosis (domain · expression challenge · audience starting point) → dynamic role selection
   ↓
-deck.json (content spec) + design.json (visual params)
+outline.md (narrative structure) + intent.md (user intent)
   ↓
-compiler → default.html (structural base) → Claude produces final HTML
+Single HTML file (CSS design system + JS slide engine + free HTML per slide)
   ↓
-PDF / PPTX
+PDF / PPTX / Speech script
 ```
 
-Three-layer separation:
-- **Content layer** `deck.json` — text, structure, speakerNotes. No visuals.
-- **Design layer** `design.json` — colors, typography, spacing, mood (design_system / design_style / visual_effects).
-- **Interaction layer** `default.html` — compiler-generated navigation, fullscreen, notes panel, a11y.
-
-All intermediates stay under `~/.codeck/projects/{slug}/`; final HTML defaults to the current repo root and can be overridden with `FINAL_HTML_DIR`.
+Core ideas:
+- **Skills define flow and format; knowledge comes from dynamically selected "people"** — role names activate vast knowledge networks in AI parameters
+- **No schema ceiling** — no block type vocabulary, free HTML per slide, AI can invent any visual expression
+- **design-dna** — finds isomorphic mappings from content's formal structure (inspired by Hofstadter's GEB), so visuals and content resonate at the structural level
 
 ## Install
 
@@ -58,39 +56,19 @@ npx skills add hiyeshu/codeck
 
 Type `/codeck` inside Claude Code to get started.
 
-If you cloned this repository locally and want to run it from source, run `./setup` from the repo root first so dependencies, symlinks, and compiler entrypoints are ready.
-
-> Breaking change: the repository layout moved from `skill/` to `skills/`. Re-run `./setup` after upgrading; old local scripts or symlinks that still point at `skill/` are no longer supported.
-
-## Updating
-
-- Git repo install: run `git pull --ff-only && ./setup` from the repo root
-- Non-git repo-like install: run `node skills/update.mjs` from the install root
-
-`node skills/update.mjs` is currently macOS/Linux only and depends on the system `tar` and `cp` commands.
-
-## Repository Layout
+## Layout
 
 ```
-skills/
-├── codeck/          entry dashboard
-├── codeck-outline/  editor skill
-├── codeck-design/   designer skill + reference library
-├── codeck-review/   reviewer skill
-├── codeck-export/   export skill
-├── codeck-speech/   speech skill
-├── compiler/        spec validation, migration, rendering, HTML contract checks
-├── pipeline.ts      pipeline state tracking + staleness propagation
-├── intent-schema.ts cross-skill intent protocol
-├── home.ts          global directory resolver
-└── cli-util.ts      shared CLI utilities
+~/.claude/skills/
+├── codeck/          entry dashboard + content diagnosis
+├── codeck-outline/  outline skill + self-review checklist
+├── codeck-design/   design skill + ui-ux-db style database
+├── codeck-review/   review skill
+├── codeck-export/   export skill + PDF/PPTX toolchain
+└── codeck-speech/   speech skill
 ```
 
-## Development
-
-```bash
-npm test
-```
+Project artifacts live under `~/.codeck/projects/{slug}/`.
 
 ## License
 

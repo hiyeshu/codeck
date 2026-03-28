@@ -90,8 +90,8 @@ skill-name/
 ## codeck 特有约定
 
 - 所有 codeck 子技能共享 AskUserQuestion 四段式：Re-ground → Simplify → Recommend → Options
-- 上下游依赖通过 `.codeck/` 目录传递，不通过技能间直接调用
-- 每个技能的出口更新 pipeline 状态
+- 上下游依赖通过 `~/.codeck/projects/{slug}/` 目录传递，不通过技能间直接调用
+- 每个阶段通过 diagnosis.md 的角色推荐激活动态角色
 - 以用户母语为主，技术术语保留英文
 
 ## Evals（测试用例）
@@ -107,11 +107,11 @@ skill-name/
   "id": 1,
   "skill": "codeck-outline",
   "prompt": "帮我规划一个关于 AI 的技术分享大纲",
-  "expected_output": "生成 .codeck/outline.md",
+  "expected_output": "生成 outline.md",
   "files": [],
   "assertions": [
-    { "type": "file_exists", "path": ".codeck/outline.md", "description": "应生成 outline" },
-    { "type": "file_contains", "path": ".codeck/outline.md", "value": "narrativeArc", "description": "应有叙事结构" }
+    { "type": "file_exists", "path": "outline.md", "description": "应生成 outline" },
+    { "type": "file_contains", "path": "outline.md", "value": "叙事弧", "description": "应有叙事结构" }
   ]
 }
 ```
