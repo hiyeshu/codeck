@@ -21,7 +21,7 @@ codeck is a set of Claude Code skills. Install it, then type `/codeck` inside Cl
 | Command | What it does | Output |
 |---------|-------------|--------|
 | `/codeck` | Scan materials, content diagnosis (three signals), dynamic role recommendation | diagnosis.md |
-| `/codeck-outline` | Role activation → narrative questions → story arc → title smithing | outline.md, intent.md |
+| `/codeck-outline` | Role activation → narrative questions → story arc → title smithing | outline.md |
 | `/codeck-design` | Role activation → design-dna isomorphic mapping → single HTML output | {title}-r{n}.html |
 | `/codeck-review` | Inverse role (audience most likely to struggle) → six-dimension review → direct HTML fixes | review.md |
 | `/codeck-export` | HTML → PDF / PPTX | PDF, PPTX |
@@ -34,7 +34,7 @@ Materials
   ↓
 Content diagnosis (domain · expression challenge · audience starting point) → dynamic role selection
   ↓
-outline.md (narrative structure) + intent.md (user intent)
+outline.md (narrative structure + user intent)
   ↓
 Single HTML file (CSS design system + JS slide engine + free HTML per slide)
   ↓

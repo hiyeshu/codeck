@@ -17,7 +17,7 @@ codeck 产出一个**单 HTML 文件**，由 `assemble.sh` 拼装：
 ```
 素材 → 内容诊断（三信号）→ 动态角色选择
   ↓
-outline.md（叙事结构）+ intent.md（用户意图）
+outline.md（叙事结构 + 用户意图）
   ↓
 custom.css + slides.html → assemble.sh → 单 HTML 文件
   ↓
@@ -38,8 +38,7 @@ skill 文件安装在 `~/.claude/skills/codeck*/`，项目产物在 `~/.codeck/p
 
 关键产物：
 - `diagnosis.md` — 内容诊断 + 角色推荐
-- `outline.md` — 大纲
-- `intent.md` — 用户意图、偏好、决策日志
+- `outline.md` — 大纲 + 用户意图
 - `{title}-r{n}.html` — 设计产出（修订版本号递增）
 - `design-notes.md` — 设计过程 + design-dna 同构映射
 - `review.md` — 审稿记录

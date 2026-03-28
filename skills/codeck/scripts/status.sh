@@ -17,7 +17,6 @@ _mtime() { stat -c '%Y' "$1" 2>/dev/null || stat -f '%m' "$1" 2>/dev/null; }
 
 CODECK_DIAGNOSIS=$(_has "$DECK_DIR/diagnosis.md" && echo done || echo none)
 CODECK_OUTLINE=$(_has "$DECK_DIR/outline.md" && echo done || echo none)
-CODECK_INTENT=$(_has "$DECK_DIR/intent.md" && echo done || echo none)
 CODECK_CSS=$(_has "$DECK_DIR/custom.css" && echo done || echo none)
 CODECK_SLIDES=$(_has "$DECK_DIR/slides.html" && echo done || echo none)
 CODECK_HTML_PATH=$(_html)

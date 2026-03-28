@@ -46,9 +46,8 @@ mkdir -p "$DECK_DIR"
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-读取 `$DECK_DIR/outline.md` — 页面结构、内容要点、给设计师的话。
+读取 `$DECK_DIR/outline.md` — 页面结构、内容要点、用户意图、给设计师的话。
 读取 `$DECK_DIR/diagnosis.md` — 角色、领域、表达挑战。
-读取 `$DECK_DIR/intent.md` — 用户意图、偏好、情绪基调。
 
 如果 outline.md 不存在（STATUS_OUTLINE: none），用 AskUserQuestion：
 - A) 先跑 `/codeck-outline`
@@ -333,11 +332,6 @@ slides.html 可能很长。如果单次写入失败，先写前几页，再用 E
 >
 > 产出：`$DECK_DIR/{title}-r{revision}.html` + `$DECK_DIR/design-dna.json` + `$DECK_DIR/design-notes.md`
 > 下一步：`/codeck-review`
-
-如果 `intent.md` 存在，追加决策日志：
-```
-> [design] {风格方向、同构映射、关键视觉决策}
-```
 
 显示 dashboard：
 ```bash

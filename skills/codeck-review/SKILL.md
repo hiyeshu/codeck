@@ -45,8 +45,7 @@ bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 
 ## 读取上下文
 
-读取 `$DECK_DIR/outline.md` — 页面结构，用来对照实际 HTML 的页数和内容。
-读取 `$DECK_DIR/intent.md`（如果存在）— 用户偏好、禁忌、情绪基调。
+读取 `$DECK_DIR/outline.md` — 页面结构、用户意图，用来对照实际 HTML 的页数和内容。
 读取 `$DECK_DIR/design-notes.md`（如果存在）— 设计师的关键决策和给审稿人的话。
 读取 `$DECK_DIR/diagnosis.md`（如果存在）— 角色激活。
 
@@ -73,7 +72,7 @@ bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 - 论证有力？有空洞断言吗？
 - 节奏合理？信息密度均匀吗？
 - 核心信息在前 2 页传达了吗？
-- 叙事弧是否匹配 intent.md 的情绪基调？
+- 叙事弧是否匹配 outline.md 用户意图段的情绪基调？
 
 问题出在内容 → 改 slides.html。
 
@@ -187,11 +186,6 @@ bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
 >
 > 产出：`$DECK_DIR/review.md`
 > 下一步：`/codeck-export` 或 `/codeck-speech`
-
-如果 `intent.md` 存在，追加决策日志：
-```
-> [review] {修复摘要、关键发现}
-```
 
 显示 dashboard：
 ```bash

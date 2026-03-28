@@ -40,9 +40,8 @@ bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 
 读取源文件：
 - **HTML 文件**（最新的 `*-r*.html`）— 这是实际的幻灯片内容。读取每个 `<section class="slide">` 的文字内容。
-- **outline.md** — 大纲结构和叙事弧
-- **intent.md** — 用户意图、情绪基调
-- **review.md** — 审稿人的"给演讲稿的话"
+- **outline.md** — 大纲结构、叙事弧、用户意图
+- **review.md** — 审稿人的反馈
 - **design-notes.md** — 设计师的视觉意图（演讲稿节奏应匹配视觉节奏）
 
 如果没有 HTML 文件也没有 outline.md，提示先跑 `/codeck-design` 或 `/codeck-outline`。
@@ -163,11 +162,6 @@ totalEstimate: "{预估}"
 >
 > 产出：`$DECK_DIR/speech.md` + HTML `data-notes` 已更新为完整逐字稿
 > 按 P 键进入演讲者模式可看到逐字稿
-
-如果 `intent.md` 存在，追加决策日志：
-```
-> [speech] {风格选择、时间分配、关键决策}
-```
 
 显示 dashboard：
 ```bash

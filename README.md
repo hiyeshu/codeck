@@ -21,7 +21,7 @@ codeck 是一组 Claude Code 技能（Skill），安装后在 Claude Code 中用
 | 命令 | 做什么 | 产出 |
 |------|--------|------|
 | `/codeck` | 扫描素材、内容诊断（三信号）、动态角色推荐、显示进度 | diagnosis.md |
-| `/codeck-outline` | 角色激活 → 叙事提问 → 大纲规划 → 标题锻造 | outline.md, intent.md |
+| `/codeck-outline` | 角色激活 → 叙事提问 → 大纲规划 → 标题锻造 | outline.md |
 | `/codeck-design` | 角色激活 → design-dna 同构映射 → 直出单 HTML 文件 | {title}-r{n}.html |
 | `/codeck-review` | 反向角色（最可能翻车的听众）→ 六维审查 → 直接改 HTML | review.md |
 | `/codeck-export` | HTML → PDF / PPTX | PDF, PPTX |
@@ -34,7 +34,7 @@ codeck 是一组 Claude Code 技能（Skill），安装后在 Claude Code 中用
   ↓
 内容诊断（领域属性 · 表达挑战 · 听众认知起点）→ 动态角色选择
   ↓
-outline.md（叙事结构）+ intent.md（用户意图）
+outline.md（叙事结构 + 用户意图）
   ↓
 单 HTML 文件（CSS 设计系统 + JS 翻页引擎 + 每页自由 HTML）
   ↓
