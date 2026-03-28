@@ -7,7 +7,12 @@ DECK_DIR="${1:?用法: source status.sh \$DECK_DIR}"
 
 # ─── 文件检测 ───
 _has() { [ -f "$1" ]; }
-_html() { ls "$DECK_DIR"/*-r*.html 2>/dev/null | sort -V | tail -1; }
+_html() {
+  local f
+  f=$(ls "$DECK_DIR"/*-r*.html 2>/dev/null | sort -V | tail -1)
+  [ -n "$f" ] && echo "$f" && return 0
+  return 1
+}
 _mtime() { stat -c '%Y' "$1" 2>/dev/null || stat -f '%m' "$1" 2>/dev/null; }
 
 CODECK_DIAGNOSIS=$(_has "$DECK_DIR/diagnosis.md" && echo done || echo none)
@@ -15,8 +20,8 @@ CODECK_OUTLINE=$(_has "$DECK_DIR/outline.md" && echo done || echo none)
 CODECK_INTENT=$(_has "$DECK_DIR/intent.md" && echo done || echo none)
 CODECK_CSS=$(_has "$DECK_DIR/custom.css" && echo done || echo none)
 CODECK_SLIDES=$(_has "$DECK_DIR/slides.html" && echo done || echo none)
-CODECK_HTML=$(_html && echo done || echo none)
 CODECK_HTML_PATH=$(_html)
+[ -n "$CODECK_HTML_PATH" ] && CODECK_HTML="done" || CODECK_HTML="none"
 CODECK_DESIGN_NOTES=$(_has "$DECK_DIR/design-notes.md" && echo done || echo none)
 CODECK_REVIEW=$(_has "$DECK_DIR/review.md" && echo done || echo none)
 CODECK_SPEECH=$(_has "$DECK_DIR/speech.md" && echo done || echo none)
@@ -119,13 +124,39 @@ _icon() {
   esac
 }
 
-# ─── 结构化输出 ───
+# ─── 推导 title ───
+_title="new deck"
+if [ -n "$CODECK_HTML_PATH" ]; then
+  _title=$(basename "$CODECK_HTML_PATH" | sed 's/-r[0-9]*\.html$//')
+elif [ -f "$DECK_DIR/outline.md" ]; then
+  _title=$(head -1 "$DECK_DIR/outline.md" | sed 's/^#* *//' | cut -c1-40)
+fi
+
+# ─── Dashboard 输出 ───
+echo ""
+echo "+======================================================+"
+printf "| %-52s |\n" "codeck · $_title"
+echo "+======================================================+"
+echo "| Stage              | Status    | Output               |"
+echo "|--------------------|-----------|----------------------|"
+printf "| %-18s | %-9s | %-20s |\n" "/codeck-outline" "$(_icon "$CODECK_STATUS_OUTLINE")" "outline.md"
+_design_out="---"
+[ -n "$CODECK_HTML_PATH" ] && _design_out=$(basename "$CODECK_HTML_PATH")
+printf "| %-18s | %-9s | %-20s |\n" "/codeck-design" "$(_icon "$CODECK_STATUS_DESIGN")" "$_design_out"
+printf "| %-18s | %-9s | %-20s |\n" "/codeck-review" "$(_icon "$CODECK_STATUS_REVIEW")" "review.md"
+printf "| %-18s | %-9s | %-20s |\n" "/codeck-export" "$(_icon "$CODECK_STATUS_EXPORT")" ".pdf / .pptx"
+printf "| %-18s | %-9s | %-20s |\n" "/codeck-speech" "$(_icon "$CODECK_STATUS_SPEECH")" "speech.md"
+echo "+------------------------------------------------------+"
+if [ -n "$CODECK_STALE" ]; then
+  echo "| STALE: $CODECK_STALE"
+  echo "+------------------------------------------------------+"
+fi
+if [ -n "$CODECK_NEXT" ]; then
+  echo "| NEXT: /codeck-$CODECK_NEXT — $CODECK_NEXT_REASON"
+else
+  echo "| $CODECK_NEXT_REASON"
+fi
+echo "+======================================================+"
+echo ""
 echo "DECK_DIR: $DECK_DIR"
-echo "STATUS_OUTLINE: $CODECK_STATUS_OUTLINE"
-echo "STATUS_DESIGN: $CODECK_STATUS_DESIGN"
-echo "STATUS_REVIEW: $CODECK_STATUS_REVIEW"
-echo "STATUS_EXPORT: $CODECK_STATUS_EXPORT"
-echo "STATUS_SPEECH: $CODECK_STATUS_SPEECH"
-[ -n "$CODECK_STALE" ] && echo "STALE: $CODECK_STALE"
-[ -n "$CODECK_NEXT" ] && echo "NEXT: $CODECK_NEXT — $CODECK_NEXT_REASON"
 [ -n "$CODECK_HTML_PATH" ] && echo "HTML: $CODECK_HTML_PATH"
