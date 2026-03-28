@@ -43,13 +43,6 @@ html, body {
 }
 .slide.active { display: flex; }
 
-/* ─── 通用元素约束 ─── */
-img, .image-container {
-  max-width: 100%;
-  max-height: min(50vh, 400px);
-  object-fit: contain;
-}
-
 /* ─── Fragment ─── */
 [data-f] {
   opacity: 0;
