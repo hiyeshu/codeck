@@ -28,17 +28,17 @@ description: |
 3. **Recommend** — 给建议
 4. **Options** — A/B/C
 
-## Step 1: 依赖检测
+## Step 1: 状态检测
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-echo "DECK_DIR: $DECK_DIR"
 
-ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "HTML_FOUND" || echo "NO_HTML"
+# 状态检测 + dashboard
+bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
 ```
 
-如果 `NO_HTML`：
+如果 `STATUS_DESIGN` 不是 `done`：
 > codeck export，还没有渲染好的 HTML。建议先跑 `/codeck-design`。
 - A) 先跑 `/codeck-design`
 
@@ -182,8 +182,7 @@ pdftoppm -jpeg -r 150 *.pdf slide-check
 >
 > 下一步：`/codeck-speech` — 教练会帮你准备上台的每一句话。
 
-显示简版 pipeline 进度：
-```
-outline [done] → design [done] → review [done] → export [done] → speech [ready]
-下一步：/codeck-speech
+显示 dashboard：
+```bash
+bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
 ```

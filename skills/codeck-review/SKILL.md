@@ -34,18 +34,12 @@ description: |
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-echo "DECK_DIR: $DECK_DIR"
 
-[ -f "$DECK_DIR/diagnosis.md" ] && echo "DIAGNOSIS: FOUND" || echo "DIAGNOSIS: MISSING"
-[ -f "$DECK_DIR/outline.md" ] && echo "OUTLINE: FOUND" || echo "OUTLINE: MISSING"
-[ -f "$DECK_DIR/intent.md" ] && echo "INTENT: FOUND" || echo "INTENT: MISSING"
-[ -f "$DECK_DIR/design-notes.md" ] && echo "DESIGN_NOTES: FOUND" || echo "DESIGN_NOTES: MISSING"
-[ -f "$DECK_DIR/custom.css" ] && echo "CUSTOM_CSS: FOUND" || echo "CUSTOM_CSS: MISSING"
-[ -f "$DECK_DIR/slides.html" ] && echo "SLIDES_HTML: FOUND" || echo "SLIDES_HTML: MISSING"
-ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "ASSEMBLED_HTML: FOUND" || echo "ASSEMBLED_HTML: NONE"
+# 状态检测 + dashboard
+bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
 ```
 
-如果 `ASSEMBLED_HTML: NONE`，提示先跑 `/codeck-design`。
+如果 `STATUS_DESIGN` 不是 `done`，提示先跑 `/codeck-design`。
 
 如果有 custom.css + slides.html 但没有拼装后的 HTML，提示重新运行 assemble.sh。
 
@@ -199,6 +193,7 @@ bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
 > [review] {修复摘要、关键发现}
 ```
 
-```
-outline [done] → design [done] → review [done] → export [ready] → speech [ready]
+显示 dashboard：
+```bash
+bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
 ```

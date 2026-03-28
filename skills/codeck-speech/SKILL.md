@@ -33,13 +33,9 @@ description: |
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-echo "DECK_DIR: $DECK_DIR"
 
-ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "HTML: FOUND" || echo "HTML: MISSING"
-[ -f "$DECK_DIR/outline.md" ] && echo "OUTLINE: FOUND" || echo "OUTLINE: MISSING"
-[ -f "$DECK_DIR/intent.md" ] && echo "INTENT: FOUND" || echo "INTENT: MISSING"
-[ -f "$DECK_DIR/review.md" ] && echo "REVIEW: FOUND" || echo "REVIEW: MISSING"
-[ -f "$DECK_DIR/design-notes.md" ] && echo "DESIGN_NOTES: FOUND" || echo "DESIGN_NOTES: MISSING"
+# 状态检测 + dashboard
+bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
 ```
 
 读取源文件：
@@ -173,6 +169,7 @@ totalEstimate: "{预估}"
 > [speech] {风格选择、时间分配、关键决策}
 ```
 
-```
-outline [done] → design [done] → review [done] → export → speech [done]
+显示 dashboard：
+```bash
+bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
 ```

@@ -6,7 +6,7 @@ codeck-outline/SKILL.md: 大纲角色，角色激活 → 叙事提问 → 大纲
 codeck-outline/references/checklist.md: 大纲自审清单。
 codeck-design/SKILL.md: 设计角色，角色激活 → design-dna 同构映射 → 结构化设计档案 → AI 写 custom.css + slides.html → assemble.sh 拼装单 HTML。
 codeck-design/references/: 三维设计档案规格（design-dna-schema.md 字段定义 + design-dna-guide.md 映射规则 + checklist.md 设计自审清单）。
-codeck-design/scripts/: 固定翻页引擎（engine.js + engine.css + assemble.sh）。导航、fragment、overview、演讲者模式、进度条，每个 deck 行为一致。
+codeck-design/scripts/: 固定翻页引擎（engine.js + engine.css + assemble.sh）+ 共用状态检测（status.sh）。所有 skill 入口和出口调 status.sh 显示 dashboard。
 codeck-review/SKILL.md: 审稿角色（反向选择：最可能翻车的听众），六维审查 + 直接改 HTML。
 codeck-export/SKILL.md: 导出角色，HTML 为单一真相源，PDF（Playwright）/ PPTX 导出 + QA。
 codeck-export/pptx/: PPTX 工具库（PptxGenJS、thumbnail.py、soffice.py）。
@@ -20,6 +20,7 @@ LICENSE: Apache-2.0。
 下游: Claude skill 运行时
 
 变更日志
+- 2026-03-28: v2.1.1 status.sh 共用状态检测。所有 skill 的准备段和结尾段用同一个脚本输出 dashboard（文件检测 + 时间戳偏差 + NEXT 推荐）。去掉 scan.json，素材摘要写进 diagnosis.md。engine.css 加 clamp 响应系统 + fragment 动画类型（scale/blur/slide）。generation-guide 加反模式黑名单。
 - 2026-03-28: v2.1 引擎分离。固定 engine.js/engine.css（导航、fragment、overview、演讲者模式），AI 只写 custom.css + slides.html，assemble.sh 拼装。加演讲者模式（BroadcastChannel 同步）、data-notes speaker notes、speech 回写。
 - 2026-03-28: v2.0 架构重写。去掉 deck.json/design.json/compiler 三层架构，改为 AI 直出单 HTML。引入内容诊断三信号、动态角色选择、design-dna 同构映射、反向审稿角色。
 - 2026-03-24: 仓库目录从 `skill/` 硬切到 `skills/`

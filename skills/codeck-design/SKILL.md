@@ -41,19 +41,16 @@ description: |
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-echo "DECK_DIR: $DECK_DIR"
 
-[ -f "$DECK_DIR/outline.md" ] && echo "OUTLINE: FOUND" || echo "OUTLINE: MISSING"
-[ -f "$DECK_DIR/diagnosis.md" ] && echo "DIAGNOSIS: FOUND" || echo "DIAGNOSIS: MISSING"
-[ -f "$DECK_DIR/intent.md" ] && echo "INTENT: FOUND" || echo "INTENT: MISSING"
-ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "EXISTING_HTML: FOUND" || echo "EXISTING_HTML: NONE"
+# 状态检测 + dashboard
+bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
 ```
 
 读取 `$DECK_DIR/outline.md` — 页面结构、内容要点、给设计师的话。
 读取 `$DECK_DIR/diagnosis.md` — 角色、领域、表达挑战。
 读取 `$DECK_DIR/intent.md` — 用户意图、偏好、情绪基调。
 
-如果 outline.md 不存在，用 AskUserQuestion：
+如果 outline.md 不存在（STATUS_OUTLINE: none），用 AskUserQuestion：
 - A) 先跑 `/codeck-outline`
 - B) 跳过，我直接说要什么
 
@@ -342,6 +339,7 @@ slides.html 可能很长。如果单次写入失败，先写前几页，再用 E
 > [design] {风格方向、同构映射、关键视觉决策}
 ```
 
-```
-outline [done] → design [done] → review [ready] → export → speech
+显示 dashboard：
+```bash
+bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
 ```
