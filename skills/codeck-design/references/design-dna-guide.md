@@ -160,17 +160,26 @@ design_style 不直接生成 CSS，而是指导 CSS 和 HTML 的写法：
 ```
 
 ### fragment 入场效果
+
+引擎内置四种入场，通过 `data-f-type` 属性选择：
+
+| 类型 | 属性值 | 适用场景 |
+|------|--------|----------|
+| fade-up | 默认（不写） | 文字、列表、大多数内容 |
+| scale | `data-f-type="scale"` | 图片、卡片、关键数字 |
+| blur | `data-f-type="blur"` | 大标题、hero 文案、电影感揭示 |
+| slide | `data-f-type="slide"` | 时间线、步骤、从左到右的序列 |
+
+用法：`<div data-f="1" data-f-type="blur">...</div>`
+
+原则：同一页内保持一种入场方式。整个 deck 最多用两种。
+
+custom.css 可以覆盖引擎的入场 transition 时长和曲线：
 ```css
-/* 配合引擎 data-f 的 fragment 步进 */
 [data-f] {
-  opacity: 0;
-  transform: translateY(20px);
   transition: opacity var(--duration-normal) var(--ease),
-              transform var(--duration-normal) var(--ease);
-}
-[data-f].visible {
-  opacity: 1;
-  transform: translateY(0);
+              transform var(--duration-normal) var(--ease),
+              filter var(--duration-normal) var(--ease);
 }
 ```
 
@@ -206,6 +215,15 @@ design_style 不直接生成 CSS，而是指导 CSS 和 HTML 的写法：
 }
 ```
 
+## 反模式黑名单
+
+以下选择是 AI 的常见退化默认，design-dna 流程应自然避开。如果你发现自己在用，退回 DNA 重新推导：
+
+- **字体**：Inter / Roboto / Arial — 通用到没有性格。从 DNA 的 aesthetic.mood 推导具体字体
+- **颜色**：`#6366f1`（Tailwind indigo）— AI 生成 UI 的指纹色。如果 DNA 色板出现它，质疑来源
+- **布局**：所有内容居中 — 每页都 `text-align:center; justify-content:center` = 没有层级。DNA 的 composition.balance_type 应该驱动非对称选择
+- **效果**：glassmorphism（毛玻璃 + 模糊背景）— 趋势已过，执行难度高。除非 DNA 的 visual_effects 明确指定，不用
+
 ## 质量检查
 
 交付前验证：
@@ -218,3 +236,4 @@ design_style 不直接生成 CSS，而是指导 CSS 和 HTML 的写法：
 - [ ] 对比度 ≥ 4.5:1（正文）
 - [ ] 不覆盖引擎 class（`.slide`, `#progress`, `.mobile-nav`）
 - [ ] `prefers-reduced-motion` 尊重（如果有动画）
+- [ ] 不在黑名单里
