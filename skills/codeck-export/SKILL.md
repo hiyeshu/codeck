@@ -98,19 +98,11 @@ await browser.close();
 console.log(`✓ ${baseName}.pdf`);
 ```
 
-### poster 资源升级（PPTX 专属）
+### poster 资源
 
-导出 PPTX 之前，扫描 slides.html 里的 `.media-poster` 元素，提取原件路径。
+slides.html 里的 `.media-poster` 元素是视频/音频的占位。原件路径记录在 outline.md 资产清单和占位框的 caption 里。
 
-如果找到 poster 资源且导出格式是 PPTX：
-> codeck export，HTML 里有 {N} 个媒体占位（视频/音频），PPTX 可以嵌入原件。
->
-> 建议选 A，嵌入后 PowerPoint 里能直接播放。
-- A) 嵌入原件到 PPTX
-- B) 保持占位图，不嵌入
-
-选 A → 在 PptxGenJS 生成时用 `slide.addMedia({ path: "..." })` 嵌入。
-选 B 或导出 PDF/HTML → 不处理，占位图就是最终形态。
+默认保持占位图导出。用户说"嵌入视频"时，从 caption 提取路径，PPTX 用 `slide.addMedia({ path: "..." })`。
 
 ### PPTX — 从 HTML 转换
 
