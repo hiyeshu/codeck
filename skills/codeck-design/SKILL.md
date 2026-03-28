@@ -87,7 +87,7 @@ ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "EXISTING_HTML: FOUND" || echo "EXI
 
 把同构映射的视觉策略落实为结构化的三维设计档案。
 
-读取 `design-dna/schema.md` 了解完整字段定义。三个维度：
+读取 `references/design-dna-schema.md` 了解完整字段定义。三个维度：
 
 | 维度 | 内容 | 来源 |
 |------|------|------|
@@ -159,7 +159,7 @@ engine.js 已包含这些能力，AI 不需要写任何 JS：
 
 ### custom.css 写法
 
-读取 `design-dna/generation-guide.md` 了解从 design-dna.json → custom.css 的完整映射规则。
+读取 `references/design-dna-guide.md` 了解从 design-dna.json → custom.css 的完整映射规则。
 
 核心流程：design-dna.json 的 `design_system` → `:root` CSS 变量 → 布局原语 → 页面类型样式 → 移动适配。
 
