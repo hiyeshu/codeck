@@ -232,6 +232,29 @@ engine.js 已包含这些能力，AI 不需要写任何 JS：
 - `data-f="N"` 标记 fragment 步进（N 越小越先出现）
 - 不写 `<script>` 标签、进度条、移动导航——引擎自动处理
 
+### 资源引用
+
+outline.md 的资产清单列出了可用资源。在 slides.html 里这样引用：
+
+**图片：** 用 `assets/` 相对路径，assemble.sh 自动内联为 base64。
+```html
+<img src="assets/architecture.png" alt="系统架构" style="max-width:80%">
+```
+
+**代码片段：** 从源文件提取，用 `<pre><code>` 嵌入。
+```html
+<pre><code class="lang-typescript">function resolve(state: State): Action {
+  return state.match(patterns);
+}</code></pre>
+```
+
+**数据：** 转为 HTML 表格或 CSS 柱状图，不引入图表库。
+```html
+<div class="bar" style="--val:85%">转化率 85%</div>
+```
+
+**SVG：** 直接内联，不用 `<img>`。
+
 ### 视觉规则
 
 1. **CSS 变量驱动** — 全局色彩、字体、间距通过 `:root` 变量控制
