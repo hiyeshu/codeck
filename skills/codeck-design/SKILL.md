@@ -234,26 +234,32 @@ engine.js 已包含这些能力，AI 不需要写任何 JS：
 
 ### 资源引用
 
-outline.md 的资产清单列出了可用资源。在 slides.html 里这样引用：
+outline.md 资产清单标注了每个资源的级别。按级别写 HTML：
 
-**图片：** 用 `assets/` 相对路径，assemble.sh 自动内联为 base64。
+**inline（内联）：** 图片用 `assets/` 路径，assemble.sh 自动 base64。SVG 直接内联。
 ```html
 <img src="assets/architecture.png" alt="系统架构" style="max-width:80%">
+<svg viewBox="0 0 100 100">...</svg>
 ```
 
-**代码片段：** 从源文件提取，用 `<pre><code>` 嵌入。
+**poster（缩略图）：** 视频/音频/大文件用封面图 + 播放占位。
+```html
+<div class="media-poster">
+  <img src="assets/demo-cover.jpg" alt="演示视频">
+  <div class="play-icon">▶</div>
+  <p class="caption">demo.mp4</p>
+</div>
+```
+custom.css 里加 `.media-poster` 样式（居中、圆角、半透明播放图标叠加）。
+
+**extract（提取内容）：** 代码用 `<pre><code>`，数据用表格或 CSS 图表。
 ```html
 <pre><code class="lang-typescript">function resolve(state: State): Action {
   return state.match(patterns);
 }</code></pre>
-```
 
-**数据：** 转为 HTML 表格或 CSS 柱状图，不引入图表库。
-```html
 <div class="bar" style="--val:85%">转化率 85%</div>
 ```
-
-**SVG：** 直接内联，不用 `<img>`。
 
 ### 视觉规则
 
