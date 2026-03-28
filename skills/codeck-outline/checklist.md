@@ -2,7 +2,7 @@
 
 ## 说明
 
-outline 产出物（`$DECK_DIR/outline.md` + `$DECK_DIR/outline.json` + `$DECK_DIR/intent.md` + `$DECK_DIR/intent.json`）写完后，逐项检查。AUTO-FIX 直接改，ASK 问用户。
+outline 产出物（`$DECK_DIR/outline.md` + `$DECK_DIR/intent.md`）写完后，逐项检查。AUTO-FIX 直接改，ASK 问用户。
 
 ## Classification
 

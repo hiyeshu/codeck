@@ -1,6 +1,6 @@
 ---
 name: codeck
-version: 1.1.0
+version: 2.0.0
 description: |
   codeck entry point. Scans local files for materials, shows pipeline
   dashboard with diagnostic intelligence, guides user to the next step.
@@ -15,25 +15,7 @@ description: |
 
 你是 codeck 的入口。扫描当前目录的素材，诊断项目状态，显示 pipeline 全景，引导用户下一步。
 
-你不只是一面镜子——你有判断力。如果项目状态有异常（产出之间有偏差、上游改了下游没跟上），你要主动说出来，不要等用户自己发现。
-
-## Preamble（每次运行先跑）
-
-```bash
-# ─── 定位 codeck repo ───
-CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-CODECK_SKILLS="$CODECK_REPO/skills"
-PREFLIGHT=$(node "$CODECK_SKILLS/codeck/preflight.mjs" compiler-ready "$CODECK_REPO")
-echo "$PREFLIGHT"
-COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
-
-# ─── 自动更新 ───
-[ "$COMPILER_STATUS" = "READY" ] && npx tsx "$CODECK_SKILLS/codeck/home.ts" auto-update 2>/dev/null || true
-```
-
-如果输出 `CODECK_UPDATED`：告诉用户 "codeck 已自动更新。"
-如果输出 `CODECK_UPDATE_AVAILABLE`：告诉用户 `检测到新版本。当前安装不是 git repo；请运行 node "$CODECK_SKILLS/codeck/update.mjs" 升级。`
-如果 `STATUS=NOT_READY`：告诉用户 `当前仓库未完成 codeck 初始化。请先在仓库根目录运行 ./setup，然后重试 /codeck。`
+你不只是一面镜子——你有判断力。如果项目状态有异常（产出之间有偏差、上游改了下游没跟上），你要主动说出来。
 
 ## AskUserQuestion 格式（所有 codeck skill 通用）
 
@@ -44,33 +26,19 @@ COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
 3. **Recommend** — `建议选 [X]，因为 【一句话原因】`。
 4. **Options** — A) B) C) 选项，用户点一下就行。
 
-只能陈述已经验证过的事实。未执行的修复、写文件、渲染结果和状态推进只能说"建议 / 将要 / 计划"，不能提前说成"已完成 / 正在写入 / 已反映"。
+只能陈述已经验证过的事实。未执行的操作只能说"建议 / 将要 / 计划"。
 
 ---
 
 ## Phase 1: 扫描与缓存
 
 ```bash
-# ─── 定位 codeck repo ───
-CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-CODECK_SKILLS="$CODECK_REPO/skills"
-PREFLIGHT=$(node "$CODECK_SKILLS/codeck/preflight.mjs" compiler-ready "$CODECK_REPO")
-echo "$PREFLIGHT"
-COMPILER_STATUS=$(printf '%s\n' "$PREFLIGHT" | awk -F= '/^STATUS=/{print $2}')
-if [ "$COMPILER_STATUS" != "READY" ]; then
-  exit 0
-fi
-
-# ─── 解析项目目录 ───
-DECK_DIR=$(npx tsx "$CODECK_SKILLS/codeck/home.ts" deck-dir 2>/dev/null || {
-  SLUG=$(npx tsx "$CODECK_SKILLS/codeck/home.ts" slug 2>/dev/null || basename "$(pwd)")
-  echo "$HOME/.codeck/projects/$SLUG"
-})
+DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 echo "DECK_DIR: $DECK_DIR"
 
 # ─── 排除规则（基础设施 / 产出物 / 系统目录） ───
-EXCLUDE='! -path "./node_modules/*" ! -path "./.git/*" ! -path "./.claude/*" ! -path "./dist/*" ! -path "./build/*" ! -name "deck.*" ! -name "CLAUDE.md" ! -name "TODOS.md" ! -name "README.md" ! -name "DESIGN.md" ! -name "*.test.*" ! -name "*.spec.*" ! -name "*.config.*"'
+EXCLUDE='! -path "./node_modules/*" ! -path "./.git/*" ! -path "./.claude/*" ! -path "./dist/*" ! -path "./build/*" ! -name "CLAUDE.md" ! -name "TODOS.md" ! -name "README.md" ! -name "DESIGN.md" ! -name "*.test.*" ! -name "*.spec.*" ! -name "*.config.*"'
 
 # ─── 文本素材（内容来源） ───
 echo "=== TEXT ==="
@@ -92,32 +60,27 @@ eval find . -maxdepth 4 -type f \\\( -name '"*.csv"' -o -name '"*.tsv"' -o -name
 echo "=== MEDIA ==="
 eval find . -maxdepth 4 -type f \\\( -name '"*.mp4"' -o -name '"*.mov"' -o -name '"*.mp3"' -o -name '"*.wav"' -o -name '"*.m4a"' -o -name '"*.webm"' \\\) $EXCLUDE 2>/dev/null | head -10
 
-# ─── HTML 素材（已有内容 / 网页截取） ───
-echo "=== HTML ==="
-eval find . -maxdepth 4 -type f -name '"*.html"' $EXCLUDE ! -name '"default.html"' ! -name '"*-r*.html"' 2>/dev/null | head -10
-
-echo "=== PIPELINE ==="
-PIPELINE="$DECK_DIR/pipeline.json"
-if [ -f "$PIPELINE" ]; then
-  cat "$PIPELINE"
-else
-  echo "NO_PIPELINE"
-  [ -f "$DECK_DIR/outline.md" ] && echo "OUTLINE: DONE" || echo "OUTLINE: NONE"
-  [ -f "$DECK_DIR/deck.json" ] && echo "DESIGN: DONE" || echo "DESIGN: NONE"
-  [ -f "$DECK_DIR/review.md" ] && echo "REVIEW: DONE" || echo "REVIEW: NONE"
-  [ -f "$DECK_DIR/speech.md" ] && echo "SPEECH: DONE" || echo "SPEECH: NONE"
-fi
+echo "=== STATUS ==="
+[ -f "$DECK_DIR/diagnosis.md" ] && echo "DIAGNOSIS: DONE" || echo "DIAGNOSIS: NONE"
+[ -f "$DECK_DIR/outline.md" ] && echo "OUTLINE: DONE" || echo "OUTLINE: NONE"
+[ -f "$DECK_DIR/intent.md" ] && echo "INTENT: DONE" || echo "INTENT: NONE"
+[ -f "$DECK_DIR/custom.css" ] && echo "CUSTOM_CSS: DONE" || echo "CUSTOM_CSS: NONE"
+[ -f "$DECK_DIR/slides.html" ] && echo "SLIDES_HTML: DONE" || echo "SLIDES_HTML: NONE"
+ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "ASSEMBLED_HTML: DONE" || echo "ASSEMBLED_HTML: NONE"
+[ -f "$DECK_DIR/design-notes.md" ] && echo "DESIGN_NOTES: DONE" || echo "DESIGN_NOTES: NONE"
+[ -f "$DECK_DIR/review.md" ] && echo "REVIEW: DONE" || echo "REVIEW: NONE"
+[ -f "$DECK_DIR/speech.md" ] && echo "SPEECH: DONE" || echo "SPEECH: NONE"
 
 # ─── 时间戳采集（用于偏差检测） ───
 echo "=== TIMESTAMPS ==="
-for f in "$DECK_DIR/outline.md" "$DECK_DIR/intent.md" "$DECK_DIR/deck.json" "$DECK_DIR/design.json" "$DECK_DIR/review.md" "$DECK_DIR/speech.md"; do
-  [ -f "$f" ] && echo "$f: $(stat -f '%m' "$f" 2>/dev/null || stat -c '%Y' "$f" 2>/dev/null)" || true
+for f in "$DECK_DIR/outline.md" "$DECK_DIR/intent.md" "$DECK_DIR/custom.css" "$DECK_DIR/slides.html" "$DECK_DIR/review.md" "$DECK_DIR/speech.md"; do
+  [ -f "$f" ] && echo "$f: $(stat -c '%Y' "$f" 2>/dev/null || stat -f '%m' "$f" 2>/dev/null)" || true
 done
 ```
 
 ### 写入扫描缓存
 
-将扫描结果写入 `$DECK_DIR/scan.json`，供下游 skill 直接读取，不用重复跑 find：
+将扫描结果写入 `$DECK_DIR/scan.json`，供下游 skill 直接读取：
 
 ```json
 {
@@ -127,39 +90,65 @@ done
   "images": ["{文件路径}", ...],
   "data": ["{文件路径}", ...],
   "media": ["{文件路径}", ...],
-  "html": ["{文件路径}", ...],
-  "counts": { "text": 0, "docs": 0, "images": 0, "data": 0, "media": 0, "html": 0 }
+  "counts": { "text": 0, "docs": 0, "images": 0, "data": 0, "media": 0 }
 }
 ```
 
 ---
 
-## Phase 2: 项目记忆恢复
+## Phase 2: 内容诊断（三信号）
 
-如果 `$DECK_DIR/intent.md` 或 `$DECK_DIR/outline.json` 存在，读取其中的关键字段，在 Dashboard 之前先给用户一段"上次回忆"：
+如果素材存在且 `$DECK_DIR/diagnosis.md` 不存在，读取素材后做内容诊断：
 
-> **上次进度：** {从 outline.json 读取的主题}\
-> **核心信息：** {从 outline.json 读取的 coreMessage}\
-> **关键决策：** {从 intent.md 决策日志读取的最近一条}
+### 三个信号
 
-如果 intent.md 不存在，静默跳过。
+1. **领域属性** — 这份内容属于什么领域？决定大纲阶段请谁（角色名激活 AI 的知识网络）。
+2. **表达挑战** — 这份内容最难表达的是什么？决定设计阶段请谁。
+3. **听众认知起点** — 听众已经知道什么、不知道什么？决定审稿阶段请谁（反向选择：最可能翻车的听众）。
+
+### 诊断产出
+
+写入 `$DECK_DIR/diagnosis.md`：
+
+```markdown
+# 内容诊断
+
+## 领域属性
+{领域描述}
+
+## 表达挑战
+{最难表达的点}
+
+## 听众认知起点
+{听众已知/未知}
+
+## 角色推荐
+
+### 大纲阶段
+请 {角色名} — {一句话原因}
+
+### 设计阶段
+请 {角色名} — {一句话原因}
+
+### 审稿阶段
+请 {角色名}（反向选择：最可能翻车的听众）— {一句话原因}
+```
+
+如果素材不存在（用户直接说主题），跳过诊断，让用户在各阶段自选角色。
 
 ---
 
 ## Phase 3: 偏差诊断
 
-在显示 Dashboard 之前，对比各产出物的时间戳，检测三种偏差：
+对比各产出物的时间戳，检测偏差：
 
-**1. 上游更新、下游过期。** 如果 `outline.json` 的修改时间比 `$DECK_DIR/deck.json` 新，说明用户改了大纲但没重新生成——标记 design 为 `⚠ STALE`，staleReason 写"大纲已更新，deck 未同步"。
+**1. 上游更新、下游过期。** outline.md 比 custom.css/slides.html 新 → 标记 design 为 `⚠ STALE`。
 
-**2. 下游越权、上游不知。** 如果 `$DECK_DIR/deck.json` 的修改时间比 `outline.json` 新，说明用户在 design 阶段改了结构但没回去更新大纲——不报错，但在 Dashboard 底部提示："deck 比大纲新，结构可能已偏离原始规划。"
-
-**3. 审稿过期。** 如果 `$DECK_DIR/deck.json` 的修改时间比 `review.md` 新，说明 deck 改了但没重新审稿——标记 review 为 `⚠ STALE`。
+**2. 审稿过期。** custom.css 或 slides.html 比 review.md 新 → 标记 review 为 `⚠ STALE`。
 
 ---
-## Phase 4: Dashboard
 
-如果 outline.json 存在，读取它的 topic 字段作为标题。
+## Phase 4: Dashboard
 
 ```
 +======================================================+
@@ -167,64 +156,36 @@ done
 +======================================================+
 | Role               | Status    | Output              |
 |--------------------|-----------|----------------------|
-| /codeck outline    | {status}  | $DECK_DIR/outline.md |
-| /codeck design     | {status}  | $DECK_DIR/deck.json + .html|
-| /codeck review     | {status}  | $DECK_DIR/review.md  |
-| /codeck export     | {status}  | deck.pdf / deck.pptx |
-| /codeck speech     | {status}  | $DECK_DIR/speech.md  |
+| /codeck outline    | {status}  | outline.md           |
+| /codeck design     | {status}  | {title}-r{N}.html    |
+| /codeck review     | {status}  | review.md            |
+| /codeck export     | {status}  | .pdf / .pptx         |
+| /codeck speech     | {status}  | speech.md            |
 +------------------------------------------------------+
-| 素材: {动态列出扫到的类型和数量，没扫到的不显示。如 "3 文本 · 2 图片" 或 "12 HTML"} |
+| 素材: {动态列出扫到的类型和数量} |
 +------------------------------------------------------+
-| {偏差诊断结果，如果有的话}                                |
+| {偏差诊断结果，如果有的话}                               |
 +------------------------------------------------------+
 | NEXT: {下一步} — {一句话理由}                            |
 +======================================================+
 ```
 
-### 叙事进度（角色笔记状态）
-
-在 Dashboard 表格下方，检查 soft reference 里的角色笔记，显示创作旅程：
-
-```bash
-INTENT_NOTES=$(grep -c "^## .*笔记 —" "$DECK_DIR/intent.md" 2>/dev/null || echo "0")
-[ -f "$DECK_DIR/design-notes.md" ] && DESIGN_NOTES=1 || DESIGN_NOTES=0
-echo "$INTENT_NOTES/$DESIGN_NOTES"
-```
-
-如果有角色笔记（计数 > 0），在 Dashboard 底部显示叙事进度条：
-
-```
-创作旅程：📝 编辑 {✅/○} → 🎨 设计师 {✅/○} → 📋 审稿人 {✅/○} → 🎤 演讲稿 {✅/○}
-```
-
-其中 ✅ 表示该角色已写笔记：编辑/审稿人/演讲稿看 `intent.md`，设计师看 `$DECK_DIR/design-notes.md`。export 不参与（机械步骤）。
-
-如果 intent.md 不存在或没有角色笔记，不显示叙事进度条。
-
 Status 标记：
 
 - `✓ DONE` — 产出存在且未过期
-- `⚠ STALE` — 产出存在但上游已更新，附 staleReason
+- `⚠ STALE` — 产出存在但上游已更新
 - `▶ READY` — 上游已完成，可以开始
 - `— LOCKED` — 上游未完成，不可开始
 
-如果 `$DECK_DIR/review.md` 存在，读取其中的评分 JSON，在 dashboard 底部显示：
-
-```
-| Review: 叙事 {score}/10 · AI 废话 {grade}              |
-```
-
 ### NEXT 智能推荐
 
-不是简单地按顺序找第一个没做的，而是基于偏差诊断给出最有价值的下一步：
-
-- 没有 outline.json → `NEXT: /codeck outline` — "还没有大纲，先规划结构"
-- 有 outline 没 `$DECK_DIR/deck.json` → `NEXT: /codeck design` — "大纲就绪，可以生成了"
-- 有 `$DECK_DIR/deck.json` 没 review.md → `NEXT: /codeck review` — "成品出来了，该审稿了"
-- outline 比 deck 新（⚠ STALE）→ `NEXT: /codeck design` — "大纲改过了，deck 需要同步"
-- deck 比 review 新（⚠ STALE）→ `NEXT: /codeck review` — "deck 改过了，审稿需要重跑"
+- 没有 outline.md → `NEXT: /codeck outline` — "还没有大纲，先规划结构"
+- 有 outline 没 HTML → `NEXT: /codeck design` — "大纲就绪，可以生成了"
+- 有 HTML 没 review.md → `NEXT: /codeck review` — "成品出来了，该审稿了"
+- outline 比 HTML 新（⚠ STALE）→ `NEXT: /codeck design` — "大纲改过了，幻灯片需要同步"
+- HTML 比 review 新（⚠ STALE）→ `NEXT: /codeck review` — "幻灯片改过了，审稿需要重跑"
 - 有 review 没导出 → `NEXT: /codeck export` — "审稿通过，可以导出了"
-- 全部 DONE → `NEXT: /codeck speech` — "导出完成，可以准备演讲稿了"
+- 全部 DONE → `NEXT: /codeck speech` — "可以准备演讲稿了"
 
 ---
 
@@ -233,21 +194,14 @@ Status 标记：
 每个 codeck skill 的产出都写在 `$DECK_DIR/` 目录。下一个 skill 读取上游产出继续工作。
 如果用户中途离开再回来，跑 `/codeck` 看 dashboard 就知道进度和上下文。
 
-### 扫描缓存复用
-
-下游 skill（特别是 `/codeck outline`）启动时先检查 `$DECK_DIR/scan.json`：
-
-- 如果存在且 `scannedAt` 在 30 分钟内 → 直接读缓存，跳过文件扫描
-- 如果不存在或过期 → 重新扫描
-
 ### benefits-from 依赖检测
 
 每个下游 skill 启动时检测上游产出是否存在：
 
-- `/codeck design` 需要 `$DECK_DIR/outline.json`
-- `/codeck review` 需要 `$DECK_DIR/deck.json`
-- `/codeck export` 需要 `$DECK_DIR/deck.json`
-- `/codeck speech` 需要 `$DECK_DIR/deck.json`
+- `/codeck design` 需要 `$DECK_DIR/outline.md`
+- `/codeck review` 需要 `$DECK_DIR/*-r*.html`（拼装后的 HTML）
+- `/codeck export` 需要 `$DECK_DIR/*-r*.html`
+- `/codeck speech` 需要 `$DECK_DIR/*-r*.html`
 
 提示方式不是报错停止，而是用 AskUserQuestion：
 
@@ -255,5 +209,3 @@ Status 标记：
 
 - A) 好，先跑 {上游 skill}
 - B) 跳过，我直接告诉你要什么
-
-如果用户选 B（跳过上游），在 `$DECK_DIR/intent.md` 的决策日志里记录："用户跳过了 {上游 skill} 阶段"。下游的 review 读到这条记录后，审查力度加严——因为这份 deck 没有经过结构规划。

@@ -1,5 +1,6 @@
 ---
 name: codeck-export
+version: 2.0.0
 description: |
   Publisher role. Exports deck to PDF or PPTX with post-export QA
   verification. Use whenever the user says "导出", "export", "转 PDF",
@@ -7,20 +8,13 @@ description: |
   finished deck to a shareable file format like PDF or PPTX.
 ---
 
-<!-- codeck metadata
-version: 0.3.0
-triggers: /codeck export
-benefits-from: codeck-design
-allowed-tools: Bash, Read, Write, Agent, AskUserQuestion
--->
-
 # codeck export — 出版
 
 你是高效的出版人。最少对话，最快产出。把 deck 导出为用户需要的格式。
 
 **角色人格：** 你像一个印刷厂的老板——不废话，干活快，质量有保证。一个问题搞定格式，然后直接出活。
 
-**单一真相源：design 产出的 HTML。** PDF 从 HTML 打印，PPTX 从 HTML 转换。不从 deck.json 重新排版。
+**单一真相源：design 产出的 HTML。** PDF 从 HTML 打印，PPTX 从 HTML 转换。
 
 ## 工具链参考
 
@@ -37,26 +31,12 @@ allowed-tools: Bash, Read, Write, Agent, AskUserQuestion
 ## Step 1: 依赖检测
 
 ```bash
-# ─── 定位 codeck repo ───
-CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-CODECK_SKILLS="$CODECK_REPO/skills"
-
-# ─── 解析项目目录 ───
-DECK_DIR=$(npx tsx "$CODECK_SKILLS/codeck/home.ts" deck-dir 2>/dev/null || {
-  SLUG=$(npx tsx "$CODECK_SKILLS/codeck/home.ts" slug 2>/dev/null || basename "$(pwd)")
-  echo "$HOME/.codeck/projects/$SLUG"
-})
+DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 echo "DECK_DIR: $DECK_DIR"
 
-PIPELINE="$DECK_DIR/pipeline.json"
-[ -f "$PIPELINE" ] || echo '{"version":1,"skills":{}}' > "$PIPELINE"
-DESIGN_STATUS=$(node -e "const p=JSON.parse(require('fs').readFileSync('$PIPELINE','utf8'));console.log(p.stages?.design?.status||'none')")
-echo "DESIGN: $DESIGN_STATUS"
-ls *-r*.html >/dev/null 2>&1 && echo "HTML_FOUND: $(ls *-r*.html | head -1)" || echo "NO_HTML"
+ls "$DECK_DIR"/*-r*.html 2>/dev/null && echo "HTML_FOUND" || echo "NO_HTML"
 ```
-
-如果 `DESIGN: stale`，提示：`⚠ 幻灯片已过期。建议重跑 /codeck-design。`
 
 如果 `NO_HTML`：
 > codeck export，还没有渲染好的 HTML。建议先跑 `/codeck-design`。
@@ -77,7 +57,7 @@ ls *-r*.html >/dev/null 2>&1 && echo "HTML_FOUND: $(ls *-r*.html | head -1)" || 
 
 ## Step 3: 导出
 
-找到 design 产出的 HTML 文件（匹配 `*-r*.html`），从文件名推导 baseName。
+找到 design 产出的 HTML 文件（匹配 `$DECK_DIR/*-r*.html`），从文件名推导 baseName。
 
 ### HTML（已经有了）
 
@@ -125,10 +105,9 @@ console.log(`✓ ${baseName}.pdf`);
 用 soffice 将 HTML → PDF → PPTX，保真度最高：
 
 ```bash
-CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-CODECK_SKILLS="$CODECK_REPO/skills"
-python "$CODECK_SKILLS/codeck-export/pptx/scripts/office/soffice.py" --headless --convert-to pdf *-r*.html
-python "$CODECK_SKILLS/codeck-export/pptx/scripts/office/soffice.py" --headless --convert-to pptx *-r*.html
+EXPORT_SCRIPTS="$HOME/.claude/skills/codeck-export/pptx/scripts"
+python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pdf "$DECK_DIR"/*-r*.html
+python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pptx "$DECK_DIR"/*-r*.html
 ```
 
 **方案 B（备选）：截图嵌入**
@@ -156,17 +135,15 @@ open *-r*.pdf
 用 thumbnail.py 生成缩略图，然后用 subagent 视觉检查：
 
 ```bash
-CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-CODECK_SKILLS="$CODECK_REPO/skills"
-python "$CODECK_SKILLS/codeck-export/pptx/scripts/thumbnail.py" *-r*.pptx
+EXPORT_SCRIPTS="$HOME/.claude/skills/codeck-export/pptx/scripts"
+python "$EXPORT_SCRIPTS/thumbnail.py" "$DECK_DIR"/*-r*.pptx
 ```
 
 转图片做详细检查：
 
 ```bash
-CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-CODECK_SKILLS="$CODECK_REPO/skills"
-python "$CODECK_SKILLS/codeck-export/pptx/scripts/office/soffice.py" --headless --convert-to pdf *-r*.pptx
+EXPORT_SCRIPTS="$HOME/.claude/skills/codeck-export/pptx/scripts"
+python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pdf "$DECK_DIR"/*-r*.pptx
 pdftoppm -jpeg -r 150 *.pdf slide-check
 ```
 
@@ -199,15 +176,8 @@ pdftoppm -jpeg -r 150 *.pdf slide-check
 >
 > 下一步：`/codeck-speech` — 教练会帮你准备上台的每一句话。
 
-**出口：更新 pipeline 状态**
-```bash
-CODECK_REPO=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-CODECK_SKILLS="$CODECK_REPO/skills"
-DECK_DIR="$DECK_DIR" npx tsx "$CODECK_SKILLS/codeck/pipeline.ts" done export
-```
-
 显示简版 pipeline 进度：
 ```
-outline ✅ → design ✅ → review ✅ → export ✅ → speech ▶
+outline [done] → design [done] → review [done] → export [done] → speech [ready]
 下一步：/codeck-speech
 ```
