@@ -36,7 +36,7 @@ DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 
 # 状态检测 + dashboard
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
 如果 `STATUS_DESIGN` 不是 `done`，提示先跑 `/codeck-design`。
@@ -195,5 +195,5 @@ bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
 
 显示 dashboard：
 ```bash
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```

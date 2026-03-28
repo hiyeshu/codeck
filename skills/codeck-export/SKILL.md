@@ -35,7 +35,7 @@ DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 
 # 状态检测 + dashboard
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
 如果 `STATUS_DESIGN` 不是 `done`：
@@ -184,5 +184,5 @@ pdftoppm -jpeg -r 150 *.pdf slide-check
 
 显示 dashboard：
 ```bash
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```

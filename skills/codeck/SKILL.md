@@ -37,7 +37,7 @@ DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 
 # 共用状态检测
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
 ## Phase 2: 素材扫描

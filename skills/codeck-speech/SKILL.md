@@ -35,7 +35,7 @@ DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 
 # 状态检测 + dashboard
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
 读取源文件：
@@ -171,5 +171,5 @@ totalEstimate: "{预估}"
 
 显示 dashboard：
 ```bash
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```

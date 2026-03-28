@@ -43,7 +43,7 @@ DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 
 # 状态检测 + dashboard
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
 读取 `$DECK_DIR/outline.md` — 页面结构、内容要点、给设计师的话。
@@ -341,5 +341,5 @@ slides.html 可能很长。如果单次写入失败，先写前几页，再用 E
 
 显示 dashboard：
 ```bash
-bash "$HOME/.claude/skills/codeck-design/scripts/status.sh" "$DECK_DIR"
+bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
