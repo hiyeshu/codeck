@@ -49,8 +49,20 @@ skill 文件安装在 `~/.claude/skills/codeck*/`，项目产物在 `~/.codeck/p
 
 设计阶段的核心工具。从大纲提取形式结构（张力曲线、信息密度、论证拓扑、情绪色谱），在其他领域找同构映射，翻译成视觉策略。
 
-## 开发规范
+## 仓库结构
 
-1. 每文件不超过 800 行
-2. 单函数不超过 20 行
-3. 注释：中文 + ASCII 分块 `/* ─── 标题 ─── */`
+```
+codeck/
+├── setup              # 安装脚本（符号链接 skills → ~/.claude/skills/）
+├── CLAUDE.md          # 项目说明
+├── skills/            # 全部 skill 源码
+│   ├── CLAUDE.md      # 成员清单 + 变更日志
+│   ├── CONVENTIONS.md # 技能编写规范
+│   ├── codeck/        # 入口 dashboard
+│   ├── codeck-outline/
+│   ├── codeck-design/
+│   ├── codeck-review/
+│   ├── codeck-export/
+│   └── codeck-speech/
+└── README.md
+```

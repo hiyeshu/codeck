@@ -6,36 +6,6 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# ─── 检查 Node.js ───
-
-echo "→ 检查 Node.js..."
-if ! command -v node &>/dev/null; then
-  echo "✗ 需要 Node.js >= 18，请先安装"
-  exit 1
-fi
-
-NODE_VERSION=$(node -v | sed 's/v//' | cut -d. -f1)
-if [ "$NODE_VERSION" -lt 18 ]; then
-  echo "✗ Node.js 版本过低 ($(node -v))，需要 >= 18"
-  exit 1
-fi
-
-# ─── 安装 + 编译 ───
-
-echo "→ 安装依赖..."
-npm install --silent
-
-WORKSPACE_DIRS=0
-[ -d "$SCRIPT_DIR/packages" ] && [ -n "$(find "$SCRIPT_DIR/packages" -mindepth 1 -maxdepth 1 -type d 2>/dev/null)" ] && WORKSPACE_DIRS=1
-[ -d "$SCRIPT_DIR/apps" ] && [ -n "$(find "$SCRIPT_DIR/apps" -mindepth 1 -maxdepth 1 -type d 2>/dev/null)" ] && WORKSPACE_DIRS=1
-
-if [ "$WORKSPACE_DIRS" -eq 1 ]; then
-  echo "→ 编译 packages..."
-  npm run build:packages
-else
-  echo "→ 跳过 packages 编译（未检测到 apps/* 或 packages/* workspace）"
-fi
-
 # ─── 注册 skills 到 Claude Code ───
 
 CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
@@ -49,6 +19,11 @@ SKILLS=(
   codeck-speech
   codeck-export
 )
+
+# 同时复制 CONVENTIONS.md 和 CLAUDE.md
+cp "$SCRIPT_DIR/skills/CONVENTIONS.md" "$CLAUDE_SKILLS_DIR/" 2>/dev/null || true
+cp "$SCRIPT_DIR/skills/CLAUDE.md" "$CLAUDE_SKILLS_DIR/" 2>/dev/null || true
+
 for skill in "${SKILLS[@]}"; do
   target="$CLAUDE_SKILLS_DIR/$skill"
   if [ -L "$target" ] || [ ! -e "$target" ]; then
@@ -58,7 +33,7 @@ done
 echo "→ 已注册 ${#SKILLS[@]} 个 skill"
 
 echo ""
-echo "✓ codeck 安装完成 (v$(cat VERSION 2>/dev/null || echo '?'))"
+echo "✓ codeck 安装完成"
 echo ""
 echo "使用方式:"
 echo "  /codeck            dashboard"
@@ -69,5 +44,4 @@ echo "  /codeck-speech     演讲教练 — 准备上台"
 echo "  /codeck-export     出版 — PDF / PPTX"
 echo ""
 echo "更新方式:"
-echo "  cd /path/to/codeck-repo && git pull && ./setup"
-echo "  # 这次已硬切到 skills/ 目录，升级后请重新运行 ./setup"
+echo "  cd /path/to/codeck && git pull && ./setup"
