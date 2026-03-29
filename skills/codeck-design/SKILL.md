@@ -4,10 +4,13 @@ version: 2.0.0
 description: |
   Designer role. Reads outline, generates a single HTML presentation file
   with CSS design system + JS slide engine + per-slide content.
+  Accepts visual references (URLs, screenshots, design specs) and
+  extracts design signals to inform the isomorphic mapping.
   Use whenever the user says "design slides", "generate deck",
   "generate the deck", "build slides", "visual style",
-  "设计", "生成幻灯片", "视觉风格", or wants to turn an outline
-  into actual slides.
+  "reference this style", "like this design",
+  "设计", "生成幻灯片", "视觉风格", "参考这个风格",
+  or wants to turn an outline into actual slides.
 ---
 
 # codeck design
@@ -58,6 +61,37 @@ If outline.md doesn't exist (STATUS_OUTLINE: none), use AskUserQuestion:
 ## Role transition
 
 Read the "note to designer" at the end of outline.md. Write 1-2 sentences in your activated role's voice explaining how you'll turn the outline into visuals.
+
+## Reference extraction (optional)
+
+If the user provides visual references — URLs, screenshots, design specs, other presentations — extract design signals before proceeding to isomorphic mapping.
+
+### What to extract
+
+From each reference, identify:
+
+| Signal | Example |
+|--------|---------|
+| **Color logic** | "dark background, single warm accent, no gradients" |
+| **Type contrast** | "ultra-heavy headlines vs light body, cinematic scale gap" |
+| **Spatial rhythm** | "generous negative space, content clustered in lower third" |
+| **Material / texture** | "glassmorphism, frosted surfaces, subtle inner glow borders" |
+| **Motion language** | "fade-rise entrance, staggered delays, ease-out curves" |
+| **Structural pattern** | "full-bleed hero, minimal nav, single CTA" |
+
+### How to use references
+
+References inform, not dictate. Cross-check each extracted signal against the isomorphic mapping:
+
+1. **Signal matches content structure** → adopt directly. A cinematic type scale matches a narrative that builds dramatic tension.
+2. **Signal is decorative only** → discard. A glassmorphic nav bar looks good but doesn't serve every argument's structure.
+3. **Signal conflicts with content** → note the conflict and explain to the user why you're diverging.
+
+Write extracted signals to `$DECK_DIR/design-notes.md` under a `## References` section before the role and mapping sections.
+
+### Multiple references
+
+If the user gives several references, find the **intersection** — the signals that appear across references. That's what the user is actually drawn to, even if they can't articulate it.
 
 ## design-dna: isomorphic mapping → design archive
 

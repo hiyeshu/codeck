@@ -192,7 +192,8 @@ html, body {
   background: var(--bg, #111);
 }
 .ov-cell {
-  aspect-ratio: 16/9;
+  display: flex;
+  flex-direction: column;
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
@@ -208,9 +209,21 @@ html, body {
 }
 .ov-viewport {
   position: relative;
-  width: 100%; height: 100%;
+  width: 100%;
+  aspect-ratio: 16/9;
   overflow: hidden;
   background: var(--bg, #111);
+  flex-shrink: 0;
+}
+.ov-label {
+  padding: 4px 8px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--pv-text-dim, rgba(255,255,255,0.5));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-body, system-ui, sans-serif);
 }
 
 @media (max-width: 768px) {

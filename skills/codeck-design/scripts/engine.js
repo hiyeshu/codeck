@@ -177,6 +177,11 @@
         var vp = document.createElement('div');
         vp.className = 'ov-viewport';
         cell.appendChild(vp);
+        var label = document.createElement('div');
+        label.className = 'ov-label';
+        var h = s.querySelector('h1, h2');
+        label.textContent = h ? h.textContent.trim() : '';
+        cell.appendChild(label);
         grid.appendChild(cell);
       });
       app.appendChild(grid);
