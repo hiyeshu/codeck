@@ -131,7 +131,7 @@ bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 
 ## 修复
 
-每发现一个问题，用 AskUserQuestion 说明问题和修复方案。
+能判断的直接改，不问。只有需要用户拍板的才问（内容取舍、风格偏好）。
 
 **修复流程：**
 1. 判断改 custom.css 还是 slides.html
