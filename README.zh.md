@@ -2,73 +2,50 @@
 
 # codeck
 
-**对话式 AI 演示文稿技能 — Claude Code Skill**
+**把一个文件夹变成演示文稿，靠说话。**
 
-[English](README.md) · 中文
+[English](README.md) | 中文 | [日本語](README.ja.md)
 
 </div>
 
-把一个文件夹里的笔记、文档、数据、图片，通过和 Claude 对话变成一套完整的演示文稿。
+你有一个文件夹，里面是笔记、文档、数据、图片。你想做一套演示文稿。你输入 `/codeck`。
 
-codeck 是一组 Claude Code 技能（Skill），安装后在 Claude Code 中用 `/codeck` 命令启动。
+codeck 读完你的文件，搞清楚你的内容*到底在讲什么*，然后请来合适的人帮忙——一个编辑负责结构，一个设计师负责视觉，一个审稿人用你最难搞的听众的眼光来挑刺。每个"人"都是从你内容的具体难点推导出来的，不是从名单里挑的。
 
-```
-/codeck → /codeck-outline → /codeck-design → /codeck-review → /codeck-export → /codeck-speech
-```
+产出是一个 HTML 文件。没有模板。没有固定的幻灯片类型。每页自由 HTML——AI 可以为你的内容发明任何视觉形式。
 
-## 工作流程
-
-| 命令 | 做什么 | 产出 |
-|------|--------|------|
-| `/codeck` | 扫描素材、内容诊断（三信号）、动态角色推荐、显示进度 | diagnosis.md |
-| `/codeck-outline` | 角色激活 → 叙事提问 → 大纲规划 → 标题锻造 | outline.md |
-| `/codeck-design` | 角色激活 → design-dna 同构映射 → 直出单 HTML 文件 | {title}-r{n}.html |
-| `/codeck-review` | 反向角色（最可能翻车的听众）→ 六维审查 → 直接改 HTML | (改进 HTML) |
-| `/codeck-export` | HTML → PDF / PPTX | PDF, PPTX |
-| `/codeck-speech` | 角色激活 → 逐字演讲稿 + 舞台指示 + 时间预算 | speech.md |
-
-## 架构
+## 怎么用
 
 ```
-素材
-  ↓
-内容诊断（领域属性 · 表达挑战 · 听众认知起点）→ 动态角色选择
-  ↓
-outline.md（叙事结构 + 用户意图）
-  ↓
-单 HTML 文件（CSS 设计系统 + JS 翻页引擎 + 每页自由 HTML）
-  ↓
-PDF / PPTX / 演讲稿
+/codeck          扫描素材，诊断内容，推荐角色
+    ↓
+/codeck-outline  编辑规划叙事结构，锻造每个标题
+    ↓
+/codeck-design   设计师找到和你论证结构同形的视觉语言
+    ↓
+/codeck-review   你最严格的听众逐页审查，直接改
+    ↓
+/codeck-export   PDF / PPTX
+/codeck-speech   逐字演讲稿 + 舞台指示
 ```
 
-核心理念：
-- **skill 只管流程和格式，知识来自动态请来的"人"** — 角色名激活 AI 参数里的知识网络
-- **没有 schema 天花板** — 不用 block type 词汇表，每页自由 HTML，AI 可以发明任何视觉表达
-- **design-dna** — 从内容形式结构找同构映射（受侯世达《集异壁》启发），让视觉和内容在结构层面共振
+## 三个想法
+
+**请人，不是定规则。** codeck 不硬编码设计指南，而是选择真实的人——思想家、设计师、编辑——他们的*思维方式*和你内容的挑战匹配。假设你的论证需要让看不见的东西变得显而易见：codeck 可能请来 Feynman。不是因为你在讲物理，而是因为这就是 Feynman *做的事*。人名激活 AI 对这个人工作方式的知识。
+
+**同构映射。** 设计之前，codeck 分析你内容的*形式结构*——张力曲线、信息密度、情绪弧线。然后从另一个领域找到结构上的对应：一首乐曲、一种绘画风格、一个建筑原则。你的幻灯片不只是*装着*你的论证——它们*长得像*你的论证。（受侯世达《集异壁》启发。）
+
+**没有 schema 天花板。** 大多数幻灯片工具给你一套积木：标题、要点、图片、引用。codeck 给 AI 自由 HTML。如果你的内容需要一种还没有名字的视觉形式，AI 可以发明它。
 
 ## 安装
 
-需要 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) + Node.js 18+。
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code) + Node.js 18+。
 
 ```bash
 npx skills add hiyeshu/codeck
 ```
 
-在 Claude Code 中输入 `/codeck` 开始使用。
-
-## 目录
-
-```
-~/.claude/skills/
-├── codeck/          入口 dashboard + 内容诊断
-├── codeck-outline/  大纲技能 + 自审清单
-├── codeck-design/   设计技能 + design-dna 参考
-├── codeck-review/   审稿技能
-├── codeck-export/   导出技能 + PDF/PPTX 工具链
-└── codeck-speech/   演讲稿技能
-```
-
-项目产物存在 `~/.codeck/projects/{slug}/`。
+输入 `/codeck` 开始。
 
 ## License
 

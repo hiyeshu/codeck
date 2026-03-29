@@ -2,73 +2,50 @@
 
 # codeck
 
-**Conversational AI Presentation Skill — Claude Code Skill**
+**Turn a folder into a presentation, by talking.**
 
-English · [中文](README.zh.md)
+English | [中文](README.zh.md) | [日本語](README.ja.md)
 
 </div>
 
-Turn a folder of notes, docs, data, and images into a complete presentation by chatting with Claude.
+You have a folder of notes, docs, data, and images. You want a presentation. You type `/codeck`.
 
-codeck is a set of Claude Code skills. Install it, then type `/codeck` inside Claude Code to start.
+codeck reads your files, figures out what your content is *really about*, then brings in the right people to help — an editor for structure, a designer for visuals, a reviewer who thinks like your toughest audience member. Each "person" is a role derived from your content's specific challenges, not picked from a list.
 
-```
-/codeck → /codeck-outline → /codeck-design → /codeck-review → /codeck-export → /codeck-speech
-```
+The result is a single HTML file. No templates. No slide-type vocabulary. Free HTML per slide — the AI can invent any visual form your content needs.
 
-## Workflow
-
-| Command | What it does | Output |
-|---------|-------------|--------|
-| `/codeck` | Scan materials, content diagnosis (three signals), dynamic role recommendation | diagnosis.md |
-| `/codeck-outline` | Role activation → narrative questions → story arc → title smithing | outline.md |
-| `/codeck-design` | Role activation → design-dna isomorphic mapping → single HTML output | {title}-r{n}.html |
-| `/codeck-review` | Inverse role (audience most likely to struggle) → six-dimension review → direct HTML fixes | (improves HTML) |
-| `/codeck-export` | HTML → PDF / PPTX | PDF, PPTX |
-| `/codeck-speech` | Role activation → verbatim script + stage directions + time budget | speech.md |
-
-## Architecture
+## How it works
 
 ```
-Materials
-  ↓
-Content diagnosis (domain · expression challenge · audience starting point) → dynamic role selection
-  ↓
-outline.md (narrative structure + user intent)
-  ↓
-Single HTML file (CSS design system + JS slide engine + free HTML per slide)
-  ↓
-PDF / PPTX / Speech script
+/codeck          scan materials, diagnose content, recommend roles
+    ↓
+/codeck-outline  editor structures the narrative, smiths every title
+    ↓
+/codeck-design   designer finds visual form that mirrors your argument's shape
+    ↓
+/codeck-review   your toughest listener reviews every slide, fixes directly
+    ↓
+/codeck-export   PDF / PPTX
+/codeck-speech   verbatim script with stage directions
 ```
 
-Core ideas:
-- **Skills define flow and format; knowledge comes from dynamically selected "people"** — role names activate vast knowledge networks in AI parameters
-- **No schema ceiling** — no block type vocabulary, free HTML per slide, AI can invent any visual expression
-- **design-dna** — finds isomorphic mappings from content's formal structure (inspired by Hofstadter's GEB), so visuals and content resonate at the structural level
+## Three ideas
+
+**Roles, not rules.** Instead of hard-coded design guidelines, codeck selects real people — thinkers, designers, editors — whose *way of thinking* matches your content's challenge. Say your argument needs to make the invisible feel obvious: codeck might bring in Feynman. Not because the topic is physics, but because that's what Feynman *does*. The name activates the AI's knowledge of how that person works.
+
+**Isomorphic mapping.** Before designing, codeck analyzes the *formal structure* of your content — its tension curve, information density, emotional arc. Then it finds a structural match from another domain: a piece of music, a painting style, an architectural principle. Your slides don't just *contain* your argument — they *look like* it. (Inspired by Hofstadter's *GEB*.)
+
+**No schema ceiling.** Most slide tools give you a vocabulary of block types — title, bullets, image, quote. codeck gives the AI free HTML. If your content needs a visual form that doesn't have a name yet, the AI can invent it.
 
 ## Install
 
-Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code) + Node.js 18+.
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code) + Node.js 18+.
 
 ```bash
 npx skills add hiyeshu/codeck
 ```
 
-Type `/codeck` inside Claude Code to get started.
-
-## Layout
-
-```
-~/.claude/skills/
-├── codeck/          entry dashboard + content diagnosis
-├── codeck-outline/  outline skill + self-review checklist
-├── codeck-design/   design skill + design-dna references
-├── codeck-review/   review skill
-├── codeck-export/   export skill + PDF/PPTX toolchain
-└── codeck-speech/   speech skill
-```
-
-Project artifacts live under `~/.codeck/projects/{slug}/`.
+Type `/codeck` to start.
 
 ## License
 
