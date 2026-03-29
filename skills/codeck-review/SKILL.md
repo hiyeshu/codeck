@@ -149,42 +149,46 @@ bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
 
 **上限：** 最多 3 轮修复。第 3 轮后进入终审。
 
-## 终审 + 报告
+## 置信度判定
 
-写 `$DECK_DIR/review.md`：
+所有修复做完后，回答一个问题：**这份 deck 现在能上台吗？**
+
+四个信号：
+
+| 信号 | 问题 | 判定 |
+|------|------|------|
+| 叙事 | 讲清楚了吗？ | yes / weak: {哪页} |
+| 视觉 | 视觉稳了吗？ | yes / weak: {哪页} |
+| 风险 | 还有高风险页吗？ | none / {页码}: {风险} |
+| 上台 | 能直接去讲吗？ | ready / almost / not yet |
+
+**判定标准：**
+- **ready** — 四个信号全 yes/none，直接上台
+- **almost** — 有 weak 但不致命，用户自己决定
+- **not yet** — 有高风险页或叙事断裂，建议再改
+
+## 写出 review.md
+
+`$DECK_DIR/review.md` 不是报告，是置信卡：
 
 ```markdown
-# Review: {主题}
+# {ready / almost / not yet}
 
-## 评分
+叙事: {yes / weak: 第N页，原因}
+视觉: {yes / weak: 第N页，原因}
+风险: {none / 第N页: 风险描述}
 
-| 维度 | 分数 | 问题数 | 已修复 |
-|------|------|--------|--------|
-| 叙事流 | /10 | | |
-| 内容完整性 | /10 | | |
-| AI 废话 | A-F | | |
-| 视觉层级 | /10 | | |
-| 跨页一致性 | /10 | | |
-| 交互完整性 | /10 | | |
-
-## 修复记录
-
-- [{维度}] {问题}: {修复} (改了 {custom.css/slides.html})
-
-## 修改的文件
-
-- custom.css: {修改摘要}（如有）
-- slides.html: {修改摘要}（如有）
-- 重新拼装: {次数}
+修复: {N}处 ({custom.css M处, slides.html K处})
 ```
+
+就这些。用户扫一眼就知道能不能上台。
 
 ## 完成
 
 > codeck review 完成。
 >
-> {一句话总结——基于六维评分。}
+> **{ready / almost / not yet}** — {一句话，回答"能上台吗"}
 >
-> 产出：`$DECK_DIR/review.md`
 > 下一步：`/codeck-export` 或 `/codeck-speech`
 
 显示 dashboard：
