@@ -41,6 +41,8 @@ Read `$DECK_DIR/diagnosis.md` if it exists.
 
 ## Step 1: Scan materials
 
+Scan the **current directory** (the user's project), not DECK_DIR.
+
 ```bash
 EXCLUDE='! -path "./node_modules/*" ! -path "./.git/*" ! -path "./.claude/*" ! -path "./dist/*" ! -path "./build/*" ! -name "deck.*" ! -name "CLAUDE.md" ! -name "TODOS.md" ! -name "README.md" ! -name "DESIGN.md" ! -name "*.test.*" ! -name "*.spec.*" ! -name "*.config.*"'
 

@@ -30,6 +30,13 @@ Only state verified facts. Unexecuted actions use "will / plan to".
 
 ---
 
+## Two directories
+
+- **Current directory (`.`)** — the user's project. Materials live here.
+- **`$DECK_DIR`** — codeck's output directory. Only codeck artifacts go here (diagnosis.md, outline.md, HTML, etc.).
+
+Scan materials in `.`. Write outputs to `$DECK_DIR`. Never confuse the two.
+
 ## Phase 1: Init + status
 
 ```bash
@@ -40,6 +47,8 @@ bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
 ## Phase 2: Material scan
+
+Scan the **current directory** (the user's project), not DECK_DIR.
 
 ```bash
 EXCLUDE='! -path "./node_modules/*" ! -path "./.git/*" ! -path "./.claude/*" ! -path "./dist/*" ! -path "./build/*" ! -name "CLAUDE.md" ! -name "TODOS.md" ! -name "README.md" ! -name "DESIGN.md" ! -name "*.test.*" ! -name "*.spec.*" ! -name "*.config.*"'
