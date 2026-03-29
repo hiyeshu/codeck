@@ -226,13 +226,6 @@ Level: inline / poster / extract. No assets → write "none".
 > {1-2 sentences: narrative intent and structural highlights}
 ```
 
-> codeck outline done.
->
-> {one-line quality assessment}
->
-> Output: `$DECK_DIR/outline.md`
-> Next: `/codeck-design`
-
 ## Self-review
 
 Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, check outline.md.
@@ -240,7 +233,15 @@ Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, check outlin
 - Pass 1: structural issues → auto-fix
 - Pass 2: content quality → auto-fix mechanical issues, ask for judgment calls
 
-Show dashboard:
+## Done
+
+> codeck outline done.
+>
+> {one-line quality assessment}
+>
+> Output: `$DECK_DIR/outline.md`
+> Next: `/codeck-design` to generate slides.
+
 ```bash
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```

@@ -134,7 +134,9 @@ totalEstimate: "{estimate}"
 > {one line — readiness assessment}
 >
 > Output: `$DECK_DIR/speech.md` + HTML data-notes updated
-> Press P for speaker mode to see the script
+> Press P in the deck for speaker mode to see the script.
+>
+> All done. Need to export? `/codeck-export`. Check progress anytime with `/codeck`.
 
 ```bash
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"

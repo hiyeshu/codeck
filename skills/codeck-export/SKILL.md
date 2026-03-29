@@ -126,7 +126,7 @@ At least one fix-verify cycle before declaring done.
 
 > Export done. Output: `{baseName}.pdf` / `{baseName}.pptx`
 >
-> Next: `/codeck-speech`
+> Need a speech script? `/codeck-speech`. Otherwise you're done — run `/codeck` anytime for an overview.
 
 ```bash
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
