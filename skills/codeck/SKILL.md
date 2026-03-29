@@ -140,6 +140,51 @@ Skip diagnosis if no materials — let user provide topic directly in each stage
 
 ---
 
+## State outputs
+
+Define what the user sees in each pipeline state. These are the exact outputs — not summaries.
+
+### Empty state (no materials found)
+
+When Phase 2 finds zero files:
+
+```
+No materials found in this directory.
+
+That's fine — you can start from a topic directly.
+
+What's the presentation about? One sentence is enough.
+(Or drop some files here and run /codeck again.)
+```
+
+Warm, not clinical. One primary action. No error language.
+
+### Error state (assemble.sh fails)
+
+When assemble.sh exits non-zero:
+
+```
+Assembly failed: {error message}
+
+Check that custom.css and slides.html exist in {DECK_DIR}.
+Run /codeck-design to regenerate them.
+```
+
+Name the exact file missing. Give the exact command to fix it.
+
+### Stale state (upstream changed, downstream not rebuilt)
+
+When status.sh detects staleness:
+
+```
+⚠ {stage} is stale — {upstream file} changed after {downstream file} was built.
+Run /{next-skill} to rebuild.
+```
+
+One line. Name the files. Give the command.
+
+---
+
 ## Phase 4: Results
 
 status.sh already outputs the dashboard. Below it, add:

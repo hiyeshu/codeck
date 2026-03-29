@@ -109,6 +109,21 @@ Every field must be populated — no empty strings. Use `"none"` or `false` for 
 
 Write to `$DECK_DIR/design-dna.json`.
 
+**Anti-slop rules — hard prohibitions for custom.css:**
+
+These patterns make every deck look AI-generated. Never use them:
+
+1. **No default font stacks.** `system-ui`, `Inter`, `Roboto`, `Arial` are banned. Pick a specific font that matches the content's character — or use a system serif/monospace with intention.
+2. **No purple/violet/indigo gradients.** The most recognizable AI color scheme. If the content calls for cool tones, use a specific hue with a reason.
+3. **No symmetric 3-column card grids.** Icon-in-circle + bold title + 2-line description, repeated 3×. If you need to show three things, find a layout that reflects the content's structure.
+4. **No centered everything.** `text-align: center` on all headings and body text reads as template, not design.
+5. **No uniform border-radius.** Same large radius on every element (buttons, cards, images) signals no visual hierarchy.
+6. **No decorative blobs or wavy SVG dividers.** If a slide feels empty, it needs better content, not decoration.
+7. **No colored left-border cards.** `border-left: 3px solid <accent>` is a SaaS template pattern.
+8. **No generic hero copy patterns.** "Welcome to X", "Unlock the power of...", "Your all-in-one solution" — these are copy failures, not design failures, but flag them in the review.
+
+The isomorphic mapping gives you the *why* for every visual choice. If you can't trace a CSS decision back to the content's structure, cut it.
+
 ## Style reveal
 
 Show the user three things: (1) their content's formal structure, (2) the isomorphic match and why it's structural not decorative, (3) concrete visual consequences.

@@ -124,8 +124,22 @@ At least one fix-verify cycle before declaring done.
 
 ## Step 5: Done
 
-> Export done. Output: `{baseName}.pdf` / `{baseName}.pptx`
+For HTML output:
+
+> Your deck is ready: `{baseName}.html`
 >
+> Open it in any browser. Press **F** for fullscreen, **arrow keys** to navigate, **O** for slide overview, **S** for speaker notes.
+>
+> To share: send the file directly — it's self-contained, no server needed.
+
+For PDF/PPTX output:
+
+> Export done: `{baseName}.pdf` / `{baseName}.pptx`
+>
+> To share: attach to email or upload to Drive/Notion.
+
+Then:
+
 > Need a speech script? `/codeck-speech`. Otherwise you're done — run `/codeck` anytime for an overview.
 
 ```bash
