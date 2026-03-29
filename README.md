@@ -46,6 +46,42 @@ npx skills add hiyeshu/codeck
 
 Type `/codeck` to start.
 
+## The HTML file
+
+The output is a self-contained HTML file. Open it in any browser. No server, no build tools.
+
+### Keyboard shortcuts
+
+| Key | Action |
+|-----|--------|
+| `→` `↓` `Space` `Enter` | Next step (fragment or slide) |
+| `←` `↑` `Backspace` | Previous step |
+| `Esc` | Toggle overview grid |
+| `F` | Toggle fullscreen |
+| `P` | Open presenter mode |
+
+Touch: swipe left/right to navigate. A floating toolbar appears at the bottom on hover (desktop) or always visible (mobile).
+
+### Presenter mode
+
+Press `P` to open a presenter window with:
+
+- **Current slide** — large preview at your current fragment step
+- **Next preview** — shows what comes next (next fragment or next slide)
+- **Speaker notes** — scrollable, with zoom controls (`+` / `-`)
+- **Timer** — auto-starts on first navigation, click to pause, double-click to reset
+- **Theme toggle** — switches light/dark for all UI chrome (toolbar, overview, presenter panel)
+
+The presenter window syncs with the main window via BroadcastChannel. Navigate from either side.
+
+### Overview mode
+
+Press `Esc` to see all slides as a grid. Click any thumbnail to jump. Works in both slide view and presenter mode.
+
+### Print / Export
+
+Add `?print` to the URL to enter print layout (1280x720 per slide, all fragments visible). Use the browser's print dialog to export as PDF.
+
 ## Acknowledgments
 
 The slide engine's navigation UI is inspired by [Slidev](https://github.com/slidevjs/slidev).
