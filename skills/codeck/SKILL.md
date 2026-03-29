@@ -137,4 +137,14 @@ Don't redraw the table.
 ## Phase 5: Handoff
 
 All outputs go to `$DECK_DIR/`. Next skill reads upstream outputs.
+
+status.sh prints a NEXT recommendation. Use it:
+
+| NEXT | Suggest |
+|------|---------|
+| `/codeck-outline` | "Materials scanned. Next: `/codeck-outline` to plan the structure." |
+| `/codeck-design` | "Outline ready. Next: `/codeck-design` to generate slides." |
+| `/codeck-review` | "Slides generated. Next: `/codeck-review` to inspect and fix." |
+| `/codeck-export` or `/codeck-speech` | "Review done. Next: `/codeck-export` for PDF/PPTX, or `/codeck-speech` for a script." |
+
 User can run `/codeck` anytime to see progress.
