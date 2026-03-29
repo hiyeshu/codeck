@@ -4,7 +4,7 @@
 
 **폴더를 프레젠테이션으로. 대화만으로.**
 
-[English](README.md) | [中文](README.zh.md) | [日本語](README.ja.md) | 한국어
+[Demo](https://codeck.sh/codeck-intro) | [English](README.md) | [中文](README.zh.md) | [日本語](README.ja.md) | 한국어
 
 </div>
 
