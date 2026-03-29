@@ -147,7 +147,11 @@ Remaining risk: {none / slide N: risk}
 
 ## Done
 
+Highlight the single most impactful fix — the one that changed the most about how the deck feels:
+
 > codeck review done. Fixed {N} issues.
+>
+> Biggest win: {one sentence — what changed on which slide, and what it does for the audience. e.g., "Slide 5 had three competing text blocks. Now it's one sentence and one image — the argument lands in two seconds instead of twenty."}
 >
 > {one line — can this go on stage? Any remaining risks?}
 >

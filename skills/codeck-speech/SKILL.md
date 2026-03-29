@@ -129,7 +129,11 @@ totalEstimate: "{estimate}"
 
 ## Done
 
+Point to the single strongest moment in the script — the line or pause that will land hardest:
+
 > codeck speech done.
+>
+> Strongest moment: {slide N — what happens and why it works. e.g., "Slide 4, the three-second pause after the question. That silence is where the audience decides you're worth listening to."}
 >
 > {one line — readiness assessment}
 >

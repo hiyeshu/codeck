@@ -235,7 +235,11 @@ Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, check outlin
 
 ## Done
 
+Show the single sharpest title transformation — the one where the before/after gap is biggest:
+
 > codeck outline done.
+>
+> Best title move: "{before}" → "{after}"
 >
 > {one-line quality assessment}
 >
