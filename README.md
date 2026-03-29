@@ -4,7 +4,9 @@
 
 **Turn a folder into a presentation, by talking.**
 
-[Demo](https://codeck.sh/codeck-intro) | English | [中文](README.zh.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
+[Live demo →](https://codeck.sh/codeck-intro)
+
+English | [中文](README.zh.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
 </div>
 

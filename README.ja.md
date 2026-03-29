@@ -4,7 +4,9 @@
 
 **フォルダをプレゼンに変える。会話だけで。**
 
-[Demo](https://codeck.sh/codeck-intro) | [English](README.md) | [中文](README.zh.md) | 日本語 | [한국어](README.ko.md)
+[Live demo →](https://codeck.sh/codeck-intro)
+
+[English](README.md) | [中文](README.zh.md) | 日本語 | [한국어](README.ko.md)
 
 </div>
 
