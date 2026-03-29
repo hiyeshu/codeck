@@ -41,7 +41,7 @@ skill 文件安装在 `~/.claude/skills/codeck*/`，项目产物在 `~/.codeck/p
 - `outline.md` — 大纲 + 用户意图
 - `{title}-r{n}.html` — 设计产出（修订版本号递增）
 - `design-notes.md` — 设计过程 + design-dna 同构映射
-- `review.md` — 审稿记录
+
 - `speech.md` — 演讲稿
 
 ## design-dna

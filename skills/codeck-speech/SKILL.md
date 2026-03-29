@@ -41,7 +41,7 @@ bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 读取源文件：
 - **HTML 文件**（最新的 `*-r*.html`）— 这是实际的幻灯片内容。读取每个 `<section class="slide">` 的文字内容。
 - **outline.md** — 大纲结构、叙事弧、用户意图
-- **review.md** — 审稿人的反馈
+
 - **design-notes.md** — 设计师的视觉意图（演讲稿节奏应匹配视觉节奏）
 
 如果没有 HTML 文件也没有 outline.md，提示先跑 `/codeck-design` 或 `/codeck-outline`。

@@ -1,11 +1,12 @@
 ---
 name: codeck-review
-version: 2.0.0
+version: 2.1.0
 description: |
   Reviewer role. Opens rendered HTML, inspects every slide visually,
   fixes problems in custom.css or slides.html and re-assembles.
-  Outputs $DECK_DIR/review.md. Use whenever the user says "审查", "检查",
-  "review", "QA", or wants feedback on a rendered deck.
+  No separate output file — the improved HTML IS the output.
+  Use whenever the user says "审查", "检查", "review", "QA",
+  or wants feedback on a rendered deck.
 ---
 
 # codeck review — 审稿
@@ -149,45 +150,24 @@ bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
 
 **上限：** 最多 3 轮修复。第 3 轮后进入终审。
 
-## 置信度判定
+## 决策摘要
 
-所有修复做完后，回答一个问题：**这份 deck 现在能上台吗？**
-
-四个信号：
-
-| 信号 | 问题 | 判定 |
-|------|------|------|
-| 叙事 | 讲清楚了吗？ | yes / weak: {哪页} |
-| 视觉 | 视觉稳了吗？ | yes / weak: {哪页} |
-| 风险 | 还有高风险页吗？ | none / {页码}: {风险} |
-| 上台 | 能直接去讲吗？ | ready / almost / not yet |
-
-**判定标准：**
-- **ready** — 四个信号全 yes/none，直接上台
-- **almost** — 有 weak 但不致命，用户自己决定
-- **not yet** — 有高风险页或叙事断裂，建议再改
-
-## 写出 review.md
-
-`$DECK_DIR/review.md` 不是报告，是置信卡：
+修复完成后，在 `$DECK_DIR/design-notes.md` 末尾追加审稿摘要：
 
 ```markdown
-# {ready / almost / not yet}
+## 审稿 — {ISO date}
 
-叙事: {yes / weak: 第N页，原因}
-视觉: {yes / weak: 第N页，原因}
-风险: {none / 第N页: 风险描述}
-
-修复: {N}处 ({custom.css M处, slides.html K处})
+修复 {N} 处。{一句话：改了什么、为什么}
+剩余风险: {none / 第N页: 风险}
 ```
 
-就这些。用户扫一眼就知道能不能上台。
+不写 review.md。改过的 HTML 就是 review 的产出。
 
 ## 完成
 
-> codeck review 完成。
+> codeck review 完成。修复 {N} 处。
 >
-> **{ready / almost / not yet}** — {一句话，回答"能上台吗"}
+> {一句话——能上台吗，还有什么风险}
 >
 > 下一步：`/codeck-export` 或 `/codeck-speech`
 
