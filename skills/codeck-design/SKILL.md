@@ -101,17 +101,27 @@ Write to `$DECK_DIR/design-dna.json` with the Write tool.
 - `visual_effects` via CSS only — no external libraries (engine handles interaction, AI handles visuals)
 - Unused fields: `"none"` or `false`
 
-## Style confirmation
+## Style reveal
 
-Based on design-dna.json, describe the visual direction to the user:
+This is the moment the user sees their content reflected back as form. Don't just describe a color palette — show them the shape of their own argument.
 
-> codeck design, style direction.
+Three beats:
+
+1. **Your content's shape** — the formal structure you extracted, in plain language. ("Your argument starts scattered — four separate threads — then weaves them together until the final slide where they're one thing.")
+
+2. **The match** — what this reminds you of, and why the match is structural, not decorative. ("This is the structure of a fugue. Separate voices entering one by one, each transforming the theme, converging at the end. I'm thinking of Glenn Gould's Goldberg Variations.")
+
+3. **What you'll see** — translate to concrete visual consequences. ("Early slides: each thread gets its own visual lane, sparse, isolated. Middle slides: lanes start overlapping, colors blending. Final slide: one unified composition, all threads visible in a single frame.")
+
+> codeck design — here's what I see in your content.
 >
-> {Describe the visual direction in your role's voice, citing the isomorphic mapping}
+> {Beat 1: content shape}
 >
-> Example: "This content moves from confusion to clarity — like developing in fog. I'll use low contrast and blurred backgrounds early, then progressively increase contrast as the argument builds. Final page: clean."
+> {Beat 2: the match}
+>
+> {Beat 3: visual consequences}
 
-- A) Go with this direction (recommended)
+- A) Go with this (recommended)
 - B) I have a different idea
 - C) Show me a few directions to choose from
 

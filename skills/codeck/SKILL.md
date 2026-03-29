@@ -128,9 +128,20 @@ status.sh already outputs the dashboard. Below it, add:
 
 1. **Materials** — file types and counts from Phase 2
 2. **STALE** — one-line explanation if any stage is stale
-3. **Diagnosis** — three signals and recommended roles if Phase 3 ran
 
 Don't redraw the table.
+
+### Role reveal (if Phase 3 ran)
+
+This is the first moment the user sees the system *think*. Don't dump three role names — tell a story in three beats:
+
+1. **What your content is really about** — the core tension, in one sentence. Not the topic, the underlying struggle. ("Your material isn't about microservices — it's about convincing a team to accept short-term pain for long-term sanity.")
+
+2. **Who I'm bringing in, and why** — the derivation, not just the name. Connect the person's *way of thinking* to the content's tension. ("For the outline, I'm thinking of Feynman — not because this is physics, but because your argument needs to make the invisible feel obvious. He did that better than anyone.")
+
+3. **What this changes** — one concrete consequence. ("This means the outline won't start with background. It'll start with the one thing your audience already knows is broken.")
+
+Keep it short. Three paragraphs, not three pages. The point is: the user should feel their content was *seen*, not just processed.
 
 ---
 
