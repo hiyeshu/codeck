@@ -24,10 +24,5 @@ Downstream: Claude skill runtime
 
 ## Changelog
 
-- 2026-03-29: v2.2.0 All skills rewritten in English. Cut fluff and redundant parenthetical explanations.
-- 2026-03-29: v2.1.3 Remove review.md. Review output is the improved HTML. Decision summary appends to design-notes.md. status.sh drops review tracking.
-- 2026-03-28: v2.1.2 Remove intent.md. User intent merged into outline.md. Forward-only information flow: diagnosis → outline → HTML → review → export/speech.
-- 2026-03-28: v2.1.1 Shared status.sh. All skills use one script for dashboard (file detection + timestamp staleness + NEXT). Remove scan.json, material summary in diagnosis.md. engine.css adds clamp responsive system + fragment animation types (scale/blur/slide). Generation guide adds anti-pattern blacklist.
-- 2026-03-28: v2.1 Engine separation. Fixed engine.js/engine.css (navigation, fragments, overview, speaker mode), AI writes custom.css + slides.html only, assemble.sh combines. Speaker mode (BroadcastChannel sync), data-notes speaker notes, speech writeback.
-- 2026-03-28: v2.0 Architecture rewrite. Remove deck.json/design.json/compiler three-layer architecture, AI generates single HTML directly. Content diagnosis with three signals, dynamic role selection, design-dna isomorphic mapping, inverse review role.
+- 2026-03-29: v2 rewrite. Single HTML architecture (fixed engine + AI-written custom.css/slides.html). Content diagnosis with three signals, role selection derived from problem nature, design-dna isomorphic mapping, inverse review role. Forward-only flow: diagnosis → outline → HTML → review → export/speech. All skills in English.
 - 2026-03-24: Repository directory renamed from `skill/` to `skills/`.
