@@ -47,7 +47,6 @@ Key artifacts:
 
 ```
 codeck/
-├── setup              # Install script (symlinks skills → ~/.claude/skills/)
 ├── CLAUDE.md
 ├── skills/
 │   ├── CLAUDE.md      # Member list + changelog
