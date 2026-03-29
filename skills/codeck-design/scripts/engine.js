@@ -180,7 +180,8 @@
         var label = document.createElement('div');
         label.className = 'ov-label';
         var h = s.querySelector('h1, h2');
-        label.textContent = h ? h.textContent.trim() : '';
+        var title = h ? h.textContent.trim() : '';
+        label.textContent = (i + 1) + (title ? '. ' + title : '');
         cell.appendChild(label);
         grid.appendChild(cell);
       });
