@@ -4,7 +4,6 @@ version: 2.1.0
 description: |
   Reviewer role. Opens rendered HTML, inspects every slide visually,
   fixes problems in custom.css or slides.html and re-assembles.
-  No separate output file — the improved HTML IS the output.
   Use whenever the user says "审查", "检查", "review", "QA",
   or wants feedback on a rendered deck.
 ---
@@ -160,8 +159,6 @@ bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
 修复 {N} 处。{一句话：改了什么、为什么}
 剩余风险: {none / 第N页: 风险}
 ```
-
-不写 review.md。改过的 HTML 就是 review 的产出。
 
 ## 完成
 

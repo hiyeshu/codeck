@@ -8,7 +8,7 @@ codeck-design/SKILL.md: 设计角色，角色激活 → design-dna 同构映射 
 codeck-design/references/: 三维设计档案规格（design-dna-schema.md 字段定义 + design-dna-guide.md 映射规则 + checklist.md 设计自审清单）。
 codeck/scripts/status.sh: 共用状态检测。文件检测 + 时间戳偏差 + NEXT 推荐，所有 skill 入口和出口调用。
 codeck-design/scripts/: 固定翻页引擎（engine.js + engine.css + assemble.sh）。导航、fragment（4 种入场）、overview、演讲者模式、clamp 响应系统。
-codeck-review/SKILL.md: 审稿角色（反向选择：最可能翻车的听众），六维审查 + 直接改 HTML。无独立产出文件，决策摘要追加到 design-notes.md。
+codeck-review/SKILL.md: 审稿角色（反向选择：最可能翻车的听众），六维审查 + 直接改 HTML，决策摘要追加到 design-notes.md。
 codeck-export/SKILL.md: 导出角色，HTML 为单一真相源，PDF（Playwright）/ PPTX 导出 + QA。
 codeck-export/pptx/: PPTX 工具库（PptxGenJS、thumbnail.py、soffice.py）。
 codeck-export/pdf/: PDF 工具库（pypdf/reportlab 参考、表单填写）。
