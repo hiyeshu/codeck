@@ -134,6 +134,18 @@ Fast mode: skip Q1.5.
 - B) English
 - C) Mixed
 
+## Research to fill gaps
+
+If the materials are thin, the topic is unfamiliar, or key claims lack supporting evidence, **search the web** to strengthen the outline. Don't fabricate data — find it.
+
+When to search:
+- User mentions statistics or trends without providing source → find the real numbers
+- Material references a product, paper, or event you haven't seen → look it up
+- You need a concrete example to ground an abstract point → find one
+- The audience is specialized and you need to verify terminology or conventions
+
+Integrate findings naturally into the outline. Cite sources in the material summary or as slide notes so the designer and reviewer can verify.
+
 ## Step 4: Narrative structure
 
 ### Story arc templates

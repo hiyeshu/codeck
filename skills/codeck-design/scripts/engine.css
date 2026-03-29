@@ -182,9 +182,6 @@ html, body {
 #app.overview #slide-toolbar { display: none; }
 
 #ov-grid {
-  --ov-bg: #1a1a1a;
-  --ov-label-color: rgba(255,255,255,0.5);
-
   position: absolute; inset: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -193,7 +190,7 @@ html, body {
   overflow-y: auto;
   align-content: start;
   z-index: 250; /* above presenter-grid (200) */
-  background: var(--ov-bg);
+  background: var(--ov-bg, #1a1a1a);
 }
 .ov-cell {
   display: flex;
@@ -223,7 +220,7 @@ html, body {
   padding: 4px 8px;
   font-size: 11px;
   line-height: 1.3;
-  color: var(--ov-label-color);
+  color: var(--ov-label-color, rgba(255,255,255,0.5));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

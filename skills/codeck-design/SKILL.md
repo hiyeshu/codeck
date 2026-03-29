@@ -66,6 +66,15 @@ Read the "note to designer" at the end of outline.md. Write 1-2 sentences in you
 
 If the user provides visual references — URLs, screenshots, design specs, other presentations — extract design signals before proceeding to isomorphic mapping.
 
+### Proactive browsing
+
+When the user mentions a brand, product, or style by name without providing a URL, **browse their website yourself** to extract design signals. Don't ask the user to send a screenshot — go look.
+
+Examples:
+- "像 Linear 那样的风格" → browse linear.app, extract design signals
+- "参考 Stripe 的文档" → browse stripe.com/docs, extract signals
+- "Apple Keynote 的感觉" → browse apple.com recent event pages
+
 ### What to extract
 
 From each reference, identify:
