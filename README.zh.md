@@ -78,10 +78,6 @@ npx skills add hiyeshu/codeck
 
 按 `Esc` 显示全部页面的缩略图网格，点击跳转。
 
-### 打印 / 导出
-
-URL 加 `?print` 进入打印布局（1280x720 每页，所有片段可见），用浏览器打印对话框导出 PDF。
-
 ## License
 
 Apache-2.0

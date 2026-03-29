@@ -78,10 +78,6 @@ npx skills add hiyeshu/codeck
 
 `Esc`를 누르면 모든 슬라이드의 썸네일 그리드 표시. 클릭으로 이동.
 
-### 인쇄 / 내보내기
-
-URL에 `?print`를 추가하면 인쇄 레이아웃 (슬라이드당 1280x720, 모든 프래그먼트 표시). 브라우저 인쇄 대화상자로 PDF 내보내기.
-
 ## License
 
 Apache-2.0

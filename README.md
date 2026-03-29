@@ -78,10 +78,6 @@ The presenter window syncs with the main window via BroadcastChannel. Navigate f
 
 Press `Esc` to see all slides as a grid. Click any thumbnail to jump. Works in both slide view and presenter mode.
 
-### Print / Export
-
-Add `?print` to the URL to enter print layout (1280x720 per slide, all fragments visible). Use the browser's print dialog to export as PDF.
-
 ## Acknowledgments
 
 The slide engine's navigation UI is inspired by [Slidev](https://github.com/slidevjs/slidev).
