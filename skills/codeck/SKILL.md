@@ -107,31 +107,15 @@ echo "=== MEDIA ===" && eval find . -maxdepth 4 -type f \( -name "*.mp4" -o -nam
 
 ---
 
-## Phase 4: Dashboard
+## Phase 4: 结果展示
 
-根据 status.sh 的输出格式化 dashboard：
+Phase 1 的 status.sh 已输出 dashboard。在 dashboard 下方补充：
 
-```
-+======================================================+
-|              codeck · {标题 or "new deck"}             |
-+======================================================+
-| Stage              | Status    | Output              |
-|--------------------|-----------|----------------------|
-| /codeck-outline    | {status}  | outline.md           |
-| /codeck-design     | {status}  | {title}-r{N}.html    |
-| /codeck-review     | {status}  | review.md            |
-| /codeck-export     | {status}  | .pdf / .pptx         |
-| /codeck-speech     | {status}  | speech.md            |
-+------------------------------------------------------+
-| 素材: {动态列出扫到的类型和数量}                          |
-+------------------------------------------------------+
-| NEXT: /codeck {next} — {reason}                       |
-+======================================================+
-```
+1. **素材摘要** — Phase 2 扫到的文件类型和数量（如"3 个 .md, 2 张图片, 1 个 .csv"）
+2. **STALE 说明** — 如果有偏差阶段，用一句话解释原因
+3. **诊断摘要** — 如果刚做了 Phase 3 诊断，列出三信号和推荐角色
 
-Status 标记：`done` / `STALE` / `ready` / `---`
-
-如果有 STALE 阶段，在 dashboard 下方主动说明偏差原因。
+不要重新画表。status.sh 的输出就是 dashboard。
 
 ---
 
