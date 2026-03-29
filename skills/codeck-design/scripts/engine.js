@@ -419,7 +419,7 @@
       else if (a === 'fullscreen') toggleFullscreen();
       else if (a === 'zoom-in') zoomNotes(2);
       else if (a === 'zoom-out') zoomNotes(-2);
-      else if (a === 'theme') togglePresenterTheme(grid);
+      else if (a === 'theme') togglePresenterTheme();
     });
 
     /* Timer: click = pause/resume, double-click = reset */
@@ -443,10 +443,13 @@
       if (fsBtn) fsBtn.innerHTML = document.fullscreenElement ? ICON.exitfs : ICON.fullscreen;
     });
 
-    /* Set initial theme icon based on system preference */
-    var preferLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    /* Set initial theme icon: respect existing data-ui-theme or system preference */
     var themeBtn = document.getElementById('pv-theme-btn');
-    if (themeBtn && preferLight) themeBtn.innerHTML = ICON.moon;
+    if (themeBtn) {
+      var uiTheme = document.documentElement.getAttribute('data-ui-theme');
+      var isLight = uiTheme ? uiTheme === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches;
+      themeBtn.innerHTML = isLight ? ICON.moon : ICON.sun;
+    }
 
     sync({ t: 'sync?' });
   }
@@ -470,12 +473,16 @@
     if (el) el.style.fontSize = notesFontSize + 'px';
   }
 
-  function togglePresenterTheme(grid) {
-    var isLight = grid.classList.contains('pv-light');
-    grid.classList.toggle('pv-light', !isLight);
-    grid.classList.toggle('pv-dark', isLight);
+  function togglePresenterTheme() {
+    var html = document.documentElement;
+    var current = html.getAttribute('data-ui-theme');
+    var next;
+    if (current === 'light') next = 'dark';
+    else if (current === 'dark') next = 'light';
+    else next = window.matchMedia('(prefers-color-scheme: light)').matches ? 'dark' : 'light';
+    html.setAttribute('data-ui-theme', next);
     var btn = document.getElementById('pv-theme-btn');
-    if (btn) btn.innerHTML = isLight ? ICON.sun : ICON.moon;
+    if (btn) btn.innerHTML = next === 'light' ? ICON.moon : ICON.sun;
   }
 
   function updatePresenter() {

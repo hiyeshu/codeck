@@ -523,6 +523,64 @@ html, body {
   --pv-tip-bg: rgba(0,0,0,0.75);
 }
 
+/* ═══════════════════════════════════════
+   Manual UI theme override (single source of truth)
+   html[data-ui-theme] overrides prefers-color-scheme
+   ═══════════════════════════════════════ */
+/* ─── Force light UI ─── */
+[data-ui-theme="light"] #slide-toolbar {
+  --tb-bg: rgba(255,255,255,0.7);
+  --tb-color: rgba(0,0,0,0.55);
+  --tb-hover: #111;
+  --tb-hover-bg: rgba(0,0,0,0.08);
+  --tb-dim: rgba(0,0,0,0.45);
+  --tb-tip-bg: rgba(0,0,0,0.75);
+  --tb-tip-color: #fff;
+}
+[data-ui-theme="light"] .progress-seg { --prog-track: rgba(0,0,0,0.1); }
+[data-ui-theme="light"] .ov-cell { --ov-border: rgba(0,0,0,0.12); }
+[data-ui-theme="light"] #ov-grid { --ov-bg: #f0f0f0; --ov-label-color: rgba(0,0,0,0.5); }
+[data-ui-theme="light"] .presenter-grid:not(.pv-dark) {
+  --pv-bg: #f0f0f0;
+  --pv-surface: #fff;
+  --pv-text: #333;
+  --pv-text-dim: rgba(0,0,0,0.45);
+  --pv-text-muted: rgba(0,0,0,0.5);
+  --pv-border: rgba(0,0,0,0.1);
+  --pv-btn-bg: rgba(0,0,0,0.05);
+  --pv-btn-hover: rgba(0,0,0,0.1);
+  --pv-btn-color: rgba(0,0,0,0.5);
+  --pv-btn-active: #111;
+  --pv-tip-bg: rgba(0,0,0,0.75);
+}
+
+/* ─── Force dark UI (overrides system light preference) ─── */
+[data-ui-theme="dark"] #slide-toolbar {
+  --tb-bg: rgba(0,0,0,0.5);
+  --tb-color: rgba(255,255,255,0.7);
+  --tb-hover: #fff;
+  --tb-hover-bg: rgba(255,255,255,0.1);
+  --tb-dim: rgba(255,255,255,0.6);
+  --tb-tip-bg: rgba(0,0,0,0.85);
+  --tb-tip-color: #fff;
+}
+[data-ui-theme="dark"] .progress-seg { --prog-track: rgba(255,255,255,0.1); }
+[data-ui-theme="dark"] .ov-cell { --ov-border: rgba(255,255,255,0.1); }
+[data-ui-theme="dark"] #ov-grid { --ov-bg: #1a1a1a; --ov-label-color: rgba(255,255,255,0.5); }
+[data-ui-theme="dark"] .presenter-grid {
+  --pv-bg: #1a1a1a;
+  --pv-surface: #222;
+  --pv-text: #ccc;
+  --pv-text-dim: rgba(255,255,255,0.5);
+  --pv-text-muted: rgba(255,255,255,0.6);
+  --pv-border: rgba(255,255,255,0.08);
+  --pv-btn-bg: rgba(255,255,255,0.06);
+  --pv-btn-hover: rgba(255,255,255,0.12);
+  --pv-btn-color: rgba(255,255,255,0.6);
+  --pv-btn-active: #fff;
+  --pv-tip-bg: rgba(0,0,0,0.85);
+}
+
 /* ─── Responsive breakpoints ─── */
 @media (max-height: 700px) {
   :root {
