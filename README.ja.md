@@ -38,7 +38,7 @@ codeck はファイルを読み、あなたのコンテンツが*本当は何を
 
 ## インストール
 
-[Claude Code](https://docs.anthropic.com/en/docs/claude-code) が必要。
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code)、[Cursor](https://cursor.com)、[Codex](https://openai.com/codex)、[その他 40 以上のエージェント](https://skills.sh)に対応。
 
 ```bash
 npx skills add hiyeshu/codeck

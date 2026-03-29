@@ -38,7 +38,7 @@ The result is a single HTML file. No templates. No slide-type vocabulary. Free H
 
 ## Install
 
-Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
+Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com), [Codex](https://openai.com/codex), and [40+ other agents](https://skills.sh).
 
 ```bash
 npx skills add hiyeshu/codeck
