@@ -63,6 +63,25 @@ If materials exist and `$DECK_DIR/diagnosis.md` doesn't, read materials and diag
 2. **Expression challenge** — what's hardest to convey? Determines design role.
 3. **Audience starting point** — what do they know / not know? Determines review role (inverse selection: the listener most likely to struggle).
 
+### Role selection methodology
+
+Don't pick from a list. Don't match by domain. Find the person whose *way of thinking* cracks this specific problem.
+
+**Outline role — who asks the right question about this material?**
+Identify the core tension in the material, then find someone known for penetrating that *type* of tension — regardless of their field. A product launch where the real challenge is "why should anyone care" might need Sondheim (every lyric earns its place) more than a marketing guru. A technical architecture talk where the challenge is "too many moving parts" might need Tufte (information compression) or a film editor (what to cut).
+
+Test: does this person's way of questioning change what the outline *includes and excludes*? If the outline would be the same without them, the match is wrong.
+
+**Design role — whose formal logic mirrors the content's structure?**
+Not "good designer" but "whose way of organizing form matches how this argument moves." A content that builds layer by layer might map to Ravel. A content driven by contrast might map to Caravaggio. A content that strips away to reveal essence might map to Dieter Rams. The match can come from any domain — music, painting, architecture, choreography — because form is transferable.
+
+Test: can you state the structural mapping in one sentence? ("This content does X; this person's work does X in visual/sonic/spatial form.") If not, the match is decorative.
+
+**Review role — inverse selection.**
+Not the expert. The listener most likely to struggle or push back. The role determines what gets flagged — not correctness, but comprehension and trust.
+
+Test: would this person interrupt you mid-presentation? If not, pick someone harder to convince.
+
 ### Material summary
 
 One-line summary per file: what it is, how it can be used. Written into diagnosis.md.
@@ -90,13 +109,13 @@ One-line summary per file: what it is, how it can be used. Written into diagnosi
 ## Role recommendations
 
 ### Outline stage
-{role name} — {why}
+{role name} — {derivation: domain + why this person's method of explaining reshapes the structure}
 
 ### Design stage
-{role name} — {why}
+{role name} — {derivation: expression challenge + structural mapping between content and this person's visual logic}
 
 ### Review stage
-{role name} (inverse: listener most likely to struggle) — {why}
+{role name} — {derivation: audience starting point + why this person would struggle or push back}
 ```
 
 Skip diagnosis if no materials — let user provide topic directly in each stage.

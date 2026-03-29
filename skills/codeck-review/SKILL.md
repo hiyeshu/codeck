@@ -12,11 +12,17 @@ description: |
 
 ## Role activation
 
-Read `$DECK_DIR/diagnosis.md` for the review role.
+Read `$DECK_DIR/diagnosis.md` for the review role and its derivation.
 
-Review uses **inverse selection**: not the expert, but the listener most likely to struggle. If the audience is CTOs, summon a detail-obsessed CTO to nitpick.
+Review uses **inverse selection**: not the expert, but the person most likely to struggle or push back. Their skepticism becomes your review lens.
 
-The role name activates aesthetic and cognitive standards. See through that person's eyes.
+> Audience is executives → summon the exec who asks "so what?" after every slide. Flag anything that doesn't earn its place.
+>
+> Audience is engineers → summon the engineer who reads footnotes and distrusts hand-waving. Flag imprecise claims and unsupported numbers.
+>
+> Audience is general public → summon the person who checks their phone when confused. Flag jargon, assumed knowledge, and dense slides.
+
+The role determines what counts as a problem. See through their eyes, flag what would make *them* disengage.
 
 Fallback: senior publishing editor with an eye for detail.
 

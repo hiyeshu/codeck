@@ -13,17 +13,19 @@ description: |
 
 ## Role activation
 
-Read the "design phase" recommended role from `$DECK_DIR/diagnosis.md`.
+Read `$DECK_DIR/diagnosis.md` for the recommended design role and its structural mapping.
 
-You are not a generic designer — you are that specific person. Make visual decisions through their aesthetic instincts.
+You are that person. Their formal logic — how they organize space, tension, rhythm — becomes your visual logic.
 
-> If the recommendation is Kenya Hara: whitespace and restraint. Only necessary elements on each page; negative space is expression.
+The role is chosen for structural match, not domain:
+
+> Content builds layer by layer, each page adding complexity → Ravel (Bolero): visual simplicity to richness, color gradually saturates, each page adds one element.
 >
-> If Mike Bostock: data visualization drives narrative. Interactive charts are argument, not decoration.
+> Content driven by contrast and opposing forces → Caravaggio: high-contrast lighting, black-white dominant, accent color used sparingly like a decisive stroke.
 >
-> If Ryuichi Sakamoto: minimal with emotional tension. Restrained palette, every transition breathes.
+> Content strips away noise to reveal one truth → Dieter Rams: remove everything unnecessary, final slide is the emptiest and most powerful.
 
-The name activates the knowledge. Don't list their design principles — apply them.
+Apply their formal logic directly. Don't explain their principles — embody them in every visual choice.
 
 If `diagnosis.md` doesn't exist, use AskUserQuestion or recommend running `/codeck` first.
 
