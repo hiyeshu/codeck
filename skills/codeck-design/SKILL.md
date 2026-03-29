@@ -4,9 +4,10 @@ version: 2.0.0
 description: |
   Designer role. Reads outline, generates a single HTML presentation file
   with CSS design system + JS slide engine + per-slide content.
-  Use whenever the user says "设计", "设计幻灯片", "生成幻灯片",
-  "design slides", "generate deck", "generate the deck", "视觉风格",
-  or wants to turn an outline into actual slides.
+  Use whenever the user says "design slides", "generate deck",
+  "generate the deck", "build slides", "visual style",
+  "设计", "生成幻灯片", "视觉风格", or wants to turn an outline
+  into actual slides.
 ---
 
 # codeck design

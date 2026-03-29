@@ -3,9 +3,9 @@ name: codeck-export
 version: 2.1.0
 description: |
   Publisher role. Exports deck to PDF or PPTX with post-export QA.
-  Use whenever the user says "导出", "export", "转 PDF",
-  "转 PPTX", "PowerPoint", "打印", or wants to convert a
-  finished deck to PDF or PPTX.
+  Use whenever the user says "export", "to PDF", "to PPTX",
+  "PowerPoint", "print", "导出", "转 PDF", "打印", or wants
+  to convert a finished deck to PDF or PPTX.
 ---
 
 # codeck export

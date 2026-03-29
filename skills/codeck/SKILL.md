@@ -4,11 +4,11 @@ version: 2.1.0
 description: |
   codeck entry point. Scans local files for materials, shows pipeline
   dashboard with diagnostic intelligence, guides user to the next step.
-  Use when the user says "codeck", "做 PPT", "做演示文稿", "新建幻灯片",
-  or wants to start a new presentation project from scratch. Do NOT
-  trigger for editing files, writing code, or specific sub-tasks like
-  designing, reviewing, exporting, or writing speeches — those have
-  dedicated skills.
+  Use when the user says "codeck", "new deck", "make a presentation",
+  "做 PPT", "做演示文稿", "新建幻灯片", or wants to start a new
+  presentation project from scratch. Do NOT trigger for specific
+  sub-tasks like designing, reviewing, exporting, or writing speeches
+  — those have dedicated skills.
 ---
 
 # codeck — Entry & Dashboard

@@ -4,8 +4,8 @@ version: 2.1.0
 description: |
   Reviewer role. Opens rendered HTML, inspects every slide visually,
   fixes problems in custom.css or slides.html and re-assembles.
-  Use whenever the user says "审查", "检查", "review", "QA",
-  or wants feedback on a rendered deck.
+  Use whenever the user says "review", "QA", "check slides",
+  "inspect", "审查", "检查", or wants feedback on a rendered deck.
 ---
 
 # codeck review
