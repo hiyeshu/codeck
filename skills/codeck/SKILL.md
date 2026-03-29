@@ -32,10 +32,13 @@ Only state verified facts. Unexecuted actions use "will / plan to".
 
 ## Two directories
 
-- **Current directory (`.`)** — the user's project. Materials live here. **Final HTML goes here too** — so the user can see and open it directly.
-- **`$DECK_DIR`** — codeck's intermediate artifacts. diagnosis.md, outline.md, design-notes.md, design-dna.json, custom.css, slides.html, speech.md. The user doesn't need to look here.
+| | cwd (`.`) | `$DECK_DIR` |
+|---|---|---|
+| **What's there** | The user's project | codeck's workspace |
+| **codeck reads** | User's materials (docs, images, code, data) | Its own intermediate artifacts |
+| **codeck writes** | Final deliverables only (HTML, PDF, PPTX) | Intermediate artifacts (diagnosis.md, outline.md, design-notes.md, design-dna.json, custom.css, slides.html, speech.md) |
 
-Scan materials in `.`. Write intermediate artifacts to `$DECK_DIR`. Output final HTML to `.`.
+Never write intermediate artifacts to cwd. Never write final deliverables to DECK_DIR.
 
 ## Phase 1: Init + status
 

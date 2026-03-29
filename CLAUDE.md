@@ -37,8 +37,8 @@ Core idea: skills handle process and format. Knowledge comes from dynamically su
 Skills installed at `~/.claude/skills/codeck*/`.
 
 Two directories at runtime:
-- **User's project directory (cwd)** — materials + final HTML output (`{title}-r{n}.html`)
-- **`~/.codeck/projects/{slug}/`** — intermediate artifacts: diagnosis.md, outline.md, design-notes.md, design-dna.json, custom.css, slides.html, speech.md
+- **cwd** — the user's project. codeck reads materials here, writes final deliverables here (HTML, PDF, PPTX).
+- **`~/.codeck/projects/{slug}/`** — codeck's workspace. Reads and writes intermediate artifacts here (diagnosis.md, outline.md, design-notes.md, design-dna.json, custom.css, slides.html, speech.md).
 
 ## Repository
 

@@ -46,6 +46,10 @@ npx skills add hiyeshu/codeck
 
 Type `/codeck` to start.
 
+## Acknowledgments
+
+The slide engine's navigation UI is inspired by [Slidev](https://github.com/slidevjs/slidev).
+
 ## License
 
 Apache-2.0
