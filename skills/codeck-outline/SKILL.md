@@ -5,7 +5,7 @@ description: |
   Editor role. Reads local materials, asks narrative questions, plans
   story arc. Outputs $DECK_DIR/outline.md. Use whenever the user says
   "outline", "plan slides", "organize materials", "structure",
-  "大纲", "规划", or wants to structure content into a presentation.
+  "table of contents", "narrative", or wants to structure content into a presentation.
 ---
 
 # codeck outline — Editor

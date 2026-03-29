@@ -5,8 +5,8 @@ description: |
   Speech writer role. Reads deck content, asks about style and duration,
   generates a verbatim speech transcript with stage directions. Outputs
   $DECK_DIR/speech.md. Use whenever the user says "speech",
-  "speaker notes", "script", "how to present", "演讲稿", "备注",
-  "怎么讲", or wants help preparing to present a deck.
+  "speaker notes", "script", "how to present", "talk track",
+  "presentation notes", or wants help preparing to present a deck.
 ---
 
 # codeck speech

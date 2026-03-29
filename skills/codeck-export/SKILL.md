@@ -4,7 +4,7 @@ version: 2.1.0
 description: |
   Publisher role. Exports deck to PDF or PPTX with post-export QA.
   Use whenever the user says "export", "to PDF", "to PPTX",
-  "PowerPoint", "print", "导出", "转 PDF", "打印", or wants
+  "PowerPoint", "print", "download", "save as PDF", "convert", or wants
   to convert a finished deck to PDF or PPTX.
 ---
 

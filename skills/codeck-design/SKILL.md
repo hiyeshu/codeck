@@ -9,7 +9,7 @@ description: |
   Use whenever the user says "design slides", "generate deck",
   "generate the deck", "build slides", "visual style",
   "reference this style", "like this design",
-  "设计", "生成幻灯片", "视觉风格", "参考这个风格",
+  "design", "generate slides", "visual style", "reference this style",
   or wants to turn an outline into actual slides.
 ---
 
@@ -71,9 +71,9 @@ If the user provides visual references — URLs, screenshots, design specs, othe
 When the user mentions a brand, product, or style by name without providing a URL, **browse their website yourself** to extract design signals. Don't ask the user to send a screenshot — go look.
 
 Examples:
-- "像 Linear 那样的风格" → browse linear.app, extract design signals
-- "参考 Stripe 的文档" → browse stripe.com/docs, extract signals
-- "Apple Keynote 的感觉" → browse apple.com recent event pages
+- "something like Linear's style" → browse linear.app, extract design signals
+- "reference Stripe's docs" → browse stripe.com/docs, extract signals
+- "Apple Keynote vibes" → browse apple.com recent event pages
 
 ### What to extract
 
