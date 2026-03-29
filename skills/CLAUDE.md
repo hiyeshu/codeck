@@ -1,29 +1,33 @@
 # skills/
 
-成员清单
-codeck/SKILL.md: 入口 dashboard，素材扫描 + 内容诊断（三信号：领域属性、表达挑战、听众认知起点）+ 动态角色推荐 + pipeline 状态面板。
-codeck-outline/SKILL.md: 大纲角色，角色激活 → 叙事提问 → 大纲规划 → 标题锻造。产出 outline.md（含用户意图段）。
-codeck-outline/references/checklist.md: 大纲自审清单。
-codeck-design/SKILL.md: 设计角色，角色激活 → design-dna 同构映射 → 结构化设计档案 → AI 写 custom.css + slides.html → assemble.sh 拼装单 HTML。
-codeck-design/references/: 三维设计档案规格（design-dna-schema.md 字段定义 + design-dna-guide.md 映射规则 + checklist.md 设计自审清单）。
-codeck/scripts/status.sh: 共用状态检测。文件检测 + 时间戳偏差 + NEXT 推荐，所有 skill 入口和出口调用。
-codeck-design/scripts/: 固定翻页引擎（engine.js + engine.css + assemble.sh）。导航、fragment（4 种入场）、overview、演讲者模式、clamp 响应系统。
-codeck-review/SKILL.md: 审稿角色（反向选择：最可能翻车的听众），六维审查 + 直接改 HTML，决策摘要追加到 design-notes.md。
-codeck-export/SKILL.md: 导出角色，HTML 为单一真相源，PDF（Playwright）/ PPTX 导出 + QA。
-codeck-export/pptx/: PPTX 工具库（PptxGenJS、thumbnail.py、soffice.py）。
-codeck-export/pdf/: PDF 工具库（pypdf/reportlab 参考、表单填写）。
-codeck-speech/SKILL.md: 演讲稿角色，角色激活 → 逐字稿 + 舞台指示 + 时间预算 + 回写 HTML data-notes。
-CONVENTIONS.md: 技能编写规范（frontmatter / pushy description / 目录结构 / evals）。
-LICENSE: Apache-2.0。
+## Members
 
-依赖关系
-上游: playwright, pptxgenjs
-下游: Claude skill 运行时
+codeck/SKILL.md: Entry dashboard. Material scan + content diagnosis (3 signals: domain, expression challenge, audience starting point) + dynamic role recommendation + pipeline status.
+codeck-outline/SKILL.md: Editor role. Role activation → narrative questions → story arc → title smithing. Outputs outline.md (with user intent section).
+codeck-outline/references/checklist.md: Outline self-review checklist.
+codeck-design/SKILL.md: Designer role. Role activation → design-dna isomorphic mapping → structured design archive → AI writes custom.css + slides.html → assemble.sh assembles single HTML.
+codeck-design/references/: Design archive specs (design-dna-schema.md field definitions + design-dna-guide.md mapping rules + checklist.md design self-review).
+codeck/scripts/status.sh: Shared status detection. File detection + timestamp staleness + NEXT recommendation, called by all skills.
+codeck-design/scripts/: Fixed slide engine (engine.js + engine.css + assemble.sh). Navigation, fragments (4 entrance types), overview, speaker mode, clamp responsive system.
+codeck-review/SKILL.md: Reviewer role (inverse selection: listener most likely to struggle). Six-dimension review + direct HTML fixes, decision summary appends to design-notes.md.
+codeck-export/SKILL.md: Publisher role. HTML as single source of truth, PDF (Playwright) / PPTX export + QA.
+codeck-export/pptx/: PPTX tools (PptxGenJS, thumbnail.py, soffice.py).
+codeck-export/pdf/: PDF tools (pypdf/reportlab reference, form filling).
+codeck-speech/SKILL.md: Speech writer role. Role activation → verbatim transcript + stage directions + time budget + write back HTML data-notes.
+CONVENTIONS.md: Skill authoring conventions (frontmatter / description / directory structure / evals).
+LICENSE: Apache-2.0.
 
-变更日志
-- 2026-03-29: v2.1.3 去掉 review.md。review 的产出是改过的 HTML，不是文档。决策摘要追加到 design-notes.md。status.sh 不再追踪 review 状态。
-- 2026-03-28: v2.1.2 去掉 intent.md。用户意图（动机、偏好、情绪基调）并入 outline.md 的"用户意图"段。每个 skill 只读上游产物，不回写上游文件。信息单向流动：diagnosis → outline → HTML → review → export/speech。
-- 2026-03-28: v2.1.1 status.sh 共用状态检测。所有 skill 的准备段和结尾段用同一个脚本输出 dashboard（文件检测 + 时间戳偏差 + NEXT 推荐）。去掉 scan.json，素材摘要写进 diagnosis.md。engine.css 加 clamp 响应系统 + fragment 动画类型（scale/blur/slide）。generation-guide 加反模式黑名单。
-- 2026-03-28: v2.1 引擎分离。固定 engine.js/engine.css（导航、fragment、overview、演讲者模式），AI 只写 custom.css + slides.html，assemble.sh 拼装。加演讲者模式（BroadcastChannel 同步）、data-notes speaker notes、speech 回写。
-- 2026-03-28: v2.0 架构重写。去掉 deck.json/design.json/compiler 三层架构，改为 AI 直出单 HTML。引入内容诊断三信号、动态角色选择、design-dna 同构映射、反向审稿角色。
-- 2026-03-24: 仓库目录从 `skill/` 硬切到 `skills/`
+## Dependencies
+
+Upstream: playwright, pptxgenjs
+Downstream: Claude skill runtime
+
+## Changelog
+
+- 2026-03-29: v2.2.0 All skills rewritten in English. Cut fluff and redundant parenthetical explanations.
+- 2026-03-29: v2.1.3 Remove review.md. Review output is the improved HTML. Decision summary appends to design-notes.md. status.sh drops review tracking.
+- 2026-03-28: v2.1.2 Remove intent.md. User intent merged into outline.md. Forward-only information flow: diagnosis → outline → HTML → review → export/speech.
+- 2026-03-28: v2.1.1 Shared status.sh. All skills use one script for dashboard (file detection + timestamp staleness + NEXT). Remove scan.json, material summary in diagnosis.md. engine.css adds clamp responsive system + fragment animation types (scale/blur/slide). Generation guide adds anti-pattern blacklist.
+- 2026-03-28: v2.1 Engine separation. Fixed engine.js/engine.css (navigation, fragments, overview, speaker mode), AI writes custom.css + slides.html only, assemble.sh combines. Speaker mode (BroadcastChannel sync), data-notes speaker notes, speech writeback.
+- 2026-03-28: v2.0 Architecture rewrite. Remove deck.json/design.json/compiler three-layer architecture, AI generates single HTML directly. Content diagnosis with three signals, dynamic role selection, design-dna isomorphic mapping, inverse review role.
+- 2026-03-24: Repository directory renamed from `skill/` to `skills/`.

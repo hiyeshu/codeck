@@ -1,169 +1,141 @@
 ---
 name: codeck-speech
-version: 2.0.0
+version: 2.1.0
 description: |
-  Speech writer role. Reads deck content, asks about audience and style,
-  generates a full speech transcript with stage directions. Outputs
+  Speech writer role. Reads deck content, asks about style and duration,
+  generates a verbatim speech transcript with stage directions. Outputs
   $DECK_DIR/speech.md. Use whenever the user says "演讲稿", "备注",
   "speaker notes", "speech", "怎么讲", or wants help preparing to
-  present a deck on stage.
+  present a deck.
 ---
 
-# codeck speech — 演讲稿
+# codeck speech
 
-## 角色激活
+## Role activation
 
-读取 `$DECK_DIR/diagnosis.md`。speech 不一定有专门推荐的角色——如果有，用它；如果没有，根据内容领域和受众自选一个"演讲教练"。
+Read `$DECK_DIR/diagnosis.md`. If a speech role is recommended, use it. Otherwise, pick a coach based on domain and audience:
 
-> 技术分享 → 用费曼的方式：把复杂的讲简单，用类比拉近距离
+> Technical → Feynman: simplify the complex, bridge with analogy
 >
-> 商业提案 → 用乔布斯的方式：制造期待，一个"one more thing"
+> Business → Jobs: build anticipation, one "one more thing"
 >
-> 学术报告 → 用 Hans Rosling 的方式：让数据讲故事
+> Academic → Hans Rosling: let data tell the story
 
-## AskUserQuestion 格式
-
-1. **Re-ground** — "codeck speech，{当前步骤}"
-2. **Simplify** — 人话
-3. **Recommend** — 建议
-4. **Options** — 选项
-
-## 准备
+## Setup
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 
-# 状态检测 + dashboard
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-读取源文件：
-- **HTML 文件**（最新的 `*-r*.html`）— 这是实际的幻灯片内容。读取每个 `<section class="slide">` 的文字内容。
-- **outline.md** — 大纲结构、叙事弧、用户意图
+Read:
+- **HTML** (latest `*-r*.html`) — actual slide content
+- **outline.md** — structure, arc, user intent
+- **design-notes.md** — visual intent (speech rhythm should match visual rhythm)
 
-- **design-notes.md** — 设计师的视觉意图（演讲稿节奏应匹配视觉节奏）
+If no HTML and no outline, suggest `/codeck-design` or `/codeck-outline` first.
 
-如果没有 HTML 文件也没有 outline.md，提示先跑 `/codeck-design` 或 `/codeck-outline`。
+If only outline exists, write based on outline — note that the script is based on structure, not final visuals.
 
-如果只有 outline.md 没有 HTML，可以基于大纲写稿——提示用户稿子基于大纲而非最终视觉。
+**Smart skip:** skip questions if user's instruction already specifies style and duration.
 
-## 提问
+## Questions
 
-**智能跳过：** 用户指令已包含的信息跳过。
+### Q1: Style
 
-### Q1: 风格
+- A) TED — conversational, story-driven, breathing room
+- B) Formal — structured, precise language
+- C) Casual — natural, humor ok
 
-> codeck speech，选风格。
+### Q2: Duration
 
-- A) TED 风格 — 口语化、故事驱动、有呼吸感
-- B) 正式演讲 — 结构严谨、措辞正式
-- C) 轻松分享 — 随意自然、可以开玩笑
+- A) 5 min — lightning, ~1000 words
+- B) 15 min — standard, ~3000 words
+- C) 30+ min — deep dive, ~6000 words
 
-### Q2: 时长
+## Generate
 
-> codeck speech，多长时间？
+Write a complete, readable-aloud transcript. Page by page.
 
-- A) 5 分钟 — 闪电，约 1000 字
-- B) 15 分钟 — 标准，约 3000 字
-- C) 30+ 分钟 — 深度，约 6000 字
+### Rules
 
-## 生成
+1. **One section per slide** — matches the deck
+2. **Transitions** — natural bridges between pages
+3. **Stage directions** — `[pause Ns]` `[transition]` `[slow down]` `[speed up]` `[look at audience]`
+4. **Word count** — ~200 words/min Chinese, ~130 words/min English
+5. **Source-based** — no fabricated data
+6. **Strong opening** — story, data, or question
+7. **Strong close** — callback to opening or call to action
 
-逐页写完整可朗读的演讲稿。
+### Style notes
 
-### 规则
+**TED:** use "you" / "we", mix short and long sentences, pause after key points, end by echoing the opening.
 
-1. **逐页对应** — 每页幻灯片一个章节
-2. **过渡衔接** — 页间自然过渡，不生硬跳转
-3. **舞台指示** — `[停顿 Ns]` `[过渡]` `[放慢]` `[加快]` `[看观众]`
-4. **字数控制** — 中文约 200 字/分钟，英文约 130 词/分钟
-5. **内容基于素材** — 不编造数据
-6. **开场抓人** — 故事/数据/问题
-7. **结尾有力** — 回扣主题/号召行动
+**Formal:** complete sentences, logical progression, summarize + outlook at the end.
 
-### 风格细则
+**Casual:** colloquial, self-deprecating ok, casual transitions, end with a surprise.
 
-**TED：** 多用"你""我们"，短句长句交替，核心观点后停顿，结尾回扣开头。
+## Time budget
 
-**正式：** 完整句式，逻辑递进，"首先…其次…最后"，结尾总结+展望。
-
-**轻松：** 口语化，可以自嘲，过渡随意，结尾留彩蛋。
-
-## 时间预算
-
-> codeck speech，时间预算。
->
-> 总预估 {M}分{S}秒，目标 {T} 分钟。
-
-| 页 | 标题 | 字数 | 预估 |
-|----|------|------|------|
+| Slide | Title | Words | Estimate |
+|-------|-------|-------|----------|
 | 1 | ... | ... | ... |
 
-- A) 帮我精简超时的
-- B) 没关系，我自己控制
+- A) Help me trim the ones over time
+- B) I'll manage it myself
 
-## 回写 HTML data-notes
+## Write back HTML data-notes
 
-演讲稿生成后，把每页的逐字稿写回 HTML 的 `data-notes` 属性。这样演讲者模式能显示完整演讲稿而非 design 阶段的简要备注。
+After generating, replace each slide's `data-notes` with the full speech text for that page. This way speaker mode shows the complete script.
 
-用 Edit 工具逐页替换：
-- 找到 `<section class="slide" data-notes="...">`
-- 把 `data-notes` 的值替换为该页的完整演讲稿文本（HTML 转义引号）
-- 舞台指示（`[停顿]` `[过渡]` 等）保留在 data-notes 中
+Use Edit tool per slide:
+- Find `<section class="slide" data-notes="...">`
+- Replace `data-notes` value with the page's verbatim script (HTML-escape quotes)
+- Keep stage directions in data-notes
 
-## 写出
-
-`$DECK_DIR/speech.md`：
+## Output: $DECK_DIR/speech.md
 
 ```markdown
 ---
-stage: speech
-status: done
-created: {ISO datetime}
-role: {角色名}
-style: "{风格}"
-duration: "{时长}"
-totalEstimate: "{预估}"
+style: "{style}"
+duration: "{target}"
+totalEstimate: "{estimate}"
 ---
 
-# 演讲稿: {主题}
-
-> 风格: {风格} | 目标: {时长}
+# Speech: {topic}
 
 ---
 
-## 第 1 页: {标题}
-<!-- 预估: {N}s | {M}字 -->
+## Slide 1: {title}
+<!-- estimate: {N}s | {M} words -->
 
-{完整演讲正文}
+{verbatim speech text}
 
-[停顿 2s]
-
----
-
-## 第 2 页: {标题}
-<!-- 预估: {N}s | {M}字 -->
-
-[过渡] {衔接句}
-
-{完整演讲正文}
+[pause 2s]
 
 ---
 
-...
+## Slide 2: {title}
+<!-- estimate: {N}s | {M} words -->
+
+[transition] {bridge sentence}
+
+{verbatim speech text}
+
+---
 ```
 
-## 完成
+## Done
 
-> codeck speech 完成。
+> codeck speech done.
 >
-> {一句话——关于演讲准备度}
+> {one line — readiness assessment}
 >
-> 产出：`$DECK_DIR/speech.md` + HTML `data-notes` 已更新为完整逐字稿
-> 按 P 键进入演讲者模式可看到逐字稿
+> Output: `$DECK_DIR/speech.md` + HTML data-notes updated
+> Press P for speaker mode to see the script
 
-显示 dashboard：
 ```bash
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```

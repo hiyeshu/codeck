@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# codeck status — 所有 skill 共用的状态检测
-# 用法: bash status.sh "$DECK_DIR"
-# 输出: dashboard + 环境变量 CODECK_STATUS_*
+# codeck status — shared pipeline detection
+# Usage: bash status.sh "$DECK_DIR"
 
-DECK_DIR="${1:?用法: bash status.sh \$DECK_DIR}"
+DECK_DIR="${1:?Usage: bash status.sh \$DECK_DIR}"
 
-# ─── 文件检测 ───
+# ─── File detection ───
 _has() { [ -f "$1" ]; }
 _html() {
   local f
@@ -23,7 +22,7 @@ CODECK_HTML_PATH=$(_html)
 [ -n "$CODECK_HTML_PATH" ] && CODECK_HTML="done" || CODECK_HTML="none"
 CODECK_SPEECH=$(_has "$DECK_DIR/speech.md" && echo done || echo none)
 
-# ─── 阶段状态（done / stale / ready / locked） ───
+# ─── Stage status ───
 _stage_design() {
   [ "$CODECK_HTML" = "done" ] || { [ "$CODECK_CSS" = "done" ] && echo done && return; }
   [ "$CODECK_HTML" = "done" ] && echo done || { [ "$CODECK_OUTLINE" = "done" ] && echo ready || echo locked; }
@@ -43,7 +42,6 @@ _stage_speech() {
   fi
 }
 
-# 大纲偏差：outline 比 HTML 新？
 _stage_design_stale() {
   if [ "$CODECK_HTML" = "done" ] && [ "$CODECK_OUTLINE" = "done" ] && [ -n "$CODECK_HTML_PATH" ]; then
     local t_outline=$(_mtime "$DECK_DIR/outline.md")
@@ -58,38 +56,36 @@ CODECK_STATUS_DESIGN=$(_stage_design)
 CODECK_STATUS_EXPORT=$(_stage_export)
 CODECK_STATUS_SPEECH=$(_stage_speech)
 
-# 覆盖 design stale
 [ "$(_stage_design_stale)" = "stale" ] && [ "$CODECK_STATUS_DESIGN" = "done" ] && CODECK_STATUS_DESIGN=stale
 
-# ─── 偏差列表 ───
 CODECK_STALE=""
 [ "$CODECK_STATUS_DESIGN" = "stale" ] && CODECK_STALE="${CODECK_STALE}design "
 
-# ─── NEXT 推荐 ───
+# ─── NEXT recommendation ───
 if [ "$CODECK_STATUS_OUTLINE" = "none" ]; then
   CODECK_NEXT="outline"
-  CODECK_NEXT_REASON="还没有大纲，先规划结构"
+  CODECK_NEXT_REASON="no outline yet"
 elif [ "$CODECK_STATUS_DESIGN" = "stale" ]; then
   CODECK_NEXT="design"
-  CODECK_NEXT_REASON="大纲改过了，幻灯片需要同步"
+  CODECK_NEXT_REASON="outline changed, slides need sync"
 elif [ "$CODECK_STATUS_DESIGN" = "ready" ] || [ "$CODECK_STATUS_DESIGN" = "locked" ]; then
   CODECK_NEXT="design"
-  CODECK_NEXT_REASON="大纲就绪，可以生成了"
+  CODECK_NEXT_REASON="outline ready, generate slides"
 elif [ "$CODECK_HTML" = "done" ] && [ "$CODECK_SPEECH" = "none" ]; then
   CODECK_NEXT="review"
-  CODECK_NEXT_REASON="HTML 出来了，审一遍再继续"
+  CODECK_NEXT_REASON="HTML ready, review before continuing"
 elif [ "$CODECK_STATUS_SPEECH" = "ready" ] && [ "$CODECK_SPEECH" = "none" ]; then
   CODECK_NEXT="speech"
-  CODECK_NEXT_REASON="可以准备演讲稿了"
+  CODECK_NEXT_REASON="ready for speech script"
 elif [ "$CODECK_STATUS_EXPORT" = "ready" ]; then
   CODECK_NEXT="export"
-  CODECK_NEXT_REASON="可以导出了"
+  CODECK_NEXT_REASON="ready to export"
 else
   CODECK_NEXT=""
-  CODECK_NEXT_REASON="全部完成"
+  CODECK_NEXT_REASON="all done"
 fi
 
-# ─── 状态标记 ───
+# ─── Icons ───
 _icon() {
   case "$1" in
     done)   echo "done";;
@@ -100,7 +96,7 @@ _icon() {
   esac
 }
 
-# ─── 推导 title ───
+# ─── Title ───
 _title="new deck"
 if [ -n "$CODECK_HTML_PATH" ]; then
   _title=$(basename "$CODECK_HTML_PATH" | sed 's/-r[0-9]*\.html$//')
@@ -108,7 +104,7 @@ elif [ -f "$DECK_DIR/outline.md" ]; then
   _title=$(head -1 "$DECK_DIR/outline.md" | sed 's/^#* *//' | cut -c1-40)
 fi
 
-# ─── Dashboard 输出 ───
+# ─── Dashboard ───
 echo ""
 echo "+======================================================+"
 printf "| %-52s |\n" "codeck · $_title"

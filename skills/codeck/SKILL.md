@@ -11,39 +11,37 @@ description: |
   dedicated skills.
 ---
 
-# codeck — 入口 & Dashboard
+# codeck — Entry & Dashboard
 
-你是 codeck 的入口。扫描当前目录的素材，诊断项目状态，显示 pipeline 全景，引导用户下一步。
+Scan materials, diagnose project state, show pipeline overview, guide next step.
 
-你不只是一面镜子——你有判断力。如果项目状态有异常（产出之间有偏差、上游改了下游没跟上），你要主动说出来。
+Flag anomalies proactively: stale stages, upstream changes not reflected downstream.
 
-## AskUserQuestion 格式（所有 codeck skill 通用）
+## AskUserQuestion format
 
-每次提问必须遵循四段式：
+All codeck skills follow this pattern:
 
-1. **Re-ground** — 告诉用户当前在哪个 skill、做到哪一步。一句话。
-2. **Simplify** — 用人话解释问题。假设用户 20 分钟没看屏幕。
-3. **Recommend** — `建议选 [X]，因为 【一句话原因】`。
-4. **Options** — A) B) C) 选项，用户点一下就行。
+1. **Re-ground** — which skill, which step. One line.
+2. **Simplify** — plain language. Assume user hasn't looked at screen for 20 minutes.
+3. **Recommend** — `Suggest [X] because [reason]`.
+4. **Options** — A) B) C), one click.
 
-只能陈述已经验证过的事实。未执行的操作只能说"建议 / 将要 / 计划"。
+Only state verified facts. Unexecuted actions use "will / plan to".
 
 ---
 
-## Phase 1: 初始化 + 状态检测
+## Phase 1: Init + status
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 
-# 共用状态检测
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-## Phase 2: 素材扫描
+## Phase 2: Material scan
 
 ```bash
-# ─── 排除规则 ───
 EXCLUDE='! -path "./node_modules/*" ! -path "./.git/*" ! -path "./.claude/*" ! -path "./dist/*" ! -path "./build/*" ! -name "CLAUDE.md" ! -name "TODOS.md" ! -name "README.md" ! -name "DESIGN.md" ! -name "*.test.*" ! -name "*.spec.*" ! -name "*.config.*"'
 
 echo "=== TEXT ===" && eval find . -maxdepth 4 -type f \( -name "*.md" -o -name "*.txt" -o -name "*.rtf" -o -name "*.org" -o -name "*.rst" \) $EXCLUDE 2>/dev/null | head -20
@@ -55,71 +53,69 @@ echo "=== MEDIA ===" && eval find . -maxdepth 4 -type f \( -name "*.mp4" -o -nam
 
 ---
 
-## Phase 3: 内容诊断（三信号）
+## Phase 3: Content diagnosis
 
-如果素材存在且 `$DECK_DIR/diagnosis.md` 不存在，读取素材后做内容诊断：
+If materials exist and `$DECK_DIR/diagnosis.md` doesn't, read materials and diagnose:
 
-### 三个信号
+### Three signals
 
-1. **领域属性** — 这份内容属于什么领域？决定大纲阶段请谁（角色名激活 AI 的知识网络）。
-2. **表达挑战** — 这份内容最难表达的是什么？决定设计阶段请谁。
-3. **听众认知起点** — 听众已经知道什么、不知道什么？决定审稿阶段请谁（反向选择：最可能翻车的听众）。
+1. **Domain** — what field? Determines outline role.
+2. **Expression challenge** — what's hardest to convey? Determines design role.
+3. **Audience starting point** — what do they know / not know? Determines review role (inverse selection: the listener most likely to struggle).
 
-### 素材摘要
+### Material summary
 
-读取素材，为每个文件写一行摘要——是什么、能用来做什么。写入 diagnosis.md 的素材段。
+One-line summary per file: what it is, how it can be used. Written into diagnosis.md.
 
-### 诊断产出
-
-写入 `$DECK_DIR/diagnosis.md`：
+### Output: `$DECK_DIR/diagnosis.md`
 
 ```markdown
-# 内容诊断
+# Diagnosis
 
-## 素材
+## Materials
 
-| 文件 | 内容 | 可用于 |
-|------|------|--------|
-| {文件名} | {一句话描述} | {在演示文稿中的用途} |
+| File | Content | Use for |
+|------|---------|---------|
+| {filename} | {one-line description} | {role in deck} |
 
-## 领域属性
-{领域描述}
+## Domain
+{description}
 
-## 表达挑战
-{最难表达的点}
+## Expression challenge
+{hardest part to convey}
 
-## 听众认知起点
-{听众已知/未知}
+## Audience starting point
+{what they know / don't know}
 
-## 角色推荐
+## Role recommendations
 
-### 大纲阶段
-请 {角色名} — {一句话原因}
+### Outline stage
+{role name} — {why}
 
-### 设计阶段
-请 {角色名} — {一句话原因}
+### Design stage
+{role name} — {why}
 
-### 审稿阶段
-请 {角色名}（反向选择：最可能翻车的听众）— {一句话原因}
+### Review stage
+{role name} (inverse: listener most likely to struggle) — {why}
 ```
 
-如果素材不存在（用户直接说主题），跳过诊断，让用户在各阶段自选角色。
+Skip diagnosis if no materials — let user provide topic directly in each stage.
 
 ---
 
-## Phase 4: 结果展示
+## Phase 4: Results
 
-Phase 1 的 status.sh 已输出 dashboard。在 dashboard 下方补充：
+status.sh already outputs the dashboard. Below it, add:
 
-1. **素材摘要** — Phase 2 扫到的文件类型和数量（如"3 个 .md, 2 张图片, 1 个 .csv"）
-2. **STALE 说明** — 如果有偏差阶段，用一句话解释原因
-3. **诊断摘要** — 如果刚做了 Phase 3 诊断，列出三信号和推荐角色
+1. **Materials** — file types and counts from Phase 2
+2. **STALE** — one-line explanation if any stage is stale
+3. **Diagnosis** — three signals and recommended roles if Phase 3 ran
 
-不要重新画表。status.sh 的输出就是 dashboard。
+Don't redraw the table.
 
 ---
 
 ## Phase 5: Handoff
 
-每个 codeck skill 的产出都写在 `$DECK_DIR/` 目录。下一个 skill 读取上游产出继续工作。
-用户中途离开再回来，跑 `/codeck` 看 dashboard 就知道进度和上下文。
+All outputs go to `$DECK_DIR/`. Next skill reads upstream outputs.
+User can run `/codeck` anytime to see progress.

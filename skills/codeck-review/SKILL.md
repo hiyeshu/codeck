@@ -8,167 +8,145 @@ description: |
   or wants feedback on a rendered deck.
 ---
 
-# codeck review — 审稿
+# codeck review
 
-## 角色激活
+## Role activation
 
-读取 `$DECK_DIR/diagnosis.md` 的"审稿阶段"推荐角色。
+Read `$DECK_DIR/diagnosis.md` for the review role.
 
-审稿角色用**反向选择**：不是请最懂的人，是请最可能翻车的听众。如果听众是技术总监，请一个对细节有洁癖的技术总监来挑毛病。
+Review uses **inverse selection**: not the expert, but the listener most likely to struggle. If the audience is CTOs, summon a detail-obsessed CTO to nitpick.
 
-角色名激活审美和认知标准。直接用那个人的眼光审。
+The role name activates aesthetic and cognitive standards. See through that person's eyes.
 
-如果 `diagnosis.md` 不存在，用通用审稿人视角：资深出版编辑，对细节有洁癖，发现问题时解释"为什么这很重要"。
+Fallback: senior publishing editor with an eye for detail.
 
-## AskUserQuestion 格式
-
-1. **Re-ground** — "codeck review，{当前维度}"
-2. **Simplify** — 人话
-3. **Recommend** — 给修复建议
-4. **Options** — 选项
-
-只说已验证的事实。未执行的修复只能说"将要/计划"。
-
-## 准备
+## Setup
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
 
-# 状态检测 + dashboard
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-如果 `STATUS_DESIGN` 不是 `done`，提示先跑 `/codeck-design`。
+If `STATUS_DESIGN` is not `done`, suggest running `/codeck-design` first.
 
-如果有 custom.css + slides.html 但没有拼装后的 HTML，提示重新运行 assemble.sh。
+If custom.css + slides.html exist but no assembled HTML, re-run assemble.sh.
 
-## 读取上下文
+## Context
 
-读取 `$DECK_DIR/outline.md` — 页面结构、用户意图，用来对照实际 HTML 的页数和内容。
-读取 `$DECK_DIR/design-notes.md`（如果存在）— 设计师的关键决策和给审稿人的话。
-读取 `$DECK_DIR/diagnosis.md`（如果存在）— 角色激活。
+Read `$DECK_DIR/outline.md` — page structure, user intent.
+Read `$DECK_DIR/design-notes.md` — designer's decisions and note to reviewer.
+Read `$DECK_DIR/diagnosis.md` — role activation.
 
-**角色过渡：** 如果 design-notes.md 有"给审稿人的话"，读取后用你激活的角色写 1-2 句过渡语。
+**Role transition:** if design-notes.md has a "note to reviewer", respond in your activated role's voice.
 
-## 审查对象
+## Target
 
-审查的是拼装后的最终 HTML（`$DECK_DIR/{title}-r{N}.html`）。
+Review the assembled HTML (`$DECK_DIR/{title}-r{N}.html`).
 
-这个 HTML 由三部分拼装：
-- engine.css + engine.js — 固定引擎，不审不改
-- custom.css — AI 写的设计系统，可改
-- slides.html — AI 写的内容，可改
+Three layers:
+- engine.css + engine.js — fixed, don't touch
+- custom.css — can fix
+- slides.html — can fix
 
-发现问题后，判断改 custom.css 还是 slides.html，改完重新 assemble。
+## Six-dimension review
 
-## 六维审查
+Open the HTML, inspect every slide.
 
-打开最终 HTML，逐页检查。六个维度：
+### 1. Narrative flow
+- Logic between pages? Gaps?
+- Arguments solid? Empty claims?
+- Pacing balanced? Info density even?
+- Core message in first 2 pages?
+- Arc matches user intent mood?
 
-### 维度 1: 叙事流
+Content issues → fix slides.html.
 
-- 页面之间逻辑通顺？有断裂吗？
-- 论证有力？有空洞断言吗？
-- 节奏合理？信息密度均匀吗？
-- 核心信息在前 2 页传达了吗？
-- 叙事弧是否匹配 outline.md 用户意图段的情绪基调？
+### 2. Content completeness
+- Fabricated data or statistics?
+- Accurate terminology?
+- data-notes substantive, not repeating the title?
+- Page count matches outline.md?
 
-问题出在内容 → 改 slides.html。
+Content issues → fix slides.html.
 
-### 维度 2: 内容完整性
+### 3. AI fluff detection
 
-- 有编造的数据或统计？
-- 术语准确？
-- data-notes 充分？每页都有具体要点，不是重复标题？
-- 页面数和 outline.md 一致？
+**Hollow buzzwords:** leveraging, cutting-edge, seamlessly, robust solution, ecosystem, synergy, empower, holistic, paradigm shift, end-to-end
 
-问题出在内容 → 改 slides.html。
+**Structural fluff:** every page is 3-column cards, all titles are "N advantages of X", everything centered with no hierarchy variation
 
-### 维度 3: AI 废话检测
+**Test:** replace company name with competitor — if the sentence still holds, it's fluff.
 
-**高频空洞词：** 赋能、无缝、颠覆、一站式、全方位、深度融合、生态闭环、降本增效、数智化、全链路、leveraging、cutting-edge、seamlessly、robust solution
+Grade: A (zero fluff) / B (1-2) / C (3-5) / D (>5) / F (template throughout)
 
-**结构性废话：** 每页都是 3 列卡片、所有标题都是"XX 的 N 大优势"、全部居中排版无层级变化
+Content issues → fix slides.html.
 
-**判断标准：** 把公司名换成竞品名句子仍然成立，就是废话。
+### 4. Visual hierarchy
+- Clear eye guidance? Title → body hierarchy?
+- Whitespace rhythm? Pages too crowded or empty?
+- Color matches content mood?
+- Clear type scale?
 
-评分：A（零废话）/ B（1-2 处）/ C（3-5 处）/ D（>5 处）/ F（通篇模板化）
+Style issues → fix custom.css.
 
-问题出在内容 → 改 slides.html。
+### 5. Cross-page consistency
+- Colors consistent across pages?
+- Type hierarchy consistent?
+- Similar layouts consistent?
+- No hardcoded color values? All CSS variables?
 
-### 维度 4: 视觉层级
+Style issues → fix custom.css. Hardcoded colors in slides.html too.
 
-- 视线引导清晰？标题 → 正文层级分明？
-- 留白节奏合理？有页面太挤或太空？
-- 配色匹配内容情绪？
-- 字号分层清晰？（标题 48-72px，正文 24-32px，注释 16-20px）
+### 6. Interaction integrity
 
-问题出在样式 → 改 custom.css。
+Check that AI-generated content doesn't break the engine:
 
-### 维度 5: 跨页一致性
+| Check | Pass criteria |
+|-------|---------------|
+| Slide structure | Each page is `<section class="slide" data-notes="...">` |
+| No scripts | No `<script>` tags in slides.html |
+| No engine conflicts | custom.css doesn't override `.slide`, `#progress`, `.mobile-nav` |
+| Fragment markup | `data-f="N"` sequential from 1 |
+| Comment anchors | `<!-- ====== N. Title ====== -->` between pages |
 
-- 颜色使用跨页一致？
-- 字体层级跨页一致？
-- 同类布局跨页一致？
-- 没有硬编码颜色值？都用 CSS 变量？
+## Fixes
 
-问题出在样式 → 改 custom.css。slides.html 里的硬编码颜色也要改。
+Fix directly. Only ask user for judgment calls (content tradeoffs, style preferences).
 
-### 维度 6: 交互完整性
-
-引擎提供的交互不需要审——它们是固定代码，每个 deck 一样。审查的是 AI 生成的内容有没有破坏引擎：
-
-| 检查项 | 通过标准 |
-|--------|---------|
-| slide 结构 | 每页是 `<section class="slide" data-notes="...">` |
-| 无脚本 | slides.html 里没有 `<script>` 标签 |
-| 无引擎样式冲突 | custom.css 没有覆盖 `.slide`、`#progress`、`.mobile-nav` 等引擎 class |
-| fragment 标记 | `data-f="N"` 编号连续、从 1 开始 |
-| 注释锚点 | 每页之间有 `<!-- ====== N. 标题 ====== -->` |
-
-问题 → 改 slides.html 或 custom.css。
-
-## 修复
-
-能判断的直接改，不问。只有需要用户拍板的才问（内容取舍、风格偏好）。
-
-**修复流程：**
-1. 判断改 custom.css 还是 slides.html
-2. 用 Edit 工具修改对应文件
-3. 重新运行 assemble.sh 拼装
+1. Determine: custom.css or slides.html
+2. Edit the file
+3. Re-run assemble.sh
 
 ```bash
 ENGINE_DIR="$HOME/.claude/skills/codeck-design/scripts"
 REV=$(ls "$DECK_DIR"/*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
-bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{标题}" "{语言}" \
+bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{title}" "{language}" \
   > "$DECK_DIR/{title}-r${REV}.html"
 ```
 
-修复后版本号不变，覆盖同一个文件。
+Overwrite same revision. Max 3 rounds.
 
-**上限：** 最多 3 轮修复。第 3 轮后进入终审。
+## Decision summary
 
-## 决策摘要
-
-修复完成后，在 `$DECK_DIR/design-notes.md` 末尾追加审稿摘要：
+Append to `$DECK_DIR/design-notes.md`:
 
 ```markdown
-## 审稿 — {ISO date}
+## Review — {ISO date}
 
-修复 {N} 处。{一句话：改了什么、为什么}
-剩余风险: {none / 第N页: 风险}
+Fixed {N} issues. {one line: what and why}
+Remaining risk: {none / slide N: risk}
 ```
 
-## 完成
+## Done
 
-> codeck review 完成。修复 {N} 处。
+> codeck review done. Fixed {N} issues.
 >
-> {一句话——能上台吗，还有什么风险}
+> {one line — can this go on stage? Any remaining risks?}
 >
-> 下一步：`/codeck-export` 或 `/codeck-speech`
+> Next: `/codeck-export` or `/codeck-speech`
 
-显示 dashboard：
 ```bash
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
