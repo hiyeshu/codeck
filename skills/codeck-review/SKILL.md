@@ -49,7 +49,7 @@ Read `$DECK_DIR/diagnosis.md` — role activation.
 
 ## Target
 
-Review the assembled HTML (`$DECK_DIR/{title}-r{N}.html`).
+Review the assembled HTML (`./{title}-r{N}.html` in the user's project directory).
 
 Three layers:
 - engine.css + engine.js — fixed, don't touch
@@ -127,9 +127,9 @@ Fix directly. Only ask user for judgment calls (content tradeoffs, style prefere
 
 ```bash
 ENGINE_DIR="$HOME/.claude/skills/codeck-design/scripts"
-REV=$(ls "$DECK_DIR"/*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
+REV=$(ls ./*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
 bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{title}" "{language}" \
-  > "$DECK_DIR/{title}-r${REV}.html"
+  > "./{title}-r${REV}.html"
 ```
 
 Overwrite same revision. Max 3 rounds.

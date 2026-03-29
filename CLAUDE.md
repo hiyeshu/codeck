@@ -34,14 +34,11 @@ Core idea: skills handle process and format. Knowledge comes from dynamically su
 
 ## Directory structure
 
-Skills installed at `~/.claude/skills/codeck*/`, project artifacts at `~/.codeck/projects/{slug}/`.
+Skills installed at `~/.claude/skills/codeck*/`.
 
-Key artifacts:
-- `diagnosis.md` — content diagnosis + role recommendations
-- `outline.md` — outline + user intent
-- `{title}-r{n}.html` — design output (revision number increments)
-- `design-notes.md` — design process + design-dna isomorphic mapping
-- `speech.md` — speech transcript
+Two directories at runtime:
+- **User's project directory (cwd)** — materials + final HTML output (`{title}-r{n}.html`)
+- **`~/.codeck/projects/{slug}/`** — intermediate artifacts: diagnosis.md, outline.md, design-notes.md, design-dna.json, custom.css, slides.html, speech.md
 
 ## Repository
 

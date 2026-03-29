@@ -8,7 +8,7 @@ DECK_DIR="${1:?Usage: bash status.sh \$DECK_DIR}"
 _has() { [ -f "$1" ]; }
 _html() {
   local f
-  f=$(ls "$DECK_DIR"/*-r*.html 2>/dev/null | sort -V | tail -1)
+  f=$(ls ./*-r*.html 2>/dev/null | sort -V | tail -1)
   [ -n "$f" ] && echo "$f" && return 0
   return 1
 }

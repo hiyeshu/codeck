@@ -143,11 +143,11 @@ The slide engine (navigation, fragments, overview, speaker mode, progress bar, F
 ```bash
 ENGINE_DIR="$HOME/.claude/skills/codeck-design/scripts"
 
-REV=$(ls "$DECK_DIR"/*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
+REV=$(ls ./*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
 REV=$((${REV:-0} + 1))
 
 bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{title}" "{language}" \
-  > "$DECK_DIR/{title}-r${REV}.html"
+  > "./{title}-r${REV}.html"
 ```
 
 ### Engine capabilities (engine.js — do not reimplement)
@@ -334,7 +334,8 @@ Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run asse
 >
 > {One sentence — cite the design-dna isomorphic mapping}
 >
-> Output: `$DECK_DIR/{title}-r{revision}.html` + `$DECK_DIR/design-dna.json` + `$DECK_DIR/design-notes.md`
+> Output: `./{title}-r{revision}.html` (in user's project directory)
+> Intermediates: `$DECK_DIR/design-dna.json` + `$DECK_DIR/design-notes.md`
 > Next: `/codeck-review`
 
 Show dashboard:

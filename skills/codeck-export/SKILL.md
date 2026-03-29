@@ -32,7 +32,7 @@ If `STATUS_DESIGN` is not `done`, suggest running `/codeck-design` first.
 
 ## Step 3: Export
 
-Find the HTML file (`$DECK_DIR/*-r*.html`), derive baseName.
+Find the HTML file (`./*-r*.html` in the user's project directory), derive baseName.
 
 ### HTML
 
@@ -80,8 +80,8 @@ Default: keep placeholders in export. If user says "embed video", extract path f
 
 ```bash
 EXPORT_SCRIPTS="$HOME/.claude/skills/codeck-export/pptx/scripts"
-python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pdf "$DECK_DIR"/*-r*.html
-python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pptx "$DECK_DIR"/*-r*.html
+python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pdf ./*-r*.html
+python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pptx ./*-r*.html
 ```
 
 **Option B (fallback): screenshot embed**
@@ -102,13 +102,13 @@ Generate thumbnails:
 
 ```bash
 EXPORT_SCRIPTS="$HOME/.claude/skills/codeck-export/pptx/scripts"
-python "$EXPORT_SCRIPTS/thumbnail.py" "$DECK_DIR"/*-r*.pptx
+python "$EXPORT_SCRIPTS/thumbnail.py" ./*-r*.pptx
 ```
 
 Convert to images for detailed check:
 
 ```bash
-python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pdf "$DECK_DIR"/*-r*.pptx
+python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pdf ./*-r*.pptx
 pdftoppm -jpeg -r 150 *.pdf slide-check
 ```
 

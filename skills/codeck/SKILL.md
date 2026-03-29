@@ -32,10 +32,10 @@ Only state verified facts. Unexecuted actions use "will / plan to".
 
 ## Two directories
 
-- **Current directory (`.`)** — the user's project. Materials live here.
-- **`$DECK_DIR`** — codeck's output directory. Only codeck artifacts go here (diagnosis.md, outline.md, HTML, etc.).
+- **Current directory (`.`)** — the user's project. Materials live here. **Final HTML goes here too** — so the user can see and open it directly.
+- **`$DECK_DIR`** — codeck's intermediate artifacts. diagnosis.md, outline.md, design-notes.md, design-dna.json, custom.css, slides.html, speech.md. The user doesn't need to look here.
 
-Scan materials in `.`. Write outputs to `$DECK_DIR`. Never confuse the two.
+Scan materials in `.`. Write intermediate artifacts to `$DECK_DIR`. Output final HTML to `.`.
 
 ## Phase 1: Init + status
 
