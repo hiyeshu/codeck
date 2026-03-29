@@ -4,7 +4,7 @@
 
 **Turn a folder into a presentation, by talking.**
 
-English | [中文](README.zh.md) | [日本語](README.ja.md)
+English | [中文](README.zh.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
 </div>
 

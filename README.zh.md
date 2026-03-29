@@ -4,7 +4,7 @@
 
 **把一个文件夹变成演示文稿，靠说话。**
 
-[English](README.md) | 中文 | [日本語](README.ja.md)
+[English](README.md) | 中文 | [日本語](README.ja.md) | [한국어](README.ko.md)
 
 </div>
 
