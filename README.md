@@ -38,7 +38,7 @@ The result is a single HTML file. No templates. No slide-type vocabulary. Free H
 
 ## Install
 
-[Claude Code](https://docs.anthropic.com/en/docs/claude-code) + Node.js 18+.
+Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
 ```bash
 npx skills add hiyeshu/codeck

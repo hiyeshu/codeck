@@ -38,7 +38,7 @@ codeck はファイルを読み、あなたのコンテンツが*本当は何を
 
 ## インストール
 
-[Claude Code](https://docs.anthropic.com/en/docs/claude-code) + Node.js 18+。
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code) が必要。
 
 ```bash
 npx skills add hiyeshu/codeck
