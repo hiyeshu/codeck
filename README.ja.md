@@ -24,9 +24,8 @@ codeck はファイルを読み、あなたのコンテンツが*本当は何を
 /codeck-design   デザイナーが議論の構造と同形の視覚言語を見つける
     ↓
 /codeck-review   最も厳しい聴衆が全スライドを検査、直接修正
-    ↓
-/codeck-export   PDF / PPTX
-/codeck-speech   逐語スクリプト + ステージディレクション
+    ├── /codeck-export   PDF / PPTX
+    └── /codeck-speech   逐語スクリプト + ステージディレクション
 ```
 
 ## 3つのアイデア

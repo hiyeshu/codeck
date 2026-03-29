@@ -24,9 +24,8 @@ The result is a single HTML file. No templates. No slide-type vocabulary. Free H
 /codeck-design   designer finds visual form that mirrors your argument's shape
     ↓
 /codeck-review   your toughest listener reviews every slide, fixes directly
-    ↓
-/codeck-export   PDF / PPTX
-/codeck-speech   verbatim script with stage directions
+    ├── /codeck-export   PDF / PPTX
+    └── /codeck-speech   verbatim script with stage directions
 ```
 
 ## Three ideas
