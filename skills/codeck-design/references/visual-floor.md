@@ -255,11 +255,7 @@ When the user's materials include images, or when you can generate them, think a
 
 ### Living surfaces
 
-CSS animations loop. The eye detects the repeat within seconds and tunes it out — the brain classifies it as mechanical and stops paying attention. A shader generates continuous variation that never exactly repeats. The brain can't predict the next frame, so it keeps watching. This is the difference between a screensaver and a fire.
-
-A single slide with a shader background in an otherwise static deck is like a held note that starts vibrating. The audience doesn't know why that page felt different — they just stayed with it longer. The effect comes from contrast with the surrounding stillness.
-
-This is the highest-cost visual tool available. It adds weight to the HTML, demands GPU, and can fail silently on weak hardware. CSS gradients, blend modes, and noise textures can get 80% of the way there with zero risk. But when a page needs to feel alive — not animated, *alive* — a shader is the only thing that does it.
+CSS animations loop. The brain detects the repeat in seconds and stops watching. Shaders never repeat — the brain can't predict the next frame, so it keeps looking. Screensaver vs fire.
 
 ### Contrast fatigue relief
 
