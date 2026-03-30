@@ -24,6 +24,7 @@ Downstream: Claude skill runtime
 
 ## Changelog
 
+- 2026-03-30: codeck-design: image physics — added perceptual principles for image use (scarcity, scale, rhythm) to visual-floor.md. Added gotcha pointing to generate-image skill for on-demand image generation into $DECK_DIR/assets/. No rules on placement — principles that inspire AI to make its own decisions.
 - 2026-03-30: codeck-design + codeck-review: perceptual compensation rewrite. Removed aesthetic constraints (cover symmetry, content density caps, cover signal-to-noise) that limited AI creativity. Added perceptual blind spot rules: projector color loss (#333→black), Windows thin font rendering, contrast fatigue relief, height breakpoint checklist, visual weight = content importance. Rules now target what AI can't see about human perception, not what humans disagree about aesthetically.
 - 2026-03-30: codeck-design + codeck-review: element scale rules (superseded by perceptual rewrite above) — visual elements must use relative units (vw/vh/%/clamp), not fixed small px. Design checklist and review both check for undersized multi-element layouts. Deliberate breathing pages exempted.
 - 2026-03-30: codeck-speech: fragment-synced data-notes — split speech segments per fragment step instead of dumping full text on slide entry. speech.md output format now uses `### [on enter]` / `### [fragment N]` sections for slides with fragments.

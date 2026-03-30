@@ -235,6 +235,16 @@ The rule: **structurally unique (from the mapping), visually at least this good 
 
 Single-page quality is necessary but not sufficient. These techniques operate across pages — they're what separates a deck from 12 copies of the same slide.
 
+### The physics of images
+
+Text argues. Images assert. A photograph lands in the audience's gut before their brain has finished reading the title — it bypasses the verbal processing pipeline entirely and goes straight to emotion. This is not metaphor; it's how human perception works.
+
+When an image fills the entire slide, it stops being an illustration and becomes an environment. The audience is no longer looking *at* something — they're *inside* it. The threshold is somewhere around 60-70% of the canvas: below that, the image is furniture; above it, the image is the room. The same photograph, at different scales, tells completely different stories.
+
+Scarcity multiplies impact. In a deck of twenty text-heavy slides, a single full-bleed photograph hits like a cymbal crash. In a deck where every slide has an image, none of them register. The audience's visual system habituates — each additional image reduces the marginal impact of all the others. The most powerful image in a deck is often the only one.
+
+When the user's materials include images, or when you can generate them, think about this: not *where* to put images, but *where their absence makes the text-only slides more powerful by contrast*. The image isn't decoration. It's a rhythm break — the moment the deck shifts from thinking to feeling.
+
 ### Contrast fatigue relief
 
 Human eyes adapt to sustained high contrast. 30 slides of white-on-black (or black-on-white) at the same contrast ratio causes fatigue — the audience stops reading without knowing why. Every 4-5 slides, shift the contrast environment: invert light/dark, change background warmth, or drop a breathing page with reduced contrast. This is the visual equivalent of changing the room's lighting.
