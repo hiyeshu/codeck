@@ -86,14 +86,48 @@ Write a complete, readable-aloud transcript. Page by page.
 - A) Help me trim the ones over time
 - B) I'll manage it myself
 
-## Write back HTML data-notes
+## Write back HTML data-notes (fragment-synced)
 
-After generating, replace each slide's `data-notes` with the full speech text for that page. This way speaker mode shows the complete script.
+The engine's `buildNotes()` concatenates the slide's `data-notes` with each visible fragment's `data-notes` as the presenter steps through. Use this to sync speech rhythm with fragment rhythm.
 
-Use Edit tool per slide:
-- Find `<section class="slide" data-notes="...">`
-- Replace `data-notes` value with the page's verbatim script (HTML-escape quotes)
-- Keep stage directions in data-notes
+### How it works
+
+1. **Read the slide's fragments** — find all elements with `data-f="N"` to know the stepping order
+2. **Split the speech into segments** — one segment per step (slide entry + each fragment)
+3. **Assign notes to each step:**
+   - Slide's `data-notes` → what to say when the slide first appears (before any fragment)
+   - `data-f="1"` element's `data-notes` → what to say when fragment 1 reveals
+   - `data-f="2"` element's `data-notes` → what to say when fragment 2 reveals
+   - ...and so on
+
+### Example
+
+Speech for slide 3:
+> "Let's talk about the three ideas behind codeck. [pause 2s] First, it recruits people, not rules. [pause] Second, isomorphic mapping. [pause] Third, no schema ceiling."
+
+Slide 3 has `data-f="1"`, `data-f="2"`, `data-f="3"`:
+
+```html
+<section class="slide" data-notes="Let's talk about the three ideas behind codeck. [pause 2s]">
+  <h2 data-f="1" data-notes="First, it recruits people, not rules. [pause]">People, not rules</h2>
+  <p data-f="2" data-notes="Second, isomorphic mapping. [pause]">Isomorphic mapping</p>
+  <p data-f="3" data-notes="Third, no schema ceiling.">No schema ceiling</p>
+</section>
+```
+
+Presenter presses → three times. Notes build up progressively:
+- Step 0: "Let's talk about the three ideas..."
+- Step 1: + "First, it recruits people..."
+- Step 2: + "Second, isomorphic mapping..."
+- Step 3: + "Third, no schema ceiling."
+
+### Rules
+
+- If a slide has no fragments, put the full speech in the slide's `data-notes`
+- HTML-escape quotes inside `data-notes` attribute values
+- Keep stage directions (`[pause]`, `[slow down]`, etc.) in the notes
+- Each segment should be self-contained — the presenter reads what's new at each step
+- Match the number of speech segments to the number of steps (1 + fragment count)
 
 ## Output: $DECK_DIR/speech.md
 
@@ -109,7 +143,7 @@ totalEstimate: "{estimate}"
 ---
 
 ## Slide 1: {title}
-<!-- estimate: {N}s | {M} words -->
+<!-- estimate: {N}s | {M} words | fragments: 0 -->
 
 {verbatim speech text}
 
@@ -118,11 +152,23 @@ totalEstimate: "{estimate}"
 ---
 
 ## Slide 2: {title}
-<!-- estimate: {N}s | {M} words -->
+<!-- estimate: {N}s | {M} words | fragments: 3 -->
 
-[transition] {bridge sentence}
+### [on enter]
 
-{verbatim speech text}
+{what to say when slide appears, before any fragment}
+
+### [fragment 1]
+
+{what to say when fragment 1 reveals}
+
+### [fragment 2]
+
+{what to say when fragment 2 reveals}
+
+### [fragment 3]
+
+{what to say when fragment 3 reveals}
 
 ---
 ```

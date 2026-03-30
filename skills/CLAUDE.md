@@ -24,6 +24,7 @@ Downstream: Claude skill runtime
 
 ## Changelog
 
+- 2026-03-30: codeck-speech: fragment-synced data-notes — split speech segments per fragment step instead of dumping full text on slide entry. speech.md output format now uses `### [on enter]` / `### [fragment N]` sections for slides with fragments.
 - 2026-03-29: codeck-design: add reference extraction step — user-provided URLs, screenshots, or design specs are decomposed into design signals (color logic, type contrast, spatial rhythm, material, motion, structure) and cross-checked against isomorphic mapping. Signals that match content structure are adopted; decorative-only signals are discarded.
 - 2026-03-29: v2 rewrite. Single HTML architecture (fixed engine + AI-written custom.css/slides.html). Content diagnosis with three signals, role selection derived from problem nature, design-dna isomorphic mapping, inverse review role. Forward-only flow: diagnosis → outline → HTML → review → export/speech. All skills in English.
 - 2026-03-24: Repository directory renamed from `skill/` to `skills/`.
