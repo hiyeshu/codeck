@@ -24,10 +24,10 @@ Map `design_system` fields directly to `:root` variables in custom.css:
   --surface-card: {color.surface.card};
   --surface-elevated: {color.surface.elevated};
 
-  /* ─── Typography ─── */
-  --font-heading: {typography.font_families.heading};
-  --font-body: {typography.font_families.body};
-  --font-mono: {typography.font_families.mono};
+  /* ─── Typography (Google Fonts + system fallback) ─── */
+  --font-heading: {typography.font_families.heading}, system-ui, sans-serif;
+  --font-body: {typography.font_families.body}, system-ui, sans-serif;
+  --font-mono: {typography.font_families.mono}, ui-monospace, monospace;
 
   /* ─── Spacing ─── */
   --space-sm: {spacing.scale[1]}px;   /* typically 16px */
@@ -56,94 +56,17 @@ Map `design_system` fields directly to `:root` variables in custom.css:
 
 ## design_system → Layout Primitives
 
-Generate layout classes from the `typography` and `slides` fields:
-
-```css
-/* ─── Type scale ─── */
-.title-mega {
-  font-size: {typography.type_scale.display.size};
-  font-weight: {typography.type_scale.display.weight};
-  line-height: {typography.type_scale.display.line_height};
-  letter-spacing: {typography.type_scale.display.tracking};
-}
-.title-large {
-  font-size: {typography.type_scale.heading_1.size};
-  font-weight: {typography.type_scale.heading_1.weight};
-  line-height: {typography.type_scale.heading_1.line_height};
-}
-.title-medium {
-  font-size: {typography.type_scale.heading_2.size};
-  font-weight: {typography.type_scale.heading_2.weight};
-}
-.body-text {
-  font-size: {typography.type_scale.body.size};
-  line-height: {typography.type_scale.body.line_height};
-}
-.caption {
-  font-size: {typography.type_scale.caption.size};
-  opacity: 0.7;
-}
-
-/* ─── Layout primitives ─── */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-md); }
-.flex-col { display: flex; flex-direction: column; gap: var(--space-sm); }
-.flex-row { display: flex; gap: var(--space-md); align-items: center; }
-.card {
-  background: var(--surface-card);
-  border-radius: var(--radius);
-  padding: var(--space-md);
-  box-shadow: var(--shadow-low);
-}
-```
+Generate type scale classes (`.title-mega`, `.title-large`, `.title-medium`, `.body-text`, `.caption`) from `typography.type_scale`, and layout primitives (`.grid-2`, `.grid-3`, `.flex-col`, `.flex-row`, `.card`) using the spacing and shape variables.
 
 ## design_system.slides → Slide Type Styles
 
-```css
-/* ─── Cover ─── */
-.slide-cover {
-  /* map from slides.cover */
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ─── Section divider ─── */
-.slide-divider {
-  /* map from slides.section_divider */
-  justify-content: center;
-  align-items: center;
-}
-
-/* ─── Data slide ─── */
-.slide-data {
-  /* map from slides.data */
-}
-
-/* ─── Ending ─── */
-.slide-ending {
-  text-align: center;
-  justify-content: center;
-}
-```
+Map `slides.cover`, `slides.section_divider`, `slides.data`, `slides.ending` from the DNA to `.slide-cover`, `.slide-divider`, `.slide-data`, `.slide-ending` classes. Derive layout, alignment, and type scale from the DNA — don't default to centered everything.
 
 ## design_style → Subjective Decisions
 
-`design_style` does not map to CSS directly — it guides how you write CSS and HTML:
-
-| DNA field | Guidance |
-|-----------|----------|
-| aesthetic.mood | Overall mood → affects color temperature, spacing density |
-| visual_language.whitespace_usage | → padding/margin generosity |
-| visual_language.contrast_level | → foreground/background contrast |
-| visual_language.focal_strategy | → visual focus handling per slide |
-| composition.hierarchy_method | → how hierarchy is expressed (size / color / space) |
-| composition.balance_type | → symmetric vs asymmetric layout |
-| imagery.graphic_elements | → decorative SVGs, gradients, patterns |
+`design_style` does not map to CSS directly — it guides how you write CSS and HTML. Let `aesthetic.mood` drive color temperature, `composition.balance_type` drive layout symmetry, `visual_language.focal_strategy` drive per-slide emphasis.
 
 ## visual_effects → CSS Enhancements
-
-Implement `visual_effects` with pure CSS — no external libraries.
 
 ### Background effects
 ```css
@@ -202,10 +125,9 @@ To override the engine's transition duration and easing in custom.css:
 }
 ```
 
-## Mobile
+## Responsive
 
-Must include the 768px breakpoint:
-
+Width breakpoint (mobile):
 ```css
 @media (max-width: 768px) {
   .title-mega { font-size: calc({display.size} * 0.5); }
@@ -215,14 +137,28 @@ Must include the 768px breakpoint:
 }
 ```
 
+Height breakpoints (laptop with browser chrome, external monitors):
+```css
+@media (max-height: 700px) {
+  .slide { padding: 40px 60px; }
+  .title-mega { font-size: calc({display.size} * 0.75); }
+  .title-large { font-size: calc({heading_1.size} * 0.8); }
+}
+@media (max-height: 500px) {
+  .slide { padding: 24px 40px; }
+  .title-mega { font-size: calc({display.size} * 0.55); }
+  .caption, .decorative { display: none; }
+}
+```
+
 ## Anti-Pattern Blacklist
 
-These are common AI defaults. If you catch yourself using any of them, go back to the DNA and re-derive:
+If you catch yourself using any of these, go back to the DNA and re-derive:
 
-- **Fonts:** Inter / Roboto / Arial — generic, no character. Derive the font from `aesthetic.mood`.
-- **Color:** `#6366f1` (Tailwind indigo) — fingerprint of AI-generated UI. If it appears in the DNA palette, question the source.
-- **Layout:** everything centered — every slide with `text-align:center; justify-content:center` means no hierarchy. `composition.balance_type` should drive asymmetric choices.
-- **Effects:** glassmorphism — trend has passed, hard to execute well. Don't use unless `visual_effects` explicitly specifies it.
+- Inter / Roboto / Arial / system-ui as display fonts — AI fingerprint, no character. Google Fonts is open now — use distinctive faces (Clash Display, Fraunces, Syne, Cormorant, Archivo Black...). Never converge on Space Grotesk across decks.
+- `#6366f1` (Tailwind indigo) — AI fingerprint
+- Every slide centered — no hierarchy. Let `composition.balance_type` drive asymmetry
+- Default glassmorphism — don't use unless DNA explicitly specifies it
 
 ## Quality Checklist
 
@@ -232,7 +168,8 @@ Before delivery:
 - [ ] Spacing rhythm matches DNA scale
 - [ ] Overall mood matches `design_style.aesthetic.mood`
 - [ ] `:root` defines `--bg`, `--fg`, `--accent` (engine interface)
-- [ ] `@media (max-width: 768px)` breakpoint present
+- [ ] `@media (max-width: 768px)` width breakpoint present
+- [ ] `@media (max-height: 700px)` and `@media (max-height: 500px)` height breakpoints present
 - [ ] Contrast ≥ 4.5:1 for body text
 - [ ] No engine classes overridden (`.slide`, `#progress`, `.mobile-nav`)
 - [ ] `prefers-reduced-motion` respected (if animations present)

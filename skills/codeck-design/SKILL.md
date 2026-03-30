@@ -64,43 +64,20 @@ Read the "note to designer" at the end of outline.md. Write 1-2 sentences in you
 
 ## Reference extraction (optional)
 
-If the user provides visual references — URLs, screenshots, design specs, other presentations — extract design signals before proceeding to isomorphic mapping.
+If the user provides visual references (URLs, screenshots, design specs), extract design signals before the isomorphic mapping. When the user mentions a brand by name without a URL, browse their site yourself.
 
-### Proactive browsing
+How to extract:
+- **Color**: primary by area dominance, secondary by supporting role, accent by CTA usage. Map neutral scale from lightest background to darkest text.
+- **Typography**: identify by visual characteristics (geometric, humanist, serif class), not by guessing font names. Estimate scale ratio from heading/body size relationship.
+- **Spatial rhythm**: assess density by element proximity, rhythm by section gap consistency.
+- **Material/texture**: classify shadow softness, spread, layering. Note glass, grain, gradients.
+- **Motion**: if observable, note easing curves and duration feel.
 
-When the user mentions a brand, product, or style by name without providing a URL, **browse their website yourself** to extract design signals. Don't ask the user to send a screenshot — go look.
+Multiple references → find the intersection. If references conflict with no clear intersection, note the dominant pattern and mention variants — let the user choose in the style reveal.
 
-Examples:
-- "something like Linear's style" → browse linear.app, extract design signals
-- "reference Stripe's docs" → browse stripe.com/docs, extract signals
-- "Apple Keynote vibes" → browse apple.com recent event pages
+References inform the mapping, not override it. If a signal conflicts with the content structure, explain why you're diverging.
 
-### What to extract
-
-From each reference, identify:
-
-| Signal | Example |
-|--------|---------|
-| **Color logic** | "dark background, single warm accent, no gradients" |
-| **Type contrast** | "ultra-heavy headlines vs light body, cinematic scale gap" |
-| **Spatial rhythm** | "generous negative space, content clustered in lower third" |
-| **Material / texture** | "glassmorphism, frosted surfaces, subtle inner glow borders" |
-| **Motion language** | "fade-rise entrance, staggered delays, ease-out curves" |
-| **Structural pattern** | "full-bleed hero, minimal nav, single CTA" |
-
-### How to use references
-
-References inform, not dictate. Cross-check each extracted signal against the isomorphic mapping:
-
-1. **Signal matches content structure** → adopt directly. A cinematic type scale matches a narrative that builds dramatic tension.
-2. **Signal is decorative only** → discard. A glassmorphic nav bar looks good but doesn't serve every argument's structure.
-3. **Signal conflicts with content** → note the conflict and explain to the user why you're diverging.
-
-Write extracted signals to `$DECK_DIR/design-notes.md` under a `## References` section before the role and mapping sections.
-
-### Multiple references
-
-If the user gives several references, find the **intersection** — the signals that appear across references. That's what the user is actually drawn to, even if they can't articulate it.
+Write extracted signals to `$DECK_DIR/design-notes.md` under `## References`.
 
 ## design-dna: isomorphic mapping → design archive
 
@@ -126,43 +103,15 @@ If the content structure is simple (flat list), skip the isomorphic mapping.
 
 ### Step 2: Generate design-dna.json
 
-Translate the visual strategy into a structured three-dimensional design archive.
+Read `references/design-dna-schema.md` — the full three-dimensional schema, unabridged. Record the **complete design intent** in every field, even for effects beyond CSS. The schema header documents the codeck environment constraints; the AI decides how to converge.
 
-Read `references/design-dna-schema.md` for full field definitions. Three dimensions:
+Every field must be populated — no empty strings. Use `"none"` or `false` for inapplicable fields. A complete DNA forces deliberate decisions across all dimensions; skipping fields causes downstream generation to lack information.
 
-| Dimension | Contents | Source |
-|-----------|----------|--------|
-| `design_system` | Color, typography, spacing, layout, shape, shadow, slide type styles | Concrete visual strategy from isomorphic mapping |
-| `design_style` | Mood, visual language, composition, negative space | Role aesthetics + isomorphic mapping |
-| `visual_effects` | Background effects, text effects, fragment entrance, glass effects | Visual enhancements the content needs |
-
-Write to `$DECK_DIR/design-dna.json` with the Write tool.
-
-**Constraints:**
-- Presentation font sizes: headings 48-96px, body 24-32px, captions 16-20px (not web scale)
-- System font stacks — no CDN references
-- `visual_effects` via CSS only — no external libraries (engine handles interaction, AI handles visuals)
-- Unused fields: `"none"` or `false`
+Write to `$DECK_DIR/design-dna.json`.
 
 ## Style reveal
 
-This is the moment the user sees their content reflected back as form. Don't just describe a color palette — show them the shape of their own argument.
-
-Three beats:
-
-1. **Your content's shape** — the formal structure you extracted, in plain language. ("Your argument starts scattered — four separate threads — then weaves them together until the final slide where they're one thing.")
-
-2. **The match** — what this reminds you of, and why the match is structural, not decorative. ("This is the structure of a fugue. Separate voices entering one by one, each transforming the theme, converging at the end. I'm thinking of Glenn Gould's Goldberg Variations.")
-
-3. **What you'll see** — translate to concrete visual consequences. ("Early slides: each thread gets its own visual lane, sparse, isolated. Middle slides: lanes start overlapping, colors blending. Final slide: one unified composition, all threads visible in a single frame.")
-
-> codeck design — here's what I see in your content.
->
-> {Beat 1: content shape}
->
-> {Beat 2: the match}
->
-> {Beat 3: visual consequences}
+Show the user three things: (1) their content's formal structure, (2) the isomorphic match and why it's structural not decorative, (3) concrete visual consequences.
 
 - A) Go with this (recommended)
 - B) I have a different idea
@@ -170,38 +119,9 @@ Three beats:
 
 ## Visual impact — quality gate
 
-A correct deck is not enough. Correct and forgettable is a failure mode.
+Correct and forgettable is a failure mode. Read `references/visual-floor.md` before writing custom.css — 3 CSS benchmarks (dark cinematic, light editorial, minimal tension). Your output must be at least that level.
 
-### The visual floor
-
-Read `references/visual-floor.md`. It contains 3 concrete CSS benchmarks — dark cinematic, light editorial, minimal tension. These are the **minimum acceptable visual quality**, not targets.
-
-**Mandatory check before writing custom.css:**
-
-1. Pick the benchmark closest to your DNA's mood
-2. Compare element by element: title boldness, background layering, card surface depth, data dominance, use of whitespace
-3. If your planned CSS is flatter than the benchmark — go back to design-dna.json and push harder: more contrast, more scale difference, more surface depth
-4. Then diverge — your output follows the isomorphic mapping, the benchmark just prevents you from settling
-
-### Rhythm
-
-At least 3 gear-shifts in a 12-slide deck. Quiet slides (breathing room, single element) alternate with loud slides (full-bleed color, oversized type). If every slide feels the same, the deck has no pulse.
-
-### Motion as rhetoric
-
-Each entrance effect argues something:
-- **fade-up**: "here's the next point" (neutral, default)
-- **scale**: "this number matters" (emphasis)
-- **blur → sharp**: "now you see it" (reveal)
-- **slide-in**: "this follows that" (sequence)
-
-One primary entrance per deck. A second sparingly for contrast. Three = noise. Stagger: 80-150ms.
-
-### Surface depth
-
-- Backgrounds: gradient with color temperature, not flat. Noise overlay at 2-5% opacity for tactile warmth.
-- Cards: glass + glow on dark, hard shadow on light. Never just a background color swap.
-- Hierarchy: background → card → elevated. Each layer distinct. The eye reads depth.
+Pick the closest benchmark, compare element by element. If flatter, push the DNA harder before proceeding.
 
 ## Generate content
 
@@ -278,14 +198,6 @@ Flow: `design_system` → `:root` CSS variables → layout primitives → slide 
 
 Read `references/asset-guide.md` for full examples of inline/poster/extract asset patterns. Three levels: `inline` (base64 via assemble.sh), `poster` (cover image + play icon), `extract` (code blocks + CSS charts).
 
-### Visual rules
-
-1. **CSS variable-driven** — global color, typography, spacing through `:root` variables
-2. **Whitespace** — each page >30% whitespace
-3. **Type hierarchy** — headings 48-72px, body 24-32px, captions 16-20px
-4. **Mobile** — 768px breakpoint
-5. **No external dependencies** — system font stacks, no CDN
-
 ### Write + assemble
 
 1. Write `$DECK_DIR/custom.css` with Write tool
@@ -347,7 +259,7 @@ Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run asse
 
 ## Gotchas
 
-- **System fonts only.** No Google Fonts, no CDN links. `assemble.sh` produces a self-contained HTML. External font requests = broken offline, slow first paint.
+- **Google Fonts allowed, but always with fallback.** Use `<link>` with `font-display: swap` and a system font fallback stack. Offline = fallback renders, no breakage. Never use fonts without a fallback stack. Preload the font link to minimize FOUT.
 - **No `<script>` in slides.html.** Engine handles all JS. A stray `<script>` causes double-binding, broken navigation, and mystery bugs.
 - **`:root` variables are an API contract.** `--bg`, `--fg`, `--accent` are consumed by engine.css. Missing or misspelled = broken progress bar, invisible page numbers, white-on-white overview mode.
 - **Fragment numbers must be sequential starting from 1.** `data-f="1"`, `data-f="2"`, etc. Gaps (1, 3, 5) cause the engine to skip steps. Duplicates cause simultaneous reveals.
@@ -355,6 +267,9 @@ Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run asse
 - **CSS animations + `prefers-reduced-motion`.** If custom.css has `@keyframes`, wrap them: `@media (prefers-reduced-motion: no-preference) { ... }`. Skip this = accessibility failure.
 - **Hard-coded colors in slides.html = unmaintainable.** One palette change and you're hunting through 30 slides. Use CSS classes and `var()` exclusively.
 - **Cover slide ≠ title + subtitle centered.** That's the #1 AI default. It signals "nobody designed this." Break the symmetry.
+- **CSS negation of math functions silently fails.** `-clamp(...)`, `-min(...)`, `-max(...)` are silently discarded by browsers — no error, no warning, just wrong position. Always write `calc(-1 * clamp(...))` instead.
+- **Height breakpoints, not just width.** Laptops with browser chrome show ~600px viewport height. Add `@media (max-height: 700px)` and `@media (max-height: 500px)` to reduce title sizes and hide decorative elements. Width-only breakpoints miss the most common overflow scenario.
+- **Content density has hard limits.** Title slide: 1 heading + 1 subtitle max. Content slide: 1 heading + 6 bullets or 2 short paragraphs max. Data slide: 1 heading + 4 metric cards max. Code slide: 10 lines max. Exceeding these = viewport overflow. Split into multiple slides, never cram.
 - **Assemble.sh auto-increments revision.** Don't manually name output files. Let the script handle `r1`, `r2`, etc. Manual names break the revision chain.
 
 ## Done

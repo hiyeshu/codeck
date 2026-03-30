@@ -1,8 +1,8 @@
 # Visual Floor — Minimum Acceptable Impact
 
-These are not presets to copy. They are **benchmarks to beat**.
+Not presets. **Benchmarks to beat.**
 
-After generating design-dna.json and before writing custom.css, compare your planned output against these samples. If your design doesn't hit at least this level of visual intensity, go back to the DNA and push harder.
+After generating design-dna.json and before writing custom.css, compare your planned output against these. If your design is flatter than the closest benchmark, go back to the DNA and push harder.
 
 ---
 
@@ -226,3 +226,93 @@ After writing design-dna.json, before writing custom.css:
 4. **Then diverge** — your output should match the isomorphic mapping, not the benchmark. The benchmark just ensures you don't settle for mediocre
 
 The rule: **structurally unique (from the mapping), visually at least this good (from the floor).**
+
+---
+
+## Deck-level techniques
+
+Single-page quality is necessary but not sufficient. These techniques operate across pages — they're what separates a deck from 12 copies of the same slide.
+
+### Color temperature drift
+
+Shift `--bg` per page to follow the emotional arc. Don't change the palette — change the temperature.
+
+```css
+/* Cold open (analytical, establishing) */
+.slide:nth-child(-n+3) { --bg: #0a0f1a; }
+
+/* Warm peak (tension, conflict, the key argument) */
+.slide:nth-child(n+5):nth-child(-n+8) { --bg: #1a0f0a; }
+
+/* Resolved (conclusion — cooler than peak, warmer than open) */
+.slide:nth-child(n+10) { --bg: #0f1218; }
+```
+
+### Density inversion
+
+Every 3-4 pages, flip from dense to sparse or vice versa. A page packed with 4 metric cards followed by a page with one sentence and 80% whitespace. This is forte → piano. Without it, every page feels the same volume.
+
+### Breathing pages
+
+Some slides exist to make the audience feel, not think. A single word. A color inversion. A number at 200px with nothing else. These slides have no bullet points, no cards — just one element and space. Insert at least one per deck section.
+
+### Type as illustration
+
+When you can't use images, type itself becomes the visual element.
+
+```css
+/* Giant character as page texture */
+.slide-question::before {
+  content: '?';
+  position: absolute;
+  right: -5%;
+  bottom: -10%;
+  font-size: 400px;
+  font-weight: 900;
+  opacity: 0.04;
+  line-height: 1;
+  color: var(--fg);
+}
+```
+
+A 400px `?` as background texture. A `3x` with `-webkit-text-stroke` as a data page watermark. The letter is not content — it's atmosphere.
+
+### mix-blend-mode for light and depth
+
+One pseudo-element with a radial gradient and `mix-blend-mode: overlay` creates the illusion of light falling on the surface. Zero-cost depth.
+
+```css
+.slide-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, var(--accent), transparent 60%);
+  mix-blend-mode: overlay;
+  opacity: 0.4;
+  pointer-events: none;
+}
+```
+
+### Inline SVG generative texture
+
+`<svg>` with `feTurbulence` generates noise, grain, and organic patterns — resolution-independent, under 500 bytes. Use as a slide `::after` overlay for tactile warmth.
+
+```html
+<svg width="0" height="0" style="position:absolute">
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg>
+```
+```css
+.slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  filter: url(#grain);
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+```

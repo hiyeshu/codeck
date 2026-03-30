@@ -1,163 +1,250 @@
-# Design DNA Schema — Presentation Edition
+# Design DNA Schema
 
-Three-dimensional design archive:
-- **design_system** — quantifiable design tokens
+Based on [design-dna](https://github.com/zanwei/design-dna) by zanwei. Full three-dimensional schema, unabridged.
+
+## codeck environment
+
+Output: 16:9 HTML presentation. Engine JS is fixed; AI writes HTML + CSS only.
+
+- **No JS in slides** — engine.js handles all interaction; slides.html contains only HTML + CSS classes
+- **Google Fonts allowed** — use `<link>` with `font-display: swap` + `<link rel="preload">`. Always include a system font fallback stack so the deck degrades gracefully offline.
+- **CSS + inline SVG only** — all visual_effects must be achievable with CSS @keyframes, CSS filters, backdrop-filter, gradients, and inline `<svg>` elements
+- **No other CDN** — no script tags, no external assets besides Google Fonts
+
+Record the full design intent in every field. For effects beyond CSS+SVG, describe the intent (the AI will find the closest CSS approximation). This preserves the design vision if the deck is later rendered in a richer environment.
+
+---
+
+Three-dimensional design profile:
+- **design_system** — measurable tokens
 - **design_style** — qualitative perception
-- **visual_effects** — special rendering (CSS animations, SVG, Canvas)
+- **visual_effects** — special rendering such as Canvas, WebGL, 3D, particles, shaders, scroll effects, cursor effects, SVG animation, and glassmorphism
 
-Every field must appear in the final JSON. Write `"none"` or `false` for fields that don't apply.
+Every field below must appear in the final JSON output.
 
 ## Top-Level Structure
 
 ### `meta`
-- `name` — archive name
-- `description` — one-sentence design intent, referencing the design-dna isomorphic mapping
-- `source_references` — reference sources
-- `created_at` — ISO datetime
+- `name`
+- `description`
+- `source_references`
+- `created_at`
 
 ### `design_system`
+The structural and measurable layer.
 
 #### `design_system.color`
-- `palette_type` — "monochromatic" / "complementary" / "analogous" / "triadic" / "split-complementary"
+- `palette_type`
 - `primary.hex` + `primary.role`
 - `secondary.hex` + `secondary.role`
 - `accent.hex` + `accent.role`
-- `neutral.scale` — neutral color ladder (e.g. `["#0a0a0a", "#1a1a1a", "#333", "#666", "#999", "#ccc", "#f0f0f0"]`)
-- `neutral.usage` — how neutrals are used
-- `surface.background` — global background color
-- `surface.card` — card/container background
-- `surface.elevated` — elevated surface
-- `contrast_strategy` — "high contrast" / "subtle layers" / "dark-on-light dominant"
+- `neutral.scale`
+- `neutral.usage`
+- `semantic.success`
+- `semantic.warning`
+- `semantic.error`
+- `semantic.info`
+- `surface.background`
+- `surface.card`
+- `surface.elevated`
+- `contrast_strategy`
 
 #### `design_system.typography`
-Presentation scale (not web scale):
-
-- `type_scale.display` — cover hero title. size: 64–96px, weight, line_height, tracking
-- `type_scale.heading_1` — slide title. size: 48–72px
-- `type_scale.heading_2` — subtitle. size: 36–48px
-- `type_scale.body` — body text. size: 24–32px
-- `type_scale.body_small` — annotations/labels. size: 16–20px
-- `type_scale.caption` — data labels. size: 14–16px
-- `font_families.heading` — heading font family
-- `font_families.body` — body font family
-- `font_families.mono` — code font family
-- `font_style_notes` — typeface character notes (e.g. "geometric sans + humanist touch")
+- `type_scale.display.size` / `weight` / `line_height` / `tracking`
+- `type_scale.heading_1.size` / `weight` / `line_height` / `tracking`
+- `type_scale.heading_2.size` / `weight` / `line_height` / `tracking`
+- `type_scale.heading_3.size` / `weight` / `line_height` / `tracking`
+- `type_scale.body.size` / `weight` / `line_height` / `tracking`
+- `type_scale.body_small.size` / `weight` / `line_height` / `tracking`
+- `type_scale.caption.size` / `weight` / `line_height` / `tracking`
+- `type_scale.overline.size` / `weight` / `line_height` / `tracking`
+- `font_families.heading`
+- `font_families.body`
+- `font_families.mono`
+- `font_style_notes`
 
 #### `design_system.spacing`
-- `base_unit` — base spacing unit (e.g. "8px")
-- `scale` — spacing ladder (e.g. [8, 16, 24, 32, 48, 64, 80])
-- `slide_padding` — slide inset (e.g. "64px 80px")
-- `content_density` — "spacious" / "comfortable" / "compact"
-- `section_rhythm` — description of inter-element spacing rhythm
+- `base_unit`
+- `scale`
+- `content_density`
+- `section_rhythm`
 
 #### `design_system.layout`
-- `slide_ratio` — "16:9" (fixed)
-- `reference_size` — "1280x720" (engine reference size)
-- `grid_system` — grid system description
-- `alignment_tendency` — "centered" / "left-aligned" / "asymmetric" / "mixed"
-- `content_max_width` — max content width (e.g. "1100px")
+- `grid_system`
+- `max_content_width`
+- `columns`
+- `gutter`
+- `breakpoints`
+- `alignment_tendency`
 
 #### `design_system.shape`
 - `border_radius.small` / `medium` / `large` / `pill`
-- `border_usage` — "none" / "subtle 1px" / "bold borders"
-- `divider_style` — divider line style
+- `border_usage`
+- `divider_style`
 
 #### `design_system.elevation`
-- `shadow_style` — "none" / "soft diffused" / "hard drop" / "layered"
-- `levels.low` / `medium` / `high` — CSS box-shadow values
-- `depth_cues` — "shadows" / "overlapping layers" / "blur/glass" / "color intensity"
+- `shadow_style`
+- `levels.low` / `medium` / `high`
+- `depth_cues`
+
+#### `design_system.iconography`
+- `style`
+- `stroke_weight`
+- `size_scale`
+- `preferred_set`
 
 #### `design_system.motion`
-- `transition` — slide transition type (engine-supported; record only)
-- `easing` — CSS easing function
+- `easing`
 - `duration_scale.micro` / `normal` / `macro`
-- `entrance_pattern` — element entrance pattern (e.g. "fade-up")
-- `philosophy` — "minimal functional" / "playful" / "cinematic" / "none"
+- `entrance_pattern`
+- `exit_pattern`
+- `philosophy`
 
-#### `design_system.slides`
-Replaces web components. Defined per slide type:
-
-- `cover` — cover slide style (layout, alignment, type scale proportions)
-- `content` — content slide style (title position, body area, card grid)
-- `section_divider` — section break slide
-- `data` — data slide (charts, metric cards)
-- `ending` — closing slide
-- `slide_notes` — overall slide style notes
+#### `design_system.components`
+- `button_style`
+- `input_style`
+- `card_style`
+- `navigation_pattern`
+- `modal_style`
+- `list_style`
+- `component_notes`
 
 ### `design_style`
+The qualitative and perceptual layer.
 
 #### `design_style.aesthetic`
-- `mood` — 3–5 mood words (e.g. ["calm", "professional", "warm"])
-- `visual_metaphor` — visual metaphor from the design-dna isomorphic mapping
-- `era_influence` — historical influence (e.g. "Swiss modernism")
-- `personality_traits` — if the design were a person (e.g. ["confident", "meticulous"])
-- `adjectives` — 3–5 descriptors
+- `mood`
+- `visual_metaphor`
+- `era_influence`
+- `genre`
+- `personality_traits`
+- `adjectives`
 
 #### `design_style.visual_language`
-- `complexity` — "minimal" / "moderate" / "rich"
-- `ornamentation` — "none" / "subtle accents" / "decorative"
-- `whitespace_usage` — "generous" / "balanced" / "compact"
-- `visual_weight_distribution` — how visual weight is distributed
-- `focal_strategy` — "single hero element" / "distributed interest" / "progressive reveal"
-- `contrast_level` — "high" / "medium" / "low"
-- `texture_usage` — texture description
+- `complexity`
+- `ornamentation`
+- `whitespace_usage`
+- `visual_weight_distribution`
+- `focal_strategy`
+- `contrast_level`
+- `texture_usage`
 
 #### `design_style.composition`
-- `hierarchy_method` — "scale contrast" / "color weight" / "spatial isolation" / "typographic hierarchy"
-- `balance_type` — "symmetric" / "asymmetric" / "radial"
-- `flow_direction` — eye movement direction
-- `grouping_strategy` — how elements are grouped
-- `negative_space_role` — role of negative space
+- `hierarchy_method`
+- `balance_type`
+- `flow_direction`
+- `grouping_strategy`
+- `negative_space_role`
 
 #### `design_style.imagery`
-- `photo_treatment` — how photos are treated
-- `illustration_style` — illustration style
-- `graphic_elements` — decorative graphic elements
-- `pattern_usage` — pattern usage
+- `photo_treatment`
+- `illustration_style`
+- `graphic_elements`
+- `pattern_usage`
+- `image_shape`
+
+#### `design_style.interaction_feel`
+- `feedback_style`
+- `hover_behavior`
+- `transition_personality`
+- `loading_style`
+- `microinteraction_density`
+
+#### `design_style.brand_voice_in_ui`
+- `tone`
+- `formality`
+- `cta_style`
+- `empty_state_approach`
+- `error_tone`
 
 ### `visual_effects`
-
-Visual effects in presentations are lighter than on the web — the engine handles interaction; AI handles visual enhancement only.
+The special rendering and advanced visual behavior layer.
 
 #### `visual_effects.overview`
-- `effect_intensity` — "none" / "subtle-accent" / "moderate" ("heavy" not recommended for presentations)
-- `performance_tier` — "lightweight" (CSS) / "medium" (CSS + SVG)
-- `fallback_strategy` — "disable effects" (presentation default)
-- `primary_technology` — "CSS only" / "CSS + SVG"
+- `effect_intensity`
+- `performance_tier`
+- `fallback_strategy`
+- `primary_technology`
 
 #### `visual_effects.background_effects`
-- `type` — "none" / "gradient-animation" / "noise-field" / "mesh-gradient"
+- `type`
 - `description`
-- `params` — color_palette, speed, opacity, blend_mode
+- `technology`
+- `params.color_palette` / `speed` / `density` / `opacity` / `blend_mode`
+
+#### `visual_effects.particle_systems`
+- `enabled`
+- `type`
+- `description`
+- `technology`
+- `params.count` / `shape` / `size_range` / `movement_pattern` / `color_behavior` / `interaction` / `spawn_area`
+
+#### `visual_effects.3d_elements`
+- `enabled`
+- `type`
+- `description`
+- `technology`
+- `params.renderer` / `lighting` / `camera` / `materials` / `geometry` / `post_processing` / `interaction_model`
+
+#### `visual_effects.shader_effects`
+- `enabled`
+- `type`
+- `description`
+- `technology`
+- `params.uniforms` / `vertex_manipulation` / `fragment_output` / `noise_type` / `distortion`
+
+#### `visual_effects.scroll_effects.parallax`
+- `enabled`
+- `layers`
+- `depth_range`
+- `speed_curve`
+
+#### `visual_effects.scroll_effects.scroll_triggered_animations`
+- `enabled`
+- `trigger_points`
+- `animation_type`
+- `scrub_behavior`
+
+#### `visual_effects.scroll_effects.scroll_morphing`
+- `enabled`
+- `description`
 
 #### `visual_effects.text_effects`
-- `type` — "none" / "gradient-fill" / "split-letter-animate"
+- `type`
 - `description`
-- `params` — split_strategy, stagger, effect_style
+- `technology`
+- `params.split_strategy` / `animation_per_unit` / `stagger` / `effect_style`
+
+#### `visual_effects.cursor_effects`
+- `enabled`
+- `type`
+- `description`
+- `params.shape` / `size` / `blend_mode` / `trail` / `interaction_zone`
+
+#### `visual_effects.image_effects`
+- `type`
+- `description`
+- `technology`
+- `params.filter_pipeline` / `hover_transform` / `reveal_animation` / `distortion_type`
 
 #### `visual_effects.glassmorphism_neumorphism`
 - `enabled`
-- `style` — "glass" / "frosted-layers" / "none"
-- `params` — blur_radius, transparency, border_treatment
+- `style`
+- `params.blur_radius` / `transparency` / `border_treatment` / `shadow_type` / `light_source_angle`
+
+#### `visual_effects.canvas_drawings`
+- `enabled`
+- `type`
+- `description`
+- `technology`
+- `params.draw_method` / `animation_loop` / `color_scheme` / `responsiveness` / `interaction`
 
 #### `visual_effects.svg_animations`
 - `enabled`
-- `type` — "none" / "path-draw" / "decorative-loop"
-- `params` — animation_method, stroke_animation
-
-#### `visual_effects.fragment_effects`
-Visual effects for fragment steps (works with the engine's `data-f` attribute):
-- `entrance` — CSS animation on fragment reveal (e.g. "fade-up")
-- `timing` — animation duration
-- `stagger` — delay between multiple fragments
+- `type`
+- `description`
+- `params.animation_method` / `path_morphing` / `stroke_animation` / `filter_effects`
 
 #### `visual_effects.composite_notes`
-Free text. Multi-effect layering notes, performance trade-offs, special requirements.
+- Free-text notes for layered effects, implementation ambiguity, performance trade-offs, or screenshot-only observations
 
-## Usage in codeck
-
-1. Designer reads the outline and extracts formal structure (design-dna isomorphic mapping)
-2. Fill in design-dna.json based on the isomorphic mapping and role aesthetics
-3. Generate custom.css from design-dna.json (see design-dna-guide.md)
-4. Reference `design_style` when writing slides.html to guide content presentation
-5. Save design-dna.json to `$DECK_DIR/design-dna.json`
