@@ -52,7 +52,7 @@ echo "=== IMAGES ===" && eval find . -maxdepth 4 -type f \\\( -name '"*.png"' -o
 echo "=== DATA ===" && eval find . -maxdepth 4 -type f \\\( -name '"*.csv"' -o -name '"*.tsv"' -o -name '"*.json"' -o -name '"*.yaml"' -o -name '"*.yml"' -o -name '"*.xml"' \\\) $EXCLUDE 2>/dev/null | head -20
 ```
 
-If materials are already structured (user-written outlines, brainstorm docs with slide titles), treat the structure as raw material — cut, merge, reorder. The user's sequence is thinking order, not narrative order.
+User-provided structure is raw material — cut, merge, reorder freely.
 
 Read text files with Read tool. Classify assets:
 
