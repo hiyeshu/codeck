@@ -95,6 +95,12 @@ The engine has four built-in entrance types, selected via `data-f-type`:
 
 Usage: `<div data-f="1" data-f-type="blur">...</div>`
 
+Custom types: define `[data-f-type="yourname"]` initial state in custom.css; the engine handles reveal automatically (`.visible` resets opacity, transform, filter).
+```css
+[data-f-type="rotate"] { transform: rotate(-5deg) scale(0.95); }
+[data-f-type="drop"]   { transform: translateY(-20px); opacity: 0; }
+```
+
 Rule: use one entrance type per slide. Use at most two across the whole deck.
 
 To override the engine's transition duration and easing in custom.css:

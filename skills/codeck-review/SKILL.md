@@ -43,6 +43,7 @@ If custom.css + slides.html exist but no assembled HTML, re-run assemble.sh.
 
 Read `$DECK_DIR/outline.md` — page structure, user intent.
 Read `$DECK_DIR/design-notes.md` — designer's decisions and note to reviewer.
+Read `$DECK_DIR/design-dna.json` — full design intent (color, typography, effects, motion).
 Read `$DECK_DIR/diagnosis.md` — role activation.
 
 **Role transition:** if design-notes.md has a "note to reviewer", respond in your activated role's voice.
@@ -91,17 +92,17 @@ Content issues → fix slides.html.
 
 ### 4. Visual hierarchy
 - Clear eye guidance? Title → body hierarchy?
-- Whitespace rhythm? Pages too crowded or empty?
-- Color matches content mood?
-- Clear type scale?
+- Whitespace intentional? (Sparse can be deliberate — check design-notes before adding content)
+- Color matches content mood from design-dna?
+- Type scale ratio ≥ 2.5:1 heading/body?
 
 Style issues → fix custom.css.
 
 ### 5. Cross-page consistency
-- Colors consistent across pages?
-- Type hierarchy consistent?
+- Type hierarchy consistent within same slide types?
 - Similar layouts consistent?
 - No hardcoded color values? All CSS variables?
+- Intentional variation (color drift, density) ≠ inconsistency — check design-notes
 
 Style issues → fix custom.css. Hardcoded colors in slides.html too.
 
@@ -116,6 +117,32 @@ Check that AI-generated content doesn't break the engine:
 | No engine conflicts | custom.css doesn't override `.slide`, `#progress`, `.mobile-nav` |
 | Fragment markup | `data-f="N"` sequential from 1 |
 | Comment anchors | `<!-- ====== N. Title ====== -->` between pages |
+
+### 7. Visual quality
+
+Compare against the design-dna.json intent and visual-floor benchmarks (`~/.claude/skills/codeck-design/references/visual-floor.md`).
+
+- **Surface depth** — does the deck have material quality (gradients, shadows, glass, noise, blend modes)? Or flat colored rectangles?
+- **Type as design** — are headings visually commanding (large scale, tight tracking, gradient fill, weight contrast)? Or default-looking text?
+- **Deck-level rhythm** — does the deck use intentional variation across slides (color temperature drift, density inversion, breathing pages)? Or does every slide feel the same volume?
+- **Font character** — are fonts distinctive (Google Fonts, not Inter/Roboto/system-ui)? Is `@import` present in custom.css with fallback stack?
+- **Fragment entrances** — do entrance types match content mood? Are custom types used where appropriate?
+
+If the design-dna specifies an effect or technique that's missing from custom.css, flag it.
+
+Style issues → fix custom.css.
+
+### Design-aware guardrails
+
+Before flagging a visual "inconsistency," check if it's intentional:
+
+- **Color varies across slides** → check design-dna for `color_temperature_drift` or design-notes for "color drift". Intentional variation is not a bug.
+- **A slide is mostly empty** → check if it's a breathing page (one element + whitespace = deliberate pacing). Don't fill it.
+- **Slide density alternates** → check for density inversion pattern. Forte → piano is a technique.
+- **Title is extremely large (>80px)** → check visual-floor benchmarks. 88–120px is normal for impact slides.
+- **Background changes between slides** → this is deck-level technique, not inconsistency.
+
+Rule: if design-notes.md documents a creative decision, don't override it. Flag it only if the execution is broken (e.g. contrast too low to read), not because it's unconventional.
 
 ## Fixes
 

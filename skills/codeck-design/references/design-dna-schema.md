@@ -7,7 +7,7 @@ Based on [design-dna](https://github.com/zanwei/design-dna) by zanwei. Full thre
 Output: 16:9 HTML presentation. Engine JS is fixed; AI writes HTML + CSS only.
 
 - **No JS in slides** — engine.js handles all interaction; slides.html contains only HTML + CSS classes
-- **Google Fonts allowed** — use `<link>` with `font-display: swap` + `<link rel="preload">`. Always include a system font fallback stack so the deck degrades gracefully offline.
+- **Google Fonts allowed** — use `@import url('https://fonts.googleapis.com/css2?...')` at the top of custom.css (assemble.sh places it inside `<style>` in `<head>`). Always include a system font fallback stack so the deck degrades gracefully offline.
 - **CSS + inline SVG only** — all visual_effects must be achievable with CSS @keyframes, CSS filters, backdrop-filter, gradients, and inline `<svg>` elements
 - **No other CDN** — no script tags, no external assets besides Google Fonts
 

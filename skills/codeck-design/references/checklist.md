@@ -31,9 +31,10 @@ All clear: `Review ({artifact}): all good.`
 - Defines `--bg`, `--fg`, `--accent`, `--font-body`, `--font-heading`
 - Missing → AUTO-FIX: add sensible defaults
 
-### [HIGH] Type scale
-- Headings 48–72px, body 24–32px, annotations 16–20px
-- Hierarchy unclear → AUTO-FIX: adjust
+### [HIGH] Type scale ratio
+- Heading/body size ratio ≥ 2.5:1 (e.g. 80px/28px, 120px/36px)
+- Body ≥ 18px, annotations ≥ 14px
+- Hierarchy unclear → AUTO-FIX: increase ratio
 
 ### [HIGH] Mobile breakpoint
 - Has `@media (max-width: 768px)`

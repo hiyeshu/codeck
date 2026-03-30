@@ -259,7 +259,7 @@ Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run asse
 
 ## Gotchas
 
-- **Google Fonts allowed, but always with fallback.** Use `<link>` with `font-display: swap` and a system font fallback stack. Offline = fallback renders, no breakage. Never use fonts without a fallback stack. Preload the font link to minimize FOUT.
+- **Google Fonts allowed, but always with fallback.** Use `@import url()` at the top of custom.css — assemble.sh places it inside `<style>` in `<head>`. Always include a system font fallback stack. Offline = fallback renders, no breakage.
 - **No `<script>` in slides.html.** Engine handles all JS. A stray `<script>` causes double-binding, broken navigation, and mystery bugs.
 - **`:root` variables are an API contract.** `--bg`, `--fg`, `--accent` are consumed by engine.css. Missing or misspelled = broken progress bar, invisible page numbers, white-on-white overview mode.
 - **Fragment numbers must be sequential starting from 1.** `data-f="1"`, `data-f="2"`, etc. Gaps (1, 3, 5) cause the engine to skip steps. Duplicates cause simultaneous reveals.

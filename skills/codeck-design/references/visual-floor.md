@@ -18,9 +18,11 @@ When the content has dramatic tension, contrast, or a reveal structure.
   --accent2: #3d8bfd;
   --surface-card: rgba(255, 255, 255, 0.04);
   --surface-elevated: rgba(255, 255, 255, 0.08);
-  --font-heading: 'SF Pro Display', system-ui, sans-serif;
-  --font-body: 'SF Pro', system-ui, sans-serif;
+  --font-heading: 'Clash Display', system-ui, sans-serif;
+  --font-body: 'General Sans', system-ui, sans-serif;
 }
+
+/* @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@600;800&family=General+Sans:wght@400;500&display=swap'); */
 
 /* Background: animated gradient that breathes, not static */
 body {
@@ -85,8 +87,8 @@ When the content is structured, authoritative, or informational.
   --accent2: #2d5a27;
   --surface-card: #ffffff;
   --surface-elevated: #f0ede8;
-  --font-heading: 'New York', 'Georgia', serif;
-  --font-body: 'SF Pro', system-ui, sans-serif;
+  --font-heading: 'Cormorant Garamond', 'Georgia', serif;
+  --font-body: 'Source Sans 3', system-ui, sans-serif;
 }
 
 /* Background: warm paper, not clinical white */
@@ -159,8 +161,8 @@ When the content is reductive — stripping away to reveal a core truth.
   --fg: #ffffff;
   --accent: #ffffff;
   --surface-card: transparent;
-  --font-heading: 'SF Pro Display', system-ui, sans-serif;
-  --font-body: 'SF Pro', system-ui, sans-serif;
+  --font-heading: 'Instrument Sans', system-ui, sans-serif;
+  --font-body: 'Instrument Sans', system-ui, sans-serif;
 }
 
 /* Almost nothing. The emptiness IS the design. */
