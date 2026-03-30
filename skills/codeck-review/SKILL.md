@@ -127,6 +127,7 @@ Compare against the design-dna.json intent and visual-floor benchmarks (`~/.clau
 - **Deck-level rhythm** — does the deck use intentional variation across slides (color temperature drift, density inversion, breathing pages)? Or does every slide feel the same volume?
 - **Font character** — are fonts distinctive (Google Fonts, not Inter/Roboto/system-ui)? Is `@import` present in custom.css with fallback stack?
 - **Fragment entrances** — do entrance types match content mood? Are custom types used where appropriate?
+- **Element scale** — are visual elements (cards, icons, grids) sized with relative units (`vw`/`vh`/`%`/`clamp()`), or undersized with fixed `px`? A slide with 6 tiny icons clustered in a small box on a 1280x720 canvas is a scale failure. Elements should match the canvas they live on.
 
 If the design-dna specifies an effect or technique that's missing from custom.css, flag it.
 
@@ -141,6 +142,7 @@ Before flagging a visual "inconsistency," check if it's intentional:
 - **Slide density alternates** → check for density inversion pattern. Forte → piano is a technique.
 - **Title is extremely large (>80px)** → check visual-floor benchmarks. 88–120px is normal for impact slides.
 - **Background changes between slides** → this is deck-level technique, not inconsistency.
+- **Slide looks empty but has one big element** → check if it's a breathing page or impact page (one sentence, one image, one number). Deliberate emptiness ≠ undersized content. The spatial density flag is for slides that *have* multiple elements but size them too small.
 
 Rule: if design-notes.md documents a creative decision, don't override it. Flag it only if the execution is broken (e.g. contrast too low to read), not because it's unconventional.
 

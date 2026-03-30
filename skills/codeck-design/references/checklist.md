@@ -80,6 +80,12 @@ All clear: `Review ({artifact}): all good.`
 - No hollow words (empower, seamless, disrupt, all-in-one)
 - Found → AUTO-FIX: replace with specific language
 
+### [MEDIUM] Element scale
+- Visual elements (cards, icons, diagrams, grids) use relative units (`vw`, `vh`, `%`, `clamp()`) not fixed small `px`
+- Elements with multiple children aren't crammed into a small cluster — they spread across available space
+- Deliberate breathing pages (one element + whitespace) are fine; undersized multi-element layouts are not
+- Undersized elements → AUTO-FIX: scale up with relative units
+
 ### [LOW] Data authenticity
 - Data comes from source materials, not invented
 - Suspicious → ASK: flag as "this data needs verification"
