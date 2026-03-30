@@ -2,7 +2,7 @@
 
 # codeck
 
-**폴더를 프레젠테이션으로. 대화만으로.**
+**복잡한 걸 만들었는데, 설명이 안 된다. codeck이 말로 풀어준다.**
 
 [Live demo →](https://codeck.sh/codeck-intro)
 

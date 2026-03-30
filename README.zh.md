@@ -2,7 +2,7 @@
 
 # codeck
 
-**把一个文件夹变成演示文稿，靠说话。**
+**你做了一个复杂的东西，但说不清楚。codeck 帮你把它讲明白。**
 
 [在线演示 →](https://codeck.sh/codeck-intro)
 

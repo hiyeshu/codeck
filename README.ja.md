@@ -2,7 +2,7 @@
 
 # codeck
 
-**フォルダをプレゼンに変える。会話だけで。**
+**複雑なものを作った。でも、うまく説明できない。codeck が言葉にする手助けをする。**
 
 [Live demo →](https://codeck.sh/codeck-intro)
 

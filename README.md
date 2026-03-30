@@ -2,7 +2,7 @@
 
 # codeck
 
-**Turn a folder into a presentation, by talking.**
+**You built something complex. codeck helps you explain it.**
 
 [Live demo →](https://codeck.sh/codeck-intro)
 
