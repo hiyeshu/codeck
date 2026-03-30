@@ -253,6 +253,14 @@ When the user's materials include images, or when you can generate them, think a
 
 **Size is rank.** In any hierarchy, the most important element should be literally the largest. Not metaphorically. Not "emphasized with color." Largest. The eye reads size before it reads anything else — before color, before position, before typography. A pyramid principle argument where the conclusion and the supporting detail are the same font size has no hierarchy. The conclusion is the 80px line. The detail is the 16px line.
 
+### Living surfaces
+
+CSS animations loop. The eye detects the repeat within seconds and tunes it out — the brain classifies it as mechanical and stops paying attention. A shader generates continuous variation that never exactly repeats. The brain can't predict the next frame, so it keeps watching. This is the difference between a screensaver and a fire.
+
+A single slide with a shader background in an otherwise static deck is like a held note that starts vibrating. The audience doesn't know why that page felt different — they just stayed with it longer. The effect comes from contrast with the surrounding stillness.
+
+This is the highest-cost visual tool available. It adds weight to the HTML, demands GPU, and can fail silently on weak hardware. CSS gradients, blend modes, and noise textures can get 80% of the way there with zero risk. But when a page needs to feel alive — not animated, *alive* — a shader is the only thing that does it.
+
 ### Contrast fatigue relief
 
 Human eyes adapt to sustained high contrast. 30 slides of white-on-black (or black-on-white) at the same contrast ratio causes fatigue — the audience stops reading without knowing why. Every 4-5 slides, shift the contrast environment: invert light/dark, change background warmth, or drop a breathing page with reduced contrast. This is the visual equivalent of changing the room's lighting.
