@@ -127,7 +127,8 @@ Compare against the design-dna.json intent and visual-floor benchmarks (`~/.clau
 - **Deck-level rhythm** — does the deck use intentional variation across slides (color temperature drift, density inversion, breathing pages)? Or does every slide feel the same volume?
 - **Font character** — are fonts distinctive (Google Fonts, not Inter/Roboto/system-ui)? Is `@import` present in custom.css with fallback stack?
 - **Fragment entrances** — do entrance types match content mood? Are custom types used where appropriate?
-- **Element scale** — are visual elements (cards, icons, grids) sized with relative units (`vw`/`vh`/`%`/`clamp()`), or undersized with fixed `px`? A slide with 6 tiny icons clustered in a small box on a 1280x720 canvas is a scale failure. Elements should match the canvas they live on.
+- **Visual weight** — does each element's size match its content importance? Imagine the slide on a 3-meter projector: would the key concept command attention or disappear into the background? A core idea rendered at footnote size is a perceptual failure the AI can't see.
+- **Projection survival** — on dark themes, is the lightest gray text/border at least `#888` or `rgba(255,255,255,0.5)`? Projectors crush the bottom 30% of luminance. On light themes, are thin font weights (≤ 300) only used at large sizes (≥ 64px)? Windows renders them nearly invisible.
 
 If the design-dna specifies an effect or technique that's missing from custom.css, flag it.
 

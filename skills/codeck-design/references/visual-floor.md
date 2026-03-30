@@ -235,6 +235,10 @@ The rule: **structurally unique (from the mapping), visually at least this good 
 
 Single-page quality is necessary but not sufficient. These techniques operate across pages — they're what separates a deck from 12 copies of the same slide.
 
+### Contrast fatigue relief
+
+Human eyes adapt to sustained high contrast. 30 slides of white-on-black (or black-on-white) at the same contrast ratio causes fatigue — the audience stops reading without knowing why. Every 4-5 slides, shift the contrast environment: invert light/dark, change background warmth, or drop a breathing page with reduced contrast. This is the visual equivalent of changing the room's lighting.
+
 ### Color temperature drift
 
 Shift `--bg` per page to follow the emotional arc. Don't change the palette — change the temperature.

@@ -44,6 +44,11 @@ All clear: `Review ({artifact}): all good.`
 - Foreground/background contrast ≥ 4.5:1
 - Insufficient → ASK: suggest adjustment
 
+### [MEDIUM] Height breakpoint
+- Has `@media (max-height: 700px)` — laptops with browser chrome show ~600px viewport height
+- Titles and decorative elements scale down or hide at short viewports
+- Missing → AUTO-FIX: add height breakpoint with reduced title sizes
+
 ### [LOW] No engine style conflicts
 - Does not override `.slide`, `#progress`, `.mobile-nav`, `.presenter-*`
 - Conflict found → AUTO-FIX: remove or rename to custom class
@@ -72,19 +77,14 @@ All clear: `Review ({artifact}): all good.`
 - Not a repeat of the title; contains specific talking points
 - Empty or hollow → AUTO-FIX: extract key points from outline.md
 
-### [MEDIUM] Cover signal-to-noise
-- Cover slide: one line + breathing room, not cluttered
-- Overloaded → ASK: suggest trimming
-
 ### [MEDIUM] AI filler words
 - No hollow words (empower, seamless, disrupt, all-in-one)
 - Found → AUTO-FIX: replace with specific language
 
-### [MEDIUM] Element scale
-- Visual elements (cards, icons, diagrams, grids) use relative units (`vw`, `vh`, `%`, `clamp()`) not fixed small `px`
-- Elements with multiple children aren't crammed into a small cluster — they spread across available space
-- Deliberate breathing pages (one element + whitespace) are fine; undersized multi-element layouts are not
-- Undersized elements → AUTO-FIX: scale up with relative units
+### [MEDIUM] Visual weight
+- Key elements' size matches their content importance — a core concept shouldn't look like a footnote on a 1280x720 canvas
+- Imagine the slide on a 3-meter projector: would the key element command attention?
+- Undersized key elements → AUTO-FIX: scale up
 
 ### [LOW] Data authenticity
 - Data comes from source materials, not invented
