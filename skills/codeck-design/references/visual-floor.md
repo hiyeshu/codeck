@@ -245,6 +245,14 @@ Scarcity multiplies impact. In a deck of twenty text-heavy slides, a single full
 
 When the user's materials include images, or when you can generate them, think about this: not *where* to put images, but *where their absence makes the text-only slides more powerful by contrast*. The image isn't decoration. It's a rhythm break — the moment the deck shifts from thinking to feeling.
 
+### Data, comparison, hierarchy
+
+**One number beats a table.** A 120px number with a one-word label is more memorable than a 5-row spreadsheet. The audience will forget the table by the next slide. They'll remember the number next week. When you have data, find the one figure that carries the argument and make it the biggest thing on the page. Everything else is footnote.
+
+**Visual distance = conceptual distance.** Two things being compared should be physically close when they're similar, physically far when they're different. If A and B are nearly identical, put them side by side so the small difference pops. If A and B are opposites, separate them — left vs right, black vs white, big vs small. The spatial layout should make the comparison legible before the audience reads a single word.
+
+**Size is rank.** In any hierarchy, the most important element should be literally the largest. Not metaphorically. Not "emphasized with color." Largest. The eye reads size before it reads anything else — before color, before position, before typography. A pyramid principle argument where the conclusion and the supporting detail are the same font size has no hierarchy. The conclusion is the 80px line. The detail is the 16px line.
+
 ### Contrast fatigue relief
 
 Human eyes adapt to sustained high contrast. 30 slides of white-on-black (or black-on-white) at the same contrast ratio causes fatigue — the audience stops reading without knowing why. Every 4-5 slides, shift the contrast environment: invert light/dark, change background warmth, or drop a breathing page with reduced contrast. This is the visual equivalent of changing the room's lighting.
