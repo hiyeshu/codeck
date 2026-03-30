@@ -168,6 +168,41 @@ Three beats:
 - B) I have a different idea
 - C) Show me a few directions to choose from
 
+## Visual impact — quality gate
+
+A correct deck is not enough. Correct and forgettable is a failure mode.
+
+### The visual floor
+
+Read `references/visual-floor.md`. It contains 3 concrete CSS benchmarks — dark cinematic, light editorial, minimal tension. These are the **minimum acceptable visual quality**, not targets.
+
+**Mandatory check before writing custom.css:**
+
+1. Pick the benchmark closest to your DNA's mood
+2. Compare element by element: title boldness, background layering, card surface depth, data dominance, use of whitespace
+3. If your planned CSS is flatter than the benchmark — go back to design-dna.json and push harder: more contrast, more scale difference, more surface depth
+4. Then diverge — your output follows the isomorphic mapping, the benchmark just prevents you from settling
+
+### Rhythm
+
+At least 3 gear-shifts in a 12-slide deck. Quiet slides (breathing room, single element) alternate with loud slides (full-bleed color, oversized type). If every slide feels the same, the deck has no pulse.
+
+### Motion as rhetoric
+
+Each entrance effect argues something:
+- **fade-up**: "here's the next point" (neutral, default)
+- **scale**: "this number matters" (emphasis)
+- **blur → sharp**: "now you see it" (reveal)
+- **slide-in**: "this follows that" (sequence)
+
+One primary entrance per deck. A second sparingly for contrast. Three = noise. Stagger: 80-150ms.
+
+### Surface depth
+
+- Backgrounds: gradient with color temperature, not flat. Noise overlay at 2-5% opacity for tactile warmth.
+- Cards: glass + glow on dark, hard shadow on light. Never just a background color swap.
+- Hierarchy: background → card → elevated. Each layer distinct. The eye reads depth.
+
 ## Generate content
 
 ### Architecture: fixed engine, AI writes content and styles only
@@ -206,47 +241,11 @@ bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{title}" "{language}" \
 
 ### custom.css
 
-Read `references/design-dna-guide.md` for the full mapping rules from design-dna.json → custom.css.
+Read `references/design-dna-guide.md` for full mapping rules: design-dna.json → custom.css.
 
 Flow: `design_system` → `:root` CSS variables → layout primitives → slide type styles → mobile.
 
-```css
-/* ====== Design system (mapped from design-dna.json) ====== */
-:root {
-  --bg: #0a0a0a;
-  --fg: #f0f0f0;
-  --accent: #4a9eff;
-  --accent2: #ff6b6b;
-  --font-body: 'SF Pro', system-ui, sans-serif;
-  --font-heading: 'SF Pro Display', system-ui, sans-serif;
-  --font-mono: 'SF Mono', ui-monospace, monospace;
-  --space-sm: 16px;
-  --space-md: 32px;
-  --space-lg: 64px;
-  --radius: 8px;
-}
-
-/* ====== Layout primitives ====== */
-.title-mega { font-size: 72px; font-weight: 800; line-height: 1.1; }
-.title-large { font-size: 48px; font-weight: 700; line-height: 1.2; }
-.body-text { font-size: 28px; line-height: 1.6; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
-.flex-col { display: flex; flex-direction: column; gap: var(--space-sm); }
-.card { background: rgba(255,255,255,0.05); border-radius: var(--radius); padding: var(--space-md); }
-
-/* ====== Per-slide styles ====== */
-.slide-cover { text-align: center; justify-content: center; align-items: center; }
-
-/* ====== Mobile ====== */
-@media (max-width: 768px) {
-  .title-mega { font-size: 36px; }
-  .title-large { font-size: 28px; }
-  .body-text { font-size: 18px; }
-  .grid-2 { grid-template-columns: 1fr; }
-}
-```
-
-CSS variables are the interface between engine and content. engine.css uses `var(--bg)`, `var(--fg)`, `var(--accent)` etc. to render engine UI. Define them in `:root`; the engine adapts automatically.
+**Critical:** `--bg`, `--fg`, `--accent` are engine interface variables. engine.css uses them for progress bar, overview borders, page numbers. They must be defined in `:root`.
 
 ### slides.html
 
@@ -277,32 +276,7 @@ CSS variables are the interface between engine and content. engine.css uses `var
 
 ### Asset references
 
-outline.md asset list marks each resource's level:
-
-**inline:** Images use `assets/` path (assemble.sh auto-base64). SVG inline directly.
-```html
-<img src="assets/architecture.png" alt="System architecture" style="max-width:80%">
-<svg viewBox="0 0 100 100">...</svg>
-```
-
-**poster:** Video/audio/large files use cover image + play placeholder.
-```html
-<div class="media-poster">
-  <img src="assets/demo-cover.jpg" alt="Demo video">
-  <div class="play-icon">▶</div>
-  <p class="caption">demo.mp4</p>
-</div>
-```
-Add `.media-poster` styles in custom.css (centered, rounded, semi-transparent play icon overlay).
-
-**extract:** Code uses `<pre><code>`, data uses tables or CSS charts.
-```html
-<pre><code class="lang-typescript">function resolve(state: State): Action {
-  return state.match(patterns);
-}</code></pre>
-
-<div class="bar" style="--val:85%">Conversion rate 85%</div>
-```
+Read `references/asset-guide.md` for full examples of inline/poster/extract asset patterns. Three levels: `inline` (base64 via assemble.sh), `poster` (cover image + play icon), `extract` (code blocks + CSS charts).
 
 ### Visual rules
 
@@ -370,6 +344,18 @@ Write to `$DECK_DIR/design-notes.md`:
 - B) Looks good, next step
 
 Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run assemble.sh. Revision number stays the same (overwrites same r{n}.html). After 3 rounds, suggest moving on.
+
+## Gotchas
+
+- **System fonts only.** No Google Fonts, no CDN links. `assemble.sh` produces a self-contained HTML. External font requests = broken offline, slow first paint.
+- **No `<script>` in slides.html.** Engine handles all JS. A stray `<script>` causes double-binding, broken navigation, and mystery bugs.
+- **`:root` variables are an API contract.** `--bg`, `--fg`, `--accent` are consumed by engine.css. Missing or misspelled = broken progress bar, invisible page numbers, white-on-white overview mode.
+- **Fragment numbers must be sequential starting from 1.** `data-f="1"`, `data-f="2"`, etc. Gaps (1, 3, 5) cause the engine to skip steps. Duplicates cause simultaneous reveals.
+- **Don't override engine classes.** `.slide`, `#progress`, `.mobile-nav`, `.presenter-*` belong to the engine. Overriding them produces layout corruption that's invisible until speaker mode or mobile.
+- **CSS animations + `prefers-reduced-motion`.** If custom.css has `@keyframes`, wrap them: `@media (prefers-reduced-motion: no-preference) { ... }`. Skip this = accessibility failure.
+- **Hard-coded colors in slides.html = unmaintainable.** One palette change and you're hunting through 30 slides. Use CSS classes and `var()` exclusively.
+- **Cover slide ≠ title + subtitle centered.** That's the #1 AI default. It signals "nobody designed this." Break the symmetry.
+- **Assemble.sh auto-increments revision.** Don't manually name output files. Let the script handle `r1`, `r2`, etc. Manual names break the revision chain.
 
 ## Done
 
