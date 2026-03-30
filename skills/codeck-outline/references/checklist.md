@@ -27,8 +27,8 @@ Check `$DECK_DIR/outline.md` after writing. AUTO-FIX directly, ASK for judgment 
 - Vague → ASK: suggest sharper alternative
 
 ### [MEDIUM] Info density balance
-- No page with 5 bullet points next to a page with only a title
-- Uneven → ASK: suggest redistribution
+- Density variation should be intentional (rhythm field: dense → breathe is a technique)
+- Unintentional unevenness (no rhythm annotation, similar purpose slides with wildly different density) → ASK: suggest redistribution or add rhythm annotation
 
 ### [MEDIUM] AI fluff detection
 - Scan all text for: leveraging, cutting-edge, seamlessly, robust solution, synergy, empower, holistic, paradigm shift, end-to-end
