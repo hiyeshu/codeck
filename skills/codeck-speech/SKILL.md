@@ -65,7 +65,7 @@ Write a complete, readable-aloud transcript. Page by page.
 
 1. **One section per slide** — matches the deck
 2. **Transitions** — natural bridges between pages
-3. **Stage directions** — `[pause Ns]` `[transition]` `[slow down]` `[speed up]` `[look at audience]`
+3. **Stage directions** — write in the same language as the transcript. Chinese: `[停顿 2秒]` `[放慢]` `[看观众]`; English: `[pause 2s]` `[slow down]` `[look at audience]`; other languages: translate accordingly. The speaker must understand them without switching languages.
 4. **Word count** — ~200 words/min Chinese, ~130 words/min English
 5. **Source-based** — no fabricated data
 6. **Strong opening** — story, data, or question
