@@ -109,21 +109,6 @@ Every field must be populated — no empty strings. Use `"none"` or `false` for 
 
 Write to `$DECK_DIR/design-dna.json`.
 
-**Anti-slop rules — hard prohibitions for custom.css:**
-
-These patterns make every deck look AI-generated. Never use them:
-
-1. **No default font stacks.** `system-ui`, `Inter`, `Roboto`, `Arial` are banned. Pick a specific font that matches the content's character — or use a system serif/monospace with intention.
-2. **No purple/violet/indigo gradients.** The most recognizable AI color scheme. If the content calls for cool tones, use a specific hue with a reason.
-3. **No symmetric 3-column card grids.** Icon-in-circle + bold title + 2-line description, repeated 3×. If you need to show three things, find a layout that reflects the content's structure.
-4. **No centered everything.** `text-align: center` on all headings and body text reads as template, not design.
-5. **No uniform border-radius.** Same large radius on every element (buttons, cards, images) signals no visual hierarchy.
-6. **No decorative blobs or wavy SVG dividers.** If a slide feels empty, it needs better content, not decoration.
-7. **No colored left-border cards.** `border-left: 3px solid <accent>` is a SaaS template pattern.
-8. **No generic hero copy patterns.** "Welcome to X", "Unlock the power of...", "Your all-in-one solution" — these are copy failures, not design failures, but flag them in the review.
-
-The isomorphic mapping gives you the *why* for every visual choice. If you can't trace a CSS decision back to the content's structure, cut it.
-
 ## Style reveal
 
 Show the user three things: (1) their content's formal structure, (2) the isomorphic match and why it's structural not decorative, (3) concrete visual consequences.
@@ -279,14 +264,13 @@ Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run asse
 - **`:root` variables are an API contract.** `--bg`, `--fg`, `--accent` are consumed by engine.css. Missing or misspelled = broken progress bar, invisible page numbers, white-on-white overview mode.
 - **Fragment numbers must be sequential starting from 1.** `data-f="1"`, `data-f="2"`, etc. Gaps (1, 3, 5) cause the engine to skip steps. Duplicates cause simultaneous reveals.
 - **Don't override engine classes.** `.slide`, `#progress`, `.mobile-nav`, `.presenter-*` belong to the engine. Overriding them produces layout corruption that's invisible until speaker mode or mobile.
+- **Never set `position` on `.slide` or slide-type classes.** `.slide` is `position: absolute; inset: 0` in engine.css — that's what makes it fill the viewport. `position: relative` on `.slide-cover` etc. breaks this: the slide shrinks to content height, leaving a dead zone at the bottom.
 - **CSS animations + `prefers-reduced-motion`.** If custom.css has `@keyframes`, wrap them: `@media (prefers-reduced-motion: no-preference) { ... }`. Skip this = accessibility failure.
 - **Hard-coded colors in slides.html = unmaintainable.** One palette change and you're hunting through 30 slides. Use CSS classes and `var()` exclusively.
-- **Visual weight should match content importance.** An element's size on a 1280x720 canvas is how the audience reads its importance. A core concept rendered at 60px looks like a footnote. AI can't see this because it doesn't sit in the audience — it writes CSS by token, not by eye. Ask yourself: if this slide were projected on a 3-meter screen, would the key element command attention or disappear?
+- **Cover slide ≠ title + subtitle centered.** That's the #1 AI default. It signals "nobody designed this." Break the symmetry.
 - **CSS negation of math functions silently fails.** `-clamp(...)`, `-min(...)`, `-max(...)` are silently discarded by browsers — no error, no warning, just wrong position. Always write `calc(-1 * clamp(...))` instead.
 - **Height breakpoints, not just width.** Laptops with browser chrome show ~600px viewport height. Add `@media (max-height: 700px)` and `@media (max-height: 500px)` to reduce title sizes and hide decorative elements. Width-only breakpoints miss the most common overflow scenario.
-- **Images are rhythm, not decoration.** When user materials include images, or when generating images would serve the narrative, read `references/visual-floor.md` § "The physics of images" first. The key insight: an image's power comes from its scarcity and scale, not from having one on every slide. To generate images, use the generate-image skill and save to `$DECK_DIR/assets/` — assemble.sh auto-inlines them.
-- **Projectors eat dark grays.** On a monitor, `#333` and `#111` are distinct. On a projector, both render as black — ambient light washes out the bottom 30% of the luminance range. If the design is dark-themed, the lightest "gray" text or border needs to be at least `#888` (or `rgba(255,255,255,0.5)`) to survive projection. AI has never seen a projector.
-- **Thin fonts vanish on Windows.** macOS has subpixel antialiasing; Windows doesn't. `font-weight: 200` at 24px is elegant on a Mac, invisible on a Dell. Body text: weight ≥ 400. Headings can go lighter only if size ≥ 64px — the pixels are big enough to survive poor rendering.
+- **Content density has hard limits.** Title slide: 1 heading + 1 subtitle max. Content slide: 1 heading + 6 bullets or 2 short paragraphs max. Data slide: 1 heading + 4 metric cards max. Code slide: 10 lines max. Exceeding these = viewport overflow. Split into multiple slides, never cram.
 - **Assemble.sh auto-increments revision.** Don't manually name output files. Let the script handle `r1`, `r2`, etc. Manual names break the revision chain.
 
 ## Done

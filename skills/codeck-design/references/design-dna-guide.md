@@ -58,9 +58,13 @@ Map `design_system` fields directly to `:root` variables in custom.css:
 
 Generate type scale classes (`.title-mega`, `.title-large`, `.title-medium`, `.body-text`, `.caption`) from `typography.type_scale`, and layout primitives (`.grid-2`, `.grid-3`, `.flex-col`, `.flex-row`, `.card`) using the spacing and shape variables.
 
+**Type scale must be a ratio, not arbitrary values.** Pick a base (`--body-size`, typically `clamp(16px, 1.2vw, 20px)`) and a ratio (1.5× recommended). Then: `.caption` = base × 0.75, `.body-text` = base, `.title-medium` = base × 1.5, `.title-large` = base × 2.25, `.title-mega` = base × 3.375. The exact ratio is a design choice — but there must BE a ratio. Random per-class sizes produce visual drift.
+
 ## design_system.slides → Slide Type Styles
 
 Map `slides.cover`, `slides.section_divider`, `slides.data`, `slides.ending` from the DNA to `.slide-cover`, `.slide-divider`, `.slide-data`, `.slide-ending` classes. Derive layout, alignment, and type scale from the DNA — don't default to centered everything.
+
+**Padding is a system, not per-slide guesswork.** Define slide padding once with viewport units (e.g. `8vh 6vw`) and share it across all slide types. Individual slides can override, but the default rhythm comes from one place.
 
 ## design_style → Subjective Decisions
 
