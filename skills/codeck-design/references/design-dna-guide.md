@@ -1,5 +1,9 @@
 # Generation Guide — design-dna.json → custom.css
 
+## Canvas
+
+The engine renders every slide at **1280 × 720 px** and uses `transform: scale()` to fit any screen. Inside a slide you are working in a fixed coordinate system — use `px`, not `vw`/`vh`/`rem`. An element that should span 40 % of the slide width is `width: 512px`. Font sizes, spacing, border-radius — all in `px`, all relative to 1280 × 720. Fill the canvas.
+
 ## Priority
 
 1. **Color + typography** — 80% of visual identity
@@ -58,13 +62,13 @@ Map `design_system` fields directly to `:root` variables in custom.css:
 
 Generate type scale classes (`.title-mega`, `.title-large`, `.title-medium`, `.body-text`, `.caption`) from `typography.type_scale`, and layout primitives (`.grid-2`, `.grid-3`, `.flex-col`, `.flex-row`, `.card`) using the spacing and shape variables.
 
-**Type scale must be a ratio, not arbitrary values.** Pick a base (`--body-size`, typically `clamp(16px, 1.2vw, 20px)`) and a ratio derived from the design role — high-contrast roles (Caravaggio, Brutalism) want 2×+, compressed roles (Tufte, Rams) want 1.2×, most fall between 1.3× and 1.8×. Then: `.caption` = base × ratio^-1, `.body-text` = base, `.title-medium` = base × ratio, `.title-large` = base × ratio², `.title-mega` = base × ratio³. The ratio IS a design decision — derive it from the DNA, don't default it.
+**Type scale must be a ratio, not arbitrary values.** Pick a base (`--body-size`, typically `20px` on the 1280×720 canvas) and a ratio derived from the design role. Then: `.caption` = base × ratio^-1, `.body-text` = base, `.title-medium` = base × ratio, `.title-large` = base × ratio², `.title-mega` = base × ratio³. The ratio is a design decision — derive it from the DNA, don't default it.
 
 ## design_system.slides → Slide Type Styles
 
 Map `slides.cover`, `slides.section_divider`, `slides.data`, `slides.ending` from the DNA to `.slide-cover`, `.slide-divider`, `.slide-data`, `.slide-ending` classes. Derive layout, alignment, and type scale from the DNA — don't default to centered everything.
 
-**Padding is a system, not per-slide guesswork.** Define slide padding once with viewport units (e.g. `8vh 6vw`) and share it across all slide types. Individual slides can override, but the default rhythm comes from one place.
+**Padding is a system, not per-slide guesswork.** Define slide padding once in `px` (e.g. `60px 80px` on the 1280×720 canvas) and share it across all slide types. Individual slides can override, but the default rhythm comes from one place.
 
 **Visual center sits at ~40-45% from top, not geometric center.** Projected slides are viewed above eye level; laptop viewports lose bottom space to browser chrome. Use `padding-top` > `padding-bottom` or `align-content: center` with slight upward bias to place content mass in the audience's natural focal zone.
 
@@ -139,50 +143,25 @@ To override the engine's transition duration and easing in custom.css:
 
 ## Responsive
 
-Width breakpoint (mobile):
-```css
-@media (max-width: 768px) {
-  .title-mega { font-size: calc({display.size} * 0.5); }
-  .title-large { font-size: calc({heading_1.size} * 0.6); }
-  .body-text { font-size: 18px; }
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
-}
-```
+The engine's `transform: scale()` already adapts slides to any viewport. You do not need `@media` breakpoints for slide content — no width breakpoints, no height breakpoints. The engine handles it.
 
-Height breakpoints (laptop with browser chrome, external monitors):
-```css
-@media (max-height: 700px) {
-  .slide { padding: 40px 60px; }
-  .title-mega { font-size: calc({display.size} * 0.75); }
-  .title-large { font-size: calc({heading_1.size} * 0.8); }
-}
-@media (max-height: 500px) {
-  .slide { padding: 24px 40px; }
-  .title-mega { font-size: calc({display.size} * 0.55); }
-  .caption, .decorative { display: none; }
-}
-```
+`@media` queries in custom.css are only for engine UI elements (progress bar, mobile nav) which the AI does not write. Leave them to the engine.
 
-## Anti-Pattern Blacklist
+## Platform Constraints
 
-If you catch yourself using any of these, go back to the DNA and re-derive:
+These are engine facts, not aesthetic preferences:
 
-- Inter / Roboto / Arial / system-ui as display fonts — AI fingerprint, no character. Google Fonts is open now — use distinctive faces (Clash Display, Fraunces, Syne, Cormorant, Archivo Black...). Never converge on Space Grotesk across decks.
-- `#6366f1` (Tailwind indigo) — AI fingerprint
-- Every slide centered — no hierarchy. Let `composition.balance_type` drive asymmetry
-- Default glassmorphism — don't use unless DNA explicitly specifies it
+- **Canvas is 1280 × 720 px.** All sizing in `px`. No `vw`/`vh`/`rem` inside slides.
+- **Don't set `position` on `.slide` or `.slide-*`.** The engine uses `position: absolute` to fill the viewport. Overriding it breaks layout.
+- **Google Fonts need fallback.** Always include `system-ui, sans-serif` (or `monospace`) after the Google Font name. Offline viewers see system fonts, not broken blanks.
+- **`--bg`, `--fg`, `--accent` are engine interface variables.** They must be defined in `:root`. The engine reads them for progress bar, overview, and page numbers.
 
 ## Quality Checklist
 
 Before delivery:
-- [ ] Every color traces back to the DNA palette
-- [ ] Font families match DNA spec
-- [ ] Spacing rhythm matches DNA scale
-- [ ] Overall mood matches `design_style.aesthetic.mood`
 - [ ] `:root` defines `--bg`, `--fg`, `--accent` (engine interface)
-- [ ] `@media (max-width: 768px)` width breakpoint present
-- [ ] `@media (max-height: 700px)` and `@media (max-height: 500px)` height breakpoints present
-- [ ] Contrast ≥ 4.5:1 for body text
+- [ ] All sizing in `px` based on 1280 × 720 canvas
+- [ ] Google Fonts have `system-ui` fallback
+- [ ] No `position` set on `.slide` or `.slide-*`
 - [ ] No engine classes overridden (`.slide`, `#progress`, `.mobile-nav`)
 - [ ] `prefers-reduced-motion` respected (if animations present)
-- [ ] Nothing on the blacklist

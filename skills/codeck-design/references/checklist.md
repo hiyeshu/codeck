@@ -31,18 +31,17 @@ All clear: `Review ({artifact}): all good.`
 - Defines `--bg`, `--fg`, `--accent`, `--font-body`, `--font-heading`
 - Missing → AUTO-FIX: add sensible defaults
 
-### [HIGH] Type scale ratio
-- Heading/body size ratio ≥ 2.5:1 — this is the **minimum floor**, not a target. The actual ratio comes from design-dna.json
-- Body ≥ 18px, annotations ≥ 14px
-- Below floor → AUTO-FIX: increase ratio to at least 2.5:1
+### [HIGH] Canvas coordinate system
+- All sizing in `px` based on 1280 × 720 canvas. No `vw`/`vh`/`rem` inside slide styles
+- Violation → AUTO-FIX: convert to px equivalents (1vw ≈ 12.8px, 1vh ≈ 7.2px)
 
-### [HIGH] Mobile breakpoint
-- Has `@media (max-width: 768px)`
-- Missing → AUTO-FIX: add reduced font sizes and single-column layout
+### [HIGH] No position on slides
+- `.slide` and `.slide-*` must not have `position` set. Engine uses `position: absolute`
+- Violation → AUTO-FIX: remove the position declaration
 
-### [MEDIUM] Color contrast
-- Foreground/background contrast ≥ 4.5:1
-- Insufficient → ASK: suggest adjustment
+### [MEDIUM] Font fallback
+- Google Fonts must include `system-ui, sans-serif` (or `monospace`) fallback
+- Missing → AUTO-FIX: append fallback stack
 
 ### [LOW] No engine style conflicts
 - Does not override `.slide`, `#progress`, `.mobile-nav`, `.presenter-*`
@@ -72,13 +71,9 @@ All clear: `Review ({artifact}): all good.`
 - Not a repeat of the title; contains specific talking points
 - Empty or hollow → AUTO-FIX: extract key points from outline.md
 
-### [MEDIUM] Cover signal-to-noise
-- Cover slide: one line + breathing room, not cluttered
-- Overloaded → ASK: suggest trimming
-
-### [MEDIUM] AI filler words
-- No hollow words (empower, seamless, disrupt, all-in-one)
-- Found → AUTO-FIX: replace with specific language
+### [HIGH] Fragment continuity
+- Within each slide, `data-f` attributes must start at 1, increment by 1, no gaps, no duplicates
+- Violation → AUTO-FIX: renumber sequentially
 
 ### [LOW] Data authenticity
 - Data comes from source materials, not invented
@@ -96,9 +91,13 @@ All clear: `Review ({artifact}): all good.`
 - No text extends outside slide boundaries
 - Overflow → AUTO-FIX: reduce font size or truncate (edit custom.css and re-assemble)
 
-### [MEDIUM] Color consistency
-- slides.html has no hard-coded color values; all use CSS classes or var()
-- Hard-coded → AUTO-FIX: replace with var() references
+### [MEDIUM] Asset inlining complete
+- No residual `assets/` paths in the final HTML — all images should be base64-inlined by assemble.sh
+- Residual path found → check that the source file exists and re-run assemble.sh
+
+### [LOW] Color consistency
+- Prefer CSS classes or `var()` over inline `style="color: #xxx"` — inline colors won't follow theme changes
+- Excessive hard-coded colors → ASK: suggest using CSS variables
 
 ---
 
@@ -106,4 +105,3 @@ All clear: `Review ({artifact}): all good.`
 
 Do not flag:
 - Unconventional design choices the user explicitly requested during iteration
-- Fragment step numbers on `data-f` attributes (intentional stepping control)
