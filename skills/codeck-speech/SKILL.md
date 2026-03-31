@@ -57,6 +57,8 @@ If only outline exists, write based on outline — note that the script is based
 
 ## Generate
 
+**Before writing, build a fragment map.** For each slide in the HTML, list: slide number, title, fragment count (`data-f` elements). This map determines the speech structure — slides with fragments get `### [on enter]` + `### [fragment N]` sections, slides without get a single block. Do not skip this step.
+
 Write a complete, readable-aloud transcript. Page by page.
 
 ### Rules

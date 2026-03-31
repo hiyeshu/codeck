@@ -174,13 +174,7 @@ Slide titles are the only text the audience reads — like highway billboards.
 
 **Five strategies per title:**
 
-| Strategy | Example |
-|----------|---------|
-| Direct | "State-driven, not conversation-driven" |
-| Question | "Should an agent's memory rely on guessing?" |
-| Tension | "Pricing the priceless context" |
-| Concrete | "Give the agent a hard drive" |
-| Free | "Three lines of JSON, ten times more reliable" |
+Five strategies: Direct assertion, Question, Tension/contrast, Concrete image, Unexpected angle. Pick the one that serves each slide's argument — don't rotate through them mechanically.
 
 **Quality check:**
 1. Understood in one read? No → rewrite.

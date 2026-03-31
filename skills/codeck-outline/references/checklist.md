@@ -5,8 +5,8 @@ Check `$DECK_DIR/outline.md` after writing. AUTO-FIX directly, ASK for judgment 
 ## Pass 1 — Structural (AUTO-FIX)
 
 ### [HIGH] Story arc completeness
-- Has opening (problem/conflict) → development → closure (action/conclusion)?
-- Missing arc segment → add placeholder page
+- Has a beginning that creates tension and an ending that resolves it?
+- Missing arc → ASK: the content's natural shape might not be three-act — confirm with user before restructuring
 
 ### [HIGH] Every page has purpose
 - Each page tagged with purpose (cover/content/section-divider/ending)?
@@ -31,8 +31,8 @@ Check `$DECK_DIR/outline.md` after writing. AUTO-FIX directly, ASK for judgment 
 - Unintentional unevenness (no rhythm annotation, similar purpose slides with wildly different density) → ASK: suggest redistribution or add rhythm annotation
 
 ### [MEDIUM] AI fluff detection
-- Scan all text for: leveraging, cutting-edge, seamlessly, robust solution, synergy, empower, holistic, paradigm shift, end-to-end
-- Found → AUTO-FIX: replace with concrete language
+- Replace vague amplifiers with concrete claims. If a word could be removed without losing meaning, remove it.
+- Found → AUTO-FIX: rewrite with specifics
 
 ### [LOW] User intent section
 - outline.md "User intent" section filled (not all "not specified")?
