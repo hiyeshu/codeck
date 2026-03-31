@@ -6,7 +6,7 @@
 
 [在线演示 →](https://codeck.sh/codeck-intro)
 
-[English](README.md) | 中文 | [日本語](README.ja.md) | [한국어](README.ko.md)
+[English](README.md) | 简体中文 | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
 </div>
 
