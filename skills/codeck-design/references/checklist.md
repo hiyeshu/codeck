@@ -32,9 +32,9 @@ All clear: `Review ({artifact}): all good.`
 - Missing → AUTO-FIX: add sensible defaults
 
 ### [HIGH] Type scale ratio
-- Heading/body size ratio ≥ 2.5:1 (e.g. 80px/28px, 120px/36px)
+- Heading/body size ratio ≥ 2.5:1 — this is the **minimum floor**, not a target. The actual ratio comes from design-dna.json
 - Body ≥ 18px, annotations ≥ 14px
-- Hierarchy unclear → AUTO-FIX: increase ratio
+- Below floor → AUTO-FIX: increase ratio to at least 2.5:1
 
 ### [HIGH] Mobile breakpoint
 - Has `@media (max-width: 768px)`
@@ -43,11 +43,6 @@ All clear: `Review ({artifact}): all good.`
 ### [MEDIUM] Color contrast
 - Foreground/background contrast ≥ 4.5:1
 - Insufficient → ASK: suggest adjustment
-
-### [MEDIUM] Height breakpoint
-- Has `@media (max-height: 700px)` — laptops with browser chrome show ~600px viewport height
-- Titles and decorative elements scale down or hide at short viewports
-- Missing → AUTO-FIX: add height breakpoint with reduced title sizes
 
 ### [LOW] No engine style conflicts
 - Does not override `.slide`, `#progress`, `.mobile-nav`, `.presenter-*`
@@ -77,14 +72,13 @@ All clear: `Review ({artifact}): all good.`
 - Not a repeat of the title; contains specific talking points
 - Empty or hollow → AUTO-FIX: extract key points from outline.md
 
+### [MEDIUM] Cover signal-to-noise
+- Cover slide: one line + breathing room, not cluttered
+- Overloaded → ASK: suggest trimming
+
 ### [MEDIUM] AI filler words
 - No hollow words (empower, seamless, disrupt, all-in-one)
 - Found → AUTO-FIX: replace with specific language
-
-### [MEDIUM] Visual weight
-- Key elements' size matches their content importance — a core concept shouldn't look like a footnote on a 1280x720 canvas
-- Imagine the slide on a 3-meter projector: would the key element command attention?
-- Undersized key elements → AUTO-FIX: scale up
 
 ### [LOW] Data authenticity
 - Data comes from source materials, not invented

@@ -99,7 +99,7 @@ Find structurally similar things in your role's knowledge domain:
 >
 > A data report moving from chaos to order → Japanese karesansui → early pages scattered, final page stripped to minimal
 
-If the content structure is simple (flat list), skip the isomorphic mapping.
+Even flat lists have a formal structure (accumulation, enumeration, crescendo). Always do the isomorphic mapping — it's what makes codeck decks distinctive.
 
 ### Step 2: Generate design-dna.json
 
@@ -267,7 +267,7 @@ Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run asse
 - **Never set `position` on `.slide` or slide-type classes.** `.slide` is `position: absolute; inset: 0` in engine.css — that's what makes it fill the viewport. `position: relative` on `.slide-cover` etc. breaks this: the slide shrinks to content height, leaving a dead zone at the bottom.
 - **CSS animations + `prefers-reduced-motion`.** If custom.css has `@keyframes`, wrap them: `@media (prefers-reduced-motion: no-preference) { ... }`. Skip this = accessibility failure.
 - **Hard-coded colors in slides.html = unmaintainable.** One palette change and you're hunting through 30 slides. Use CSS classes and `var()` exclusively.
-- **Cover slide ≠ title + subtitle centered.** That's the #1 AI default. It signals "nobody designed this." Break the symmetry.
+- **Cover slide defaults to centered title + subtitle.** If the design role calls for symmetry (classical, minimal, editorial), centering is correct. Otherwise, break it — asymmetry signals intentional design.
 - **CSS negation of math functions silently fails.** `-clamp(...)`, `-min(...)`, `-max(...)` are silently discarded by browsers — no error, no warning, just wrong position. Always write `calc(-1 * clamp(...))` instead.
 - **Height breakpoints, not just width.** Laptops with browser chrome show ~600px viewport height. Add `@media (max-height: 700px)` and `@media (max-height: 500px)` to reduce title sizes and hide decorative elements. Width-only breakpoints miss the most common overflow scenario.
 - **Content density has hard limits.** Title slide: 1 heading + 1 subtitle max. Content slide: 1 heading + 6 bullets or 2 short paragraphs max. Data slide: 1 heading + 4 metric cards max. Code slide: 10 lines max. Exceeding these = viewport overflow. Split into multiple slides, never cram.

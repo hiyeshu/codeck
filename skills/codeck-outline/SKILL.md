@@ -152,15 +152,15 @@ Integrate findings naturally into the outline. Cite sources in the material summ
 
 ### Story arc templates
 
-**Problem-driven:** cover → pain point → solution → principles → architecture → demo → results → outlook
+**Problem-driven:** problem → solution → evidence → implications
 
-**Demo-driven:** cover → concept → demo screenshots → how it works → comparison → extensions
+**Demo-driven:** concept → demonstration → mechanism → extensions
 
-**Data report:** cover → summary → key metrics → trends → attribution → actions
+**Data report:** summary → metrics → patterns → actions
 
-**Teaching:** cover → why learn this → core concept → step-by-step → code examples → exercises
+**Teaching:** motivation → core idea → application → practice
 
-Pick the best match. Mix as needed.
+These are narrative shapes, not slide titles. Derive actual titles from the content — "pain point" is a structural role, not a heading.
 
 ### Title smithing
 
@@ -170,7 +170,7 @@ Slide titles are the only text the audience reads — like highway billboards.
 1. **Instant clarity** — no second read needed. Short > long, concrete > abstract.
 2. **Hook** — questions > statements, tension > flatness.
 
-**Weight:** 90% apt, 5% clear, 5% dramatic. Aptness is the foundation.
+**Priority:** apt first, then as dramatic as accuracy allows. Flat but accurate is a floor, not a goal.
 
 **Five strategies per title:**
 

@@ -58,13 +58,15 @@ Map `design_system` fields directly to `:root` variables in custom.css:
 
 Generate type scale classes (`.title-mega`, `.title-large`, `.title-medium`, `.body-text`, `.caption`) from `typography.type_scale`, and layout primitives (`.grid-2`, `.grid-3`, `.flex-col`, `.flex-row`, `.card`) using the spacing and shape variables.
 
-**Type scale must be a ratio, not arbitrary values.** Pick a base (`--body-size`, typically `clamp(16px, 1.2vw, 20px)`) and a ratio (1.5× recommended). Then: `.caption` = base × 0.75, `.body-text` = base, `.title-medium` = base × 1.5, `.title-large` = base × 2.25, `.title-mega` = base × 3.375. The exact ratio is a design choice — but there must BE a ratio. Random per-class sizes produce visual drift.
+**Type scale must be a ratio, not arbitrary values.** Pick a base (`--body-size`, typically `clamp(16px, 1.2vw, 20px)`) and a ratio derived from the design role — high-contrast roles (Caravaggio, Brutalism) want 2×+, compressed roles (Tufte, Rams) want 1.2×, most fall between 1.3× and 1.8×. Then: `.caption` = base × ratio^-1, `.body-text` = base, `.title-medium` = base × ratio, `.title-large` = base × ratio², `.title-mega` = base × ratio³. The ratio IS a design decision — derive it from the DNA, don't default it.
 
 ## design_system.slides → Slide Type Styles
 
 Map `slides.cover`, `slides.section_divider`, `slides.data`, `slides.ending` from the DNA to `.slide-cover`, `.slide-divider`, `.slide-data`, `.slide-ending` classes. Derive layout, alignment, and type scale from the DNA — don't default to centered everything.
 
 **Padding is a system, not per-slide guesswork.** Define slide padding once with viewport units (e.g. `8vh 6vw`) and share it across all slide types. Individual slides can override, but the default rhythm comes from one place.
+
+**Visual center sits at ~40-45% from top, not geometric center.** Projected slides are viewed above eye level; laptop viewports lose bottom space to browser chrome. Use `padding-top` > `padding-bottom` or `align-content: center` with slight upward bias to place content mass in the audience's natural focal zone.
 
 ## design_style → Subjective Decisions
 
@@ -105,7 +107,7 @@ Custom types: define `[data-f-type="yourname"]` initial state in custom.css; the
 [data-f-type="drop"]   { transform: translateY(-20px); opacity: 0; }
 ```
 
-Rule: use one entrance type per slide. Use at most two across the whole deck.
+Guideline: one entrance type per slide for coherence. Across the deck, use as many types as the design role calls for — a cinematic deck might use all four plus custom types, a minimal deck might use only fade-up. The role decides, not a fixed cap.
 
 To override the engine's transition duration and easing in custom.css:
 ```css

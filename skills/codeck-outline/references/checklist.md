@@ -12,9 +12,9 @@ Check `$DECK_DIR/outline.md` after writing. AUTO-FIX directly, ASK for judgment 
 - Each page tagged with purpose (cover/content/section-divider/ending)?
 - Missing → infer from content
 
-### [HIGH] Page count
-- 5-15 pages is normal range
-- Out of range → ASK: suggest merge or split
+### [MEDIUM] Page count
+- 5-15 pages is typical, not mandatory
+- Under 5 or over 15 → ASK: confirm with user, don't auto-trim
 
 ### [HIGH] No duplicate pages
 - Two pages making the same point?

@@ -8,7 +8,7 @@ After generating design-dna.json and before writing custom.css, compare your pla
 
 ## Benchmark A: Dark Cinematic
 
-When the content has dramatic tension, contrast, or a reveal structure.
+Calibration reference, not a style to apply. Your design comes from the isomorphic mapping — use this only to check if your output has enough visual weight.
 
 ```css
 :root {
@@ -77,7 +77,7 @@ body::after {
 
 ## Benchmark B: Light Editorial
 
-When the content is structured, authoritative, or informational.
+Calibration reference, not a style to apply. Your design comes from the isomorphic mapping — use this only to check if your output has enough visual weight.
 
 ```css
 :root {
@@ -153,7 +153,7 @@ body {
 
 ## Benchmark C: Minimal Tension
 
-When the content is reductive — stripping away to reveal a core truth.
+Calibration reference, not a style to apply. Your design comes from the isomorphic mapping — use this only to check if your output has enough visual weight.
 
 ```css
 :root {
@@ -234,32 +234,6 @@ The rule: **structurally unique (from the mapping), visually at least this good 
 ## Deck-level techniques
 
 Single-page quality is necessary but not sufficient. These techniques operate across pages — they're what separates a deck from 12 copies of the same slide.
-
-### The physics of images
-
-Text argues. Images assert. A photograph lands in the audience's gut before their brain has finished reading the title — it bypasses the verbal processing pipeline entirely and goes straight to emotion. This is not metaphor; it's how human perception works.
-
-When an image fills the entire slide, it stops being an illustration and becomes an environment. The audience is no longer looking *at* something — they're *inside* it. The threshold is somewhere around 60-70% of the canvas: below that, the image is furniture; above it, the image is the room. The same photograph, at different scales, tells completely different stories.
-
-Scarcity multiplies impact. In a deck of twenty text-heavy slides, a single full-bleed photograph hits like a cymbal crash. In a deck where every slide has an image, none of them register. The audience's visual system habituates — each additional image reduces the marginal impact of all the others. The most powerful image in a deck is often the only one.
-
-When the user's materials include images, or when you can generate them, think about this: not *where* to put images, but *where their absence makes the text-only slides more powerful by contrast*. The image isn't decoration. It's a rhythm break — the moment the deck shifts from thinking to feeling.
-
-### Data, comparison, hierarchy
-
-**One number beats a table.** A 120px number with a one-word label is more memorable than a 5-row spreadsheet. The audience will forget the table by the next slide. They'll remember the number next week. When you have data, find the one figure that carries the argument and make it the biggest thing on the page. Everything else is footnote.
-
-**Visual distance = conceptual distance.** Two things being compared should be physically close when they're similar, physically far when they're different. If A and B are nearly identical, put them side by side so the small difference pops. If A and B are opposites, separate them — left vs right, black vs white, big vs small. The spatial layout should make the comparison legible before the audience reads a single word.
-
-**Size is rank.** In any hierarchy, the most important element should be literally the largest. Not metaphorically. Not "emphasized with color." Largest. The eye reads size before it reads anything else — before color, before position, before typography. A pyramid principle argument where the conclusion and the supporting detail are the same font size has no hierarchy. The conclusion is the 80px line. The detail is the 16px line.
-
-### Living surfaces
-
-CSS animations loop. The brain detects the repeat in seconds and stops watching. Shaders never repeat — the brain can't predict the next frame, so it keeps looking. Screensaver vs fire.
-
-### Contrast fatigue relief
-
-Human eyes adapt to sustained high contrast. 30 slides of white-on-black (or black-on-white) at the same contrast ratio causes fatigue — the audience stops reading without knowing why. Every 4-5 slides, shift the contrast environment: invert light/dark, change background warmth, or drop a breathing page with reduced contrast. This is the visual equivalent of changing the room's lighting.
 
 ### Color temperature drift
 
