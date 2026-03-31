@@ -79,8 +79,8 @@ if [ -d "${DECK_DIR}/assets" ]; then
     b64=$(base64 -w0 "$asset" 2>/dev/null || base64 "$asset" 2>/dev/null)
     datauri="data:${mime};base64,${b64}"
     # 替换 HTML 中的 assets/filename 引用（src="assets/..." 或 url(assets/...)）
-    sed -i "s|assets/${filename}|${datauri}|g" "$TMPFILE" 2>/dev/null || \
-    sed -i '' "s|assets/${filename}|${datauri}|g" "$TMPFILE" 2>/dev/null || true
+    LC_ALL=C sed -i "s|assets/${filename}|${datauri}|g" "$TMPFILE" 2>/dev/null || \
+    LC_ALL=C sed -i '' "s|assets/${filename}|${datauri}|g" "$TMPFILE" 2>/dev/null || true
   done
 fi
 
