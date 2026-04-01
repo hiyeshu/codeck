@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# codeck status — shared pipeline detection
+# codeck status — pipeline dashboard
 # Usage: bash status.sh "$DECK_DIR"
 
 DECK_DIR="${1:?Usage: bash status.sh \$DECK_DIR}"
@@ -8,7 +8,7 @@ DECK_DIR="${1:?Usage: bash status.sh \$DECK_DIR}"
 _has() { [ -f "$1" ]; }
 _html() {
   local f
-  f=$(ls "$DECK_DIR"/*-r*.html 2>/dev/null | sort -V | tail -1)
+  f=$(ls ./*-r*.html 2>/dev/null | sort -V | tail -1)
   [ -n "$f" ] && echo "$f" && return 0
   return 1
 }
@@ -18,17 +18,19 @@ CODECK_DIAGNOSIS=$(_has "$DECK_DIR/diagnosis.md" && echo done || echo none)
 CODECK_OUTLINE=$(_has "$DECK_DIR/outline.md" && echo done || echo none)
 CODECK_CSS=$(_has "$DECK_DIR/custom.css" && echo done || echo none)
 CODECK_SLIDES=$(_has "$DECK_DIR/slides.html" && echo done || echo none)
-CODECK_HTML_PATH=$(_html) || true
+CODECK_HTML_PATH=$(_html)
 [ -n "$CODECK_HTML_PATH" ] && CODECK_HTML="done" || CODECK_HTML="none"
 CODECK_SPEECH=$(_has "$DECK_DIR/speech.md" && echo done || echo none)
 
 # ─── Stage status ───
+# Pipeline order: outline → design → review → speech → export
+
 _stage_design() {
   [ "$CODECK_HTML" = "done" ] || { [ "$CODECK_CSS" = "done" ] && echo done && return; }
   [ "$CODECK_HTML" = "done" ] && echo done || { [ "$CODECK_OUTLINE" = "done" ] && echo ready || echo locked; }
 }
 
-_stage_export() {
+_stage_review() {
   [ "$CODECK_HTML" = "done" ] && echo ready || echo locked
 }
 
@@ -42,6 +44,10 @@ _stage_speech() {
   fi
 }
 
+_stage_export() {
+  [ "$CODECK_HTML" = "done" ] && echo ready || echo locked
+}
+
 _stage_design_stale() {
   if [ "$CODECK_HTML" = "done" ] && [ "$CODECK_OUTLINE" = "done" ] && [ -n "$CODECK_HTML_PATH" ]; then
     local t_outline=$(_mtime "$DECK_DIR/outline.md")
@@ -53,134 +59,136 @@ _stage_design_stale() {
 
 CODECK_STATUS_OUTLINE=$( [ "$CODECK_OUTLINE" = "done" ] && echo done || echo none )
 CODECK_STATUS_DESIGN=$(_stage_design)
-CODECK_STATUS_EXPORT=$(_stage_export)
+CODECK_STATUS_REVIEW=$(_stage_review)
 CODECK_STATUS_SPEECH=$(_stage_speech)
+CODECK_STATUS_EXPORT=$(_stage_export)
 
 [ "$(_stage_design_stale)" = "stale" ] && [ "$CODECK_STATUS_DESIGN" = "done" ] && CODECK_STATUS_DESIGN=stale
 
-CODECK_STALE=""
-[ "$CODECK_STATUS_DESIGN" = "stale" ] && CODECK_STALE="${CODECK_STALE}design "
-
-# ─── Content summary ───
-_slide_count=0
-_deck_title=""
-_revision=""
-
-if [ "$CODECK_OUTLINE" = "done" ]; then
-  _slide_count=$(grep -c '^## ' "$DECK_DIR/outline.md" 2>/dev/null || echo 0)
-  _deck_title=$(head -1 "$DECK_DIR/outline.md" | sed 's/^#* *//' | cut -c1-40)
-fi
-
-if [ -n "$CODECK_HTML_PATH" ]; then
-  _revision=$(basename "$CODECK_HTML_PATH" | grep -o 'r[0-9]*' | tail -1)
-fi
-
-_summary=""
-[ "$_slide_count" -gt 0 ] 2>/dev/null && _summary="${_slide_count} slides"
-[ -n "$_revision" ] && _summary="${_summary:+$_summary · }$_revision"
-
-# ─── Progress ───
-_done_count=0
-_total=4  # outline, design, export, speech (review is a cycle, not a step)
-[ "$CODECK_STATUS_OUTLINE" = "done" ] && _done_count=$((_done_count + 1))
-[ "$CODECK_STATUS_DESIGN" = "done" ] || [ "$CODECK_STATUS_DESIGN" = "stale" ] && _done_count=$((_done_count + 1))
-[ "$CODECK_STATUS_EXPORT" = "done" ] 2>/dev/null  # export has no done state yet, but future-proof
-[ "$CODECK_STATUS_SPEECH" = "done" ] && _done_count=$((_done_count + 1))
-# export counts as done if PDF or PPTX exist
-_has_export=false
-for _ef in "$DECK_DIR"/*.pdf "$DECK_DIR"/*.pptx; do
-  [ -f "$_ef" ] && _has_export=true && break
-done
-if [ "$_has_export" = true ]; then
-  _done_count=$((_done_count + 1))
-  CODECK_STATUS_EXPORT="done"
-fi
-
-_bar=""
-for i in $(seq 1 $_total); do
-  if [ "$i" -le "$_done_count" ]; then
-    _bar="${_bar}█"
-  else
-    _bar="${_bar}░"
-  fi
-done
-
 # ─── NEXT recommendation ───
+# Order: outline → design → review → speech → export
 if [ "$CODECK_STATUS_OUTLINE" = "none" ]; then
   CODECK_NEXT="outline"
-  CODECK_NEXT_REASON="plan the narrative arc and structure each slide"
 elif [ "$CODECK_STATUS_DESIGN" = "stale" ]; then
   CODECK_NEXT="design"
-  CODECK_NEXT_REASON="outline changed since last build, re-generate slides"
 elif [ "$CODECK_STATUS_DESIGN" = "ready" ] || [ "$CODECK_STATUS_DESIGN" = "locked" ]; then
   CODECK_NEXT="design"
-  CODECK_NEXT_REASON="generate HTML slides from the outline"
-elif [ "$CODECK_HTML" = "done" ] && [ "$CODECK_SPEECH" = "none" ] && [ "$CODECK_STATUS_EXPORT" != "done" ]; then
+elif [ "$CODECK_HTML" = "done" ] && [ "$CODECK_SPEECH" = "none" ]; then
   CODECK_NEXT="review"
-  CODECK_NEXT_REASON="inspect every slide, fix visual and content issues"
 elif [ "$CODECK_STATUS_SPEECH" = "ready" ] && [ "$CODECK_SPEECH" = "none" ]; then
   CODECK_NEXT="speech"
-  CODECK_NEXT_REASON="write a verbatim speech transcript with timing"
 elif [ "$CODECK_STATUS_EXPORT" = "ready" ]; then
   CODECK_NEXT="export"
-  CODECK_NEXT_REASON="export to PDF or PPTX"
 else
   CODECK_NEXT=""
-  CODECK_NEXT_REASON="all done"
 fi
 
-# ─── Icons ───
-_icon() {
-  case "$1" in
-    done)   echo "done";;
-    stale)  echo "STALE";;
-    ready)  echo "ready";;
-    locked) echo "---";;
-    none)   echo "---";;
-  esac
-}
+# ─── Colors ───
+C_RESET='\033[0m'
+C_BOLD='\033[1m'
+C_DIM='\033[2m'
+C_GREEN='\033[32m'
+C_YELLOW='\033[33m'
+C_CYAN='\033[36m'
+C_WHITE='\033[97m'
 
 # ─── Title ───
 _title="new deck"
-if [ -n "$CODECK_HTML_PATH" ]; then
+if [ -f "$DECK_DIR/outline.md" ]; then
+  _title=$(head -1 "$DECK_DIR/outline.md" | sed 's/^#* *//' | cut -c1-36)
+elif [ -n "$CODECK_HTML_PATH" ]; then
   _title=$(basename "$CODECK_HTML_PATH" | sed 's/-r[0-9]*\.html$//')
-elif [ -n "$_deck_title" ]; then
-  _title="$_deck_title"
 fi
 
-# ─── Dashboard ───
+# ─── Meta line ───
+_meta=""
+if [ -f "$DECK_DIR/outline.md" ]; then
+  _pages=$(grep -c '^## ' "$DECK_DIR/outline.md" 2>/dev/null || echo 0)
+  [ "$_pages" -gt 0 ] && _meta="${_pages} pages"
+fi
+if [ -n "$CODECK_HTML_PATH" ]; then
+  _rev=$(basename "$CODECK_HTML_PATH" | grep -o 'r[0-9]*' | tail -1)
+  [ -n "$_rev" ] && { [ -n "$_meta" ] && _meta="$_meta · $_rev" || _meta="$_rev"; }
+fi
+
+# ─── Pipeline node ───
+_node() {
+  local name="$1" status="$2"
+  case "$status" in
+    done)   printf "${C_GREEN}✓ %s${C_RESET}" "$name" ;;
+    stale)  printf "${C_YELLOW}⚠ %s${C_RESET}" "$name" ;;
+    ready)  if [ "/codeck-$name" = "/codeck-$CODECK_NEXT" ]; then
+              printf "${C_WHITE}${C_BOLD}● %s${C_RESET}" "$name"
+            else
+              printf "${C_DIM}%s${C_RESET}" "$name"
+            fi ;;
+    locked) printf "${C_DIM}%s${C_RESET}" "$name" ;;
+    none)   if [ "/codeck-$name" = "/codeck-$CODECK_NEXT" ]; then
+              printf "${C_WHITE}${C_BOLD}● %s${C_RESET}" "$name"
+            else
+              printf "${C_DIM}%s${C_RESET}" "$name"
+            fi ;;
+  esac
+}
+
+_sep() { printf " ${C_DIM}─${C_RESET} "; }
+
+# ─── Render ───
+_w=47
+_hline=""
+for _ in $(seq 1 $_w); do _hline="${_hline}─"; done
+
 echo ""
-echo "+======================================================+"
-printf "| %-52s |\n" "codeck · $_title"
-echo "+======================================================+"
-echo "| Stage              | Status    | Output               |"
-echo "|--------------------|-----------|----------------------|"
-printf "| %-18s | %-9s | %-20s |\n" "/codeck-outline" "$(_icon "$CODECK_STATUS_OUTLINE")" "outline.md"
-_design_out="---"
-[ -n "$CODECK_HTML_PATH" ] && _design_out=$(basename "$CODECK_HTML_PATH")
-printf "| %-18s | %-9s | %-20s |\n" "/codeck-design" "$(_icon "$CODECK_STATUS_DESIGN")" "$_design_out"
-printf "| %-18s | %-9s | %-20s |\n" "/codeck-review" "ready" "(improves HTML)"
-printf "| %-18s | %-9s | %-20s |\n" "/codeck-export" "$(_icon "$CODECK_STATUS_EXPORT")" ".pdf / .pptx"
-printf "| %-18s | %-9s | %-20s |\n" "/codeck-speech" "$(_icon "$CODECK_STATUS_SPEECH")" "speech.md"
-echo "+------------------------------------------------------+"
-if [ -n "$_summary" ]; then
-  printf "| %-52s |\n" "$_summary"
-  echo "+------------------------------------------------------+"
+printf "  ${C_DIM}┌%s┐${C_RESET}\n" "$_hline"
+
+printf "  ${C_DIM}│${C_RESET} ${C_BOLD}codeck${C_RESET} ${C_DIM}·${C_RESET} %s" "$_title"
+# pad to box width
+_title_len=$((9 + ${#_title}))
+_pad=$(( _w - _title_len ))
+[ $_pad -gt 0 ] && printf "%${_pad}s" ""
+printf " ${C_DIM}│${C_RESET}\n"
+
+if [ -n "$_meta" ]; then
+  printf "  ${C_DIM}│${C_RESET} ${C_DIM}%s${C_RESET}" "$_meta"
+  _meta_len=$(( ${#_meta} + 1 ))
+  _pad=$(( _w - _meta_len ))
+  [ $_pad -gt 0 ] && printf "%${_pad}s" ""
+  printf " ${C_DIM}│${C_RESET}\n"
 fi
-if [ -n "$CODECK_STALE" ]; then
-  echo "| STALE: $CODECK_STALE"
-  echo "+------------------------------------------------------+"
-fi
-printf "| %-52s |\n" "$_bar $_done_count/$_total steps"
-echo "+------------------------------------------------------+"
+
+printf "  ${C_DIM}│${C_RESET}%${_w}s ${C_DIM}│${C_RESET}\n" ""
+
+# pipeline flow
+printf "  ${C_DIM}│${C_RESET} "
+_node "outline" "$CODECK_STATUS_OUTLINE"
+_sep
+_node "design" "$CODECK_STATUS_DESIGN"
+_sep
+_node "review" "$CODECK_STATUS_REVIEW"
+_sep
+_node "speech" "$CODECK_STATUS_SPEECH"
+_sep
+_node "export" "$CODECK_STATUS_EXPORT"
+printf " ${C_DIM}│${C_RESET}\n"
+
+printf "  ${C_DIM}│${C_RESET}%${_w}s ${C_DIM}│${C_RESET}\n" ""
+
+# next action
 if [ -n "$CODECK_NEXT" ]; then
-  printf "| %-52s |\n" "NEXT: /codeck-$CODECK_NEXT"
-  printf "| %-52s |\n" "$CODECK_NEXT_REASON"
+  printf "  ${C_DIM}│${C_RESET} ${C_CYAN}→ /codeck-%s${C_RESET}" "$CODECK_NEXT"
+  _next_len=$(( 13 + ${#CODECK_NEXT} ))
+  _pad=$(( _w - _next_len ))
+  [ $_pad -gt 0 ] && printf "%${_pad}s" ""
+  printf " ${C_DIM}│${C_RESET}\n"
 else
-  printf "| %-52s |\n" "$CODECK_NEXT_REASON"
+  printf "  ${C_DIM}│${C_RESET} ${C_GREEN}✓ done${C_RESET}"
+  printf "%$(( _w - 7 ))s" ""
+  printf " ${C_DIM}│${C_RESET}\n"
 fi
-echo "+======================================================+"
+
+printf "  ${C_DIM}└%s┘${C_RESET}\n" "$_hline"
 echo ""
+
+# ─── Machine-readable exports (for AI) ───
 echo "DECK_DIR: $DECK_DIR"
 [ -n "$CODECK_HTML_PATH" ] && echo "HTML: $CODECK_HTML_PATH"
-exit 0
