@@ -110,6 +110,7 @@
     slide.querySelectorAll('[data-f]').forEach(function (el) {
       el.classList.remove('visible');
     });
+    slide.dataset.step = '0';
   }
 
   function showUpTo(slide, step) {
@@ -117,6 +118,7 @@
       var f = parseInt(el.dataset.f, 10) || 0;
       el.classList.toggle('visible', f <= step);
     });
+    slide.dataset.step = String(step);
   }
 
   function stepDown() {

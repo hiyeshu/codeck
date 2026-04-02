@@ -27,6 +27,8 @@ The role is chosen for structural match, not domain:
 >
 > Content driven by contrast and opposing forces → Caravaggio: high-contrast lighting, black-white dominant, accent color used sparingly like a decisive stroke.
 >
+> Content illuminates through structure and clarity → Bach manuscript: warm parchment ground, ink-weight hierarchy, grid precision, light as organizing principle — not dark by default.
+>
 > Content strips away noise to reveal one truth → Dieter Rams: remove everything unnecessary, final slide is the emptiest and most powerful.
 
 Apply their formal logic directly. Don't explain their principles — embody them in every visual choice.
@@ -95,6 +97,8 @@ Find structurally similar things in your role's knowledge domain:
 > A layered business proposal → Ravel's Bolero → visually simple to complex, each page adds a layer, color gradually saturates
 >
 > A contrastive technical argument → Go (围棋) attack and defense → black-white contrast dominant, each turn uses one accent color as a "move"
+>
+> A structured explanation that builds understanding → architectural blueprint → warm off-white ground, precise lines, information revealed through spatial hierarchy, not through darkness
 >
 > A data report moving from chaos to order → Japanese karesansui → early pages scattered, final page stripped to minimal
 

@@ -46,8 +46,8 @@ html, body {
 /* ─── Fragments ─── */
 [data-f] {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease;
 }
 [data-f-type="scale"] { transform: scale(0.92); }
 [data-f-type="blur"]  { transform: none; filter: blur(8px); }
