@@ -33,7 +33,6 @@ Fallback if no diagnosis: curious magazine editor who asks "why" and won't accep
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
@@ -89,12 +88,12 @@ Results go into outline.md's "Material summary" section.
 - B) Fast — I decide everything, you review at the end
 - C) Expert — you write the outline, I optimize
 
-Fast mode: skip Step 3 questions, generate outline directly, confirm once.
+Fast mode: skip Q1 and Q1.5, but **still ask Q2, Q3, Q4**.
 Expert mode: user writes outline, you review and suggest improvements.
 
-**Smart skip:** if user's instruction already contains topic, audience, length, language — skip all questions, go to Step 4.
+**Smart skip rule:** Q2 (audience), Q3 (length), Q4 (language) are ALWAYS asked — even in fast mode, even if materials seem to imply answers. These are user intent, not facts you can infer. Only skip Q1/Q1.5 if the user's instruction already contains a clear core message.
 
-## Step 3: Questions (collaborative mode)
+## Step 3: Questions
 
 ### Q1: Core message
 
@@ -103,6 +102,8 @@ Expert mode: user writes outline, you review and suggest improvements.
 - A) I'll tell you
 - B) Extract from materials
 - C) Not sure yet
+
+Skip if user already stated their core message explicitly.
 
 ### Q1.5: Intent exploration (open conversation, no options)
 
@@ -117,20 +118,20 @@ Not mandatory. "Nothing special" → skip. Answers go into outline.md user inten
 
 Fast mode: skip Q1.5.
 
-### Q2: Audience
+### Q2: Audience (always ask)
 
 - A) Technical peers — jargon ok
 - B) Non-technical decision makers — plain language
 - C) Mixed audience
 - D) Teaching / sharing
 
-### Q3: Length
+### Q3: Length (always ask)
 
 - A) Concise (4-6 slides)
 - B) Standard (7-10 slides)
 - C) Detailed (11-15 slides)
 
-### Q4: Language
+### Q4: Language (always ask)
 
 - A) Chinese
 - B) English
@@ -257,7 +258,3 @@ Show the single sharpest title transformation — the one where the before/after
 >
 > Output: `$DECK_DIR/outline.md`
 > Next: `/codeck-design` to generate slides.
-
-```bash
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
-```

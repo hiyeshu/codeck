@@ -26,7 +26,6 @@ Read `$DECK_DIR/diagnosis.md`. If a speech role is recommended, use it. Otherwis
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
@@ -189,7 +188,3 @@ Point to the single strongest moment in the script — the line or pause that wi
 > Press P in the deck for speaker mode to see the script.
 >
 > All done. Need to export? `/codeck-export`. Check progress anytime with `/codeck`.
-
-```bash
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
-```

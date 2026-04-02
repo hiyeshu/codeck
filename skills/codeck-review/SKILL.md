@@ -31,11 +31,10 @@ Fallback: senior publishing editor with an eye for detail.
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-If `STATUS_DESIGN` is not `done`, suggest running `/codeck-design` first.
+Gate check: if no assembled HTML exists (`./*-r*.html`), suggest running `/codeck-design` first.
 
 If custom.css + slides.html exist but no assembled HTML, re-run assemble.sh.
 
@@ -127,8 +126,6 @@ Compare against the design-dna.json intent and visual-floor benchmarks (`~/.clau
 - **Deck-level rhythm** — does the deck use intentional variation across slides (color temperature drift, density inversion, breathing pages)? Or does every slide feel the same volume?
 - **Font character** — are fonts distinctive (Google Fonts, not Inter/Roboto/system-ui)? Is `@import` present in custom.css with fallback stack?
 - **Fragment entrances** — do entrance types match content mood? Are custom types used where appropriate?
-- **Visual weight** — does each element's size match its content importance? Imagine the slide on a 3-meter projector: would the key concept command attention or disappear into the background? A core idea rendered at footnote size is a perceptual failure the AI can't see.
-- **Projection survival** — on dark themes, is the lightest gray text/border at least `#888` or `rgba(255,255,255,0.5)`? Projectors crush the bottom 30% of luminance. On light themes, are thin font weights (≤ 300) only used at large sizes (≥ 64px)? Windows renders them nearly invisible.
 
 If the design-dna specifies an effect or technique that's missing from custom.css, flag it.
 
@@ -143,7 +140,6 @@ Before flagging a visual "inconsistency," check if it's intentional:
 - **Slide density alternates** → check for density inversion pattern. Forte → piano is a technique.
 - **Title is extremely large (>80px)** → check visual-floor benchmarks. 88–120px is normal for impact slides.
 - **Background changes between slides** → this is deck-level technique, not inconsistency.
-- **Slide looks empty but has one big element** → check if it's a breathing page or impact page (one sentence, one image, one number). Deliberate emptiness ≠ undersized content. The spatial density flag is for slides that *have* multiple elements but size them too small.
 
 Rule: if design-notes.md documents a creative decision, don't override it. Flag it only if the execution is broken (e.g. contrast too low to read), not because it's unconventional.
 
@@ -188,5 +184,5 @@ Highlight the single most impactful fix — the one that changed the most about 
 > Next: `/codeck-export` or `/codeck-speech`
 
 ```bash
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
+touch "$DECK_DIR/.reviewed"
 ```

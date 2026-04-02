@@ -47,14 +47,13 @@ Only state verified facts. For unrendered results, say "will" not "is".
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
 Read `$DECK_DIR/outline.md` — page structure, content points, user intent, note to designer.
 Read `$DECK_DIR/diagnosis.md` — role, domain, expression challenge.
 
-If outline.md doesn't exist (STATUS_OUTLINE: none), use AskUserQuestion:
+If outline.md doesn't exist, use AskUserQuestion:
 - A) Run `/codeck-outline` first
 - B) Skip — I'll describe what I want
 
@@ -282,8 +281,3 @@ Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run asse
 > Output: `./{title}-r{revision}.html` (in user's project directory)
 > Intermediates: `$DECK_DIR/design-dna.json` + `$DECK_DIR/design-notes.md`
 > Next: `/codeck-review`
-
-Show dashboard:
-```bash
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
-```
