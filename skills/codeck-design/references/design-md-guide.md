@@ -1,4 +1,4 @@
-# Generation Guide — design-dna.json → custom.css
+# Generation Guide — DESIGN.md → custom.css
 
 ## Canvas
 
@@ -9,74 +9,76 @@ The engine renders every slide at **1280 × 720 px** and uses `transform: scale(
 1. **Color + typography** — 80% of visual identity
 2. **Spacing + layout** — structural rhythm
 3. **Shape + shadow** — surface treatment
-4. **design_style** — mood, composition, visual language
-5. **visual_effects** — visual enhancements
-6. **motion** — animation (add last, after layout and effects are solid)
+4. **Overview + Do's and Don'ts** — mood, composition, visual language
+5. **Visual Effects** — visual enhancements
+6. **Motion** — animation (add last, after layout and effects are solid)
 
-## design_system → CSS Variables
+## DESIGN.md tokens → CSS Variables
 
-Map `design_system` fields directly to `:root` variables in custom.css:
+Read the YAML front matter from `$DECK_DIR/DESIGN.md` and map tokens to `:root` variables in custom.css:
 
 ```css
 :root {
   /* ─── Color ─── */
-  --bg: {color.surface.background};
+  --bg: {colors.neutral};
   --fg: {derive: light bg → dark fg, dark bg → light fg};
-  --accent: {color.accent.hex};
-  --accent2: {color.secondary.hex};
-  --primary: {color.primary.hex};
-  --surface-card: {color.surface.card};
-  --surface-elevated: {color.surface.elevated};
+  --accent: {colors.accent};
+  --accent2: {colors.secondary};
+  --primary: {colors.primary};
+  --surface-card: {colors.surface-card};
+  --surface-elevated: {colors.surface-elevated};
 
   /* ─── Typography (Google Fonts + system fallback) ─── */
-  --font-heading: {typography.font_families.heading}, system-ui, sans-serif;
-  --font-body: {typography.font_families.body}, system-ui, sans-serif;
-  --font-mono: {typography.font_families.mono}, ui-monospace, monospace;
+  --font-heading: {typography.font-heading}, system-ui, sans-serif;
+  --font-body: {typography.font-body}, system-ui, sans-serif;
+  --font-mono: {typography.font-mono}, ui-monospace, monospace;
 
   /* ─── Spacing ─── */
-  --space-sm: {spacing.scale[1]}px;   /* typically 16px */
-  --space-md: {spacing.scale[3]}px;   /* typically 32px */
-  --space-lg: {spacing.scale[5]}px;   /* typically 64px */
-  --slide-padding: {spacing.slide_padding};
+  --space-sm: {spacing.sm};
+  --space-md: {spacing.md};
+  --space-lg: {spacing.lg};
+  --slide-padding: {spacing.slide-padding};
 
   /* ─── Shape ─── */
-  --radius: {shape.border_radius.medium};
-  --radius-sm: {shape.border_radius.small};
-  --radius-lg: {shape.border_radius.large};
+  --radius: {rounded.md};
+  --radius-sm: {rounded.sm};
+  --radius-lg: {rounded.lg};
 
   /* ─── Shadow ─── */
-  --shadow-low: {elevation.levels.low};
-  --shadow-md: {elevation.levels.medium};
-  --shadow-high: {elevation.levels.high};
+  --shadow-low: {from ## Elevation & Depth prose};
+  --shadow-md: {from ## Elevation & Depth prose};
+  --shadow-high: {from ## Elevation & Depth prose};
 
   /* ─── Motion ─── */
-  --ease: {motion.easing};
-  --duration-micro: {motion.duration_scale.micro};
-  --duration-normal: {motion.duration_scale.normal};
+  --ease: {from ## Visual Effects prose};
+  --duration-micro: {from ## Visual Effects prose};
+  --duration-normal: {from ## Visual Effects prose};
 }
 ```
 
 **Critical:** `--bg`, `--fg`, `--accent` are engine interface variables. engine.css uses these three to render the progress bar, overview borders, and page numbers. They must be defined.
 
-## design_system → Layout Primitives
+**Shadow and motion** don't have YAML tokens — derive their CSS values from the prose in `## Elevation & Depth` and `## Visual Effects` sections.
 
-Generate type scale classes (`.title-mega`, `.title-large`, `.title-medium`, `.body-text`, `.caption`) from `typography.type_scale`, and layout primitives (`.grid-2`, `.grid-3`, `.flex-col`, `.flex-row`, `.card`) using the spacing and shape variables.
+## DESIGN.md tokens → Layout Primitives
 
-**Type scale must be a ratio, not arbitrary values.** Pick a base (`--body-size`, typically `20px` on the 1280×720 canvas) and a ratio derived from the design role. Then: `.caption` = base × ratio^-1, `.body-text` = base, `.title-medium` = base × ratio, `.title-large` = base × ratio², `.title-mega` = base × ratio³. The ratio is a design decision — derive it from the DNA, don't default it.
+Generate type scale classes (`.title-mega`, `.title-large`, `.title-medium`, `.body-text`, `.caption`) from `typography` tokens, and layout primitives (`.grid-2`, `.grid-3`, `.flex-col`, `.flex-row`, `.card`) using the spacing and shape variables.
 
-## design_system.slides → Slide Type Styles
+**Type scale must be a ratio, not arbitrary values.** Pick a base (`--body-size`, typically `20px` on the 1280×720 canvas) and a ratio derived from the design role. Then: `.caption` = base × ratio^-1, `.body-text` = base, `.title-medium` = base × ratio, `.title-large` = base × ratio², `.title-mega` = base × ratio³. The ratio is a design decision — derive it from the DESIGN.md, don't default it.
 
-Map `slides.cover`, `slides.section_divider`, `slides.data`, `slides.ending` from the DNA to `.slide-cover`, `.slide-divider`, `.slide-data`, `.slide-ending` classes. Derive layout, alignment, and type scale from the DNA — don't default to centered everything.
+## Slide Type Styles
+
+Map slide types from `## Components` section to `.slide-cover`, `.slide-divider`, `.slide-data`, `.slide-ending` classes. Derive layout, alignment, and type scale from the DESIGN.md — don't default to centered everything.
 
 **Padding is a system, not per-slide guesswork.** Define slide padding once in `px` (e.g. `60px 80px` on the 1280×720 canvas) and share it across all slide types. Individual slides can override, but the default rhythm comes from one place.
 
 **Visual center sits at ~40-45% from top, not geometric center.** Projected slides are viewed above eye level; laptop viewports lose bottom space to browser chrome. Use `padding-top` > `padding-bottom` or `align-content: center` with slight upward bias to place content mass in the audience's natural focal zone.
 
-## design_style → Subjective Decisions
+## Overview + Do's and Don'ts → Subjective Decisions
 
-`design_style` does not map to CSS directly — it guides how you write CSS and HTML. Let `aesthetic.mood` drive color temperature, `composition.balance_type` drive layout symmetry, `visual_language.focal_strategy` drive per-slide emphasis.
+These prose sections do not map to CSS directly — they guide how you write CSS and HTML. Let `## Overview` mood drive color temperature, composition balance drive layout symmetry, `## Do's and Don'ts` focal strategy drive per-slide emphasis.
 
-## visual_effects → CSS Enhancements
+## Visual Effects → CSS Enhancements
 
 ### Background effects
 ```css
@@ -88,7 +90,7 @@ Map `slides.cover`, `slides.section_divider`, `slides.data`, `slides.ending` fro
 .slide-cover {
   background: linear-gradient(135deg, var(--primary), var(--accent));
   background-size: 200% 200%;
-  animation: gradient-shift {params.speed} ease infinite;
+  animation: gradient-shift {speed from prose} ease infinite;
 }
 ```
 
@@ -125,8 +127,8 @@ To override the engine's transition duration and easing in custom.css:
 ### Glass effect
 ```css
 .glass {
-  backdrop-filter: blur({params.blur_radius});
-  background: rgba(255, 255, 255, {params.transparency});
+  backdrop-filter: blur({blur_radius from prose});
+  background: rgba(255, 255, 255, {transparency from prose});
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 ```

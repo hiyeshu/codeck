@@ -5,8 +5,8 @@
 codeck/SKILL.md: Entry dashboard. Material scan + content diagnosis (3 signals: domain, expression challenge, audience starting point) + dynamic role recommendation + pipeline status.
 codeck-outline/SKILL.md: Editor role. Role activation → narrative questions → story arc → title smithing. Outputs outline.md (with user intent section).
 codeck-outline/references/checklist.md: Outline self-review checklist.
-codeck-design/SKILL.md: Designer role. Role activation → design-dna isomorphic mapping → structured design archive → AI writes custom.css + slides.html → assemble.sh assembles single HTML.
-codeck-design/references/: Design archive specs (design-dna-schema.md field definitions + design-dna-guide.md mapping rules + checklist.md design self-review).
+codeck-design/SKILL.md: Designer role. Role activation → DESIGN.md isomorphic mapping → structured design archive → AI writes custom.css + slides.html → assemble.sh assembles single HTML.
+codeck-design/references/: Design archive specs (design-md-spec.md format definition + design-md-guide.md mapping rules + checklist.md design self-review).
 codeck/scripts/status.sh: Shared status detection. File detection + timestamp staleness + NEXT recommendation, called by all skills.
 codeck-design/scripts/: Fixed slide engine (engine.js + engine.css + assemble.sh). Navigation, fragments (4 entrance types), overview, speaker mode, clamp responsive system.
 codeck-review/SKILL.md: Reviewer role (inverse selection: listener most likely to struggle). Six-dimension review + direct HTML fixes, decision summary appends to design-notes.md.
@@ -24,10 +24,11 @@ Downstream: Claude skill runtime
 
 ## Changelog
 
+- 2026-04-22: codeck-design + codeck-review: design-dna.json → DESIGN.md migration. Adopted Google design.md format (YAML front matter for machine-readable tokens + Markdown prose for design rationale). New files: design-md-spec.md (format spec), design-md-guide.md (token → CSS mapping). Removed: design-dna-schema.md, design-dna-guide.md. Isomorphic mapping process unchanged — output format changed from JSON to DESIGN.md.
 - 2026-03-30: codeck-design: image physics — added perceptual principles for image use (scarcity, scale, rhythm) to visual-floor.md. Added gotcha pointing to generate-image skill for on-demand image generation into $DECK_DIR/assets/. No rules on placement — principles that inspire AI to make its own decisions.
 - 2026-03-30: codeck-design + codeck-review: perceptual compensation rewrite. Removed aesthetic constraints (cover symmetry, content density caps, cover signal-to-noise) that limited AI creativity. Added perceptual blind spot rules: projector color loss (#333→black), Windows thin font rendering, contrast fatigue relief, height breakpoint checklist, visual weight = content importance. Rules now target what AI can't see about human perception, not what humans disagree about aesthetically.
 - 2026-03-30: codeck-design + codeck-review: element scale rules (superseded by perceptual rewrite above) — visual elements must use relative units (vw/vh/%/clamp), not fixed small px. Design checklist and review both check for undersized multi-element layouts. Deliberate breathing pages exempted.
 - 2026-03-30: codeck-speech: fragment-synced data-notes — split speech segments per fragment step instead of dumping full text on slide entry. speech.md output format now uses `### [on enter]` / `### [fragment N]` sections for slides with fragments.
 - 2026-03-29: codeck-design: add reference extraction step — user-provided URLs, screenshots, or design specs are decomposed into design signals (color logic, type contrast, spatial rhythm, material, motion, structure) and cross-checked against isomorphic mapping. Signals that match content structure are adopted; decorative-only signals are discarded.
-- 2026-03-29: v2 rewrite. Single HTML architecture (fixed engine + AI-written custom.css/slides.html). Content diagnosis with three signals, role selection derived from problem nature, design-dna isomorphic mapping, inverse review role. Forward-only flow: diagnosis → outline → HTML → review → export/speech. All skills in English.
+- 2026-03-29: v2 rewrite. Single HTML architecture (fixed engine + AI-written custom.css/slides.html). Content diagnosis with three signals, role selection derived from problem nature, DESIGN.md isomorphic mapping, inverse review role. Forward-only flow: diagnosis → outline → HTML → review → export/speech. All skills in English.
 - 2026-03-24: Repository directory renamed from `skill/` to `skills/`.

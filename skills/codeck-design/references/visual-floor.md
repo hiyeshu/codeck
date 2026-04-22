@@ -2,7 +2,7 @@
 
 Not presets. **Benchmarks to beat.**
 
-After generating design-dna.json and before writing custom.css, compare your planned output against these. If your design is flatter than the closest benchmark, go back to the DNA and push harder.
+After generating DESIGN.md and before writing custom.css, compare your planned output against these. If your design is flatter than the closest benchmark, go back to the DESIGN.md and push harder.
 
 ---
 
@@ -220,7 +220,7 @@ body::after {
 
 ## How to use these benchmarks
 
-After writing design-dna.json, before writing custom.css:
+After writing DESIGN.md, before writing custom.css:
 
 1. **Pick the closest benchmark** to your DNA's mood and content structure
 2. **Check the water level** — does your output have at least this much visual weight overall? Don't compare item-by-item. A deck can beat the benchmark with different strengths (e.g. strong typography + simple background instead of layered background + plain type)

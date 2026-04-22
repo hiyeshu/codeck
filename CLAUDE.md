@@ -38,7 +38,7 @@ Skills installed at `~/.claude/skills/codeck*/`.
 
 Two directories at runtime:
 - **cwd** — the user's project. codeck reads materials here, writes final deliverables here (HTML, PDF, PPTX).
-- **`~/.codeck/projects/{slug}/`** — codeck's workspace. Reads and writes intermediate artifacts here (diagnosis.md, outline.md, design-notes.md, design-dna.json, custom.css, slides.html, speech.md).
+- **`~/.codeck/projects/{slug}/`** — codeck's workspace. Reads and writes intermediate artifacts here (diagnosis.md, outline.md, design-notes.md, DESIGN.md, custom.css, slides.html, speech.md).
 
 ## Repository
 
