@@ -39,6 +39,34 @@ Record the choice in:
 - `roles/design.md` `## Current Skeleton`
 - `channel/YYYY-MM-DD.md`: one line in the `@design` claim or handoff
 
+## Pre-flight
+
+Before writing `DESIGN.md`, `custom.css`, or `slides.html`, make a skeleton plan.
+
+The plan must decide:
+
+1. Page family for every slide.
+2. Page energy for every slide: `anchor`, `breath`, `work`, or `contrast`.
+3. Visual tone for every slide: light, dark, hero-light, or hero-dark.
+4. Media slot and ratio for every slide that uses an image or visual asset.
+5. Motion pattern for every slide that uses fragments.
+
+Checks:
+
+- No three consecutive slides share the same energy.
+- No three consecutive slides share the same visual tone unless the content demands monotony.
+- Dense `work` slides have a nearby `breath` or `anchor` slide.
+- Hero pages are used for turns, resets, openings, questions, and closings, not decoration.
+- A repeated page family must do a different rhetorical job each time.
+- Metadata and kicker are not the same sentence. Metadata names the section; kicker hooks the page.
+- Large titles are sized by word length, not by wish.
+- Media slots align to the body area, not the title top.
+- Image grids use equal visual height.
+- UI, diagrams, charts, and text-bearing images use contain fit.
+- If a UI screenshot becomes a long strip, split it into panels or redesign it into a slide-safe asset.
+
+Record the plan in `DESIGN.md` `## Layout` and summarize the current skeleton state in `roles/design.md`.
+
 ## Narrative Grid
 
 Use for decks with a speaker voice: keynotes, private talks, product launches, demo days, industry talks, creator-led essays, and narrative reports.
@@ -138,11 +166,13 @@ Recommended ratios:
 
 Rules:
 
+- Never use a source image's odd aspect ratio as the slot ratio.
 - Crop photos from the bottom first. Preserve top, left, and right.
 - Use `object-fit: contain` for UI, diagrams, charts, and text-bearing images.
 - Do not pin images to the bottom edge.
 - Do not add heavy borders or shadows to images.
 - Generated visuals must not include slide titles, footers, page numbers, signatures, or decorative frames.
+- For image cleanup, generation, composition, or screenshot redesign, use `references/asset-guide.md`. Its asset shapes are examples, not fixed modes.
 
 ## Motion Mapping
 

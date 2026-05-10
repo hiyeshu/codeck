@@ -25,6 +25,9 @@ Downstream: Claude skill runtime
 
 ## Changelog
 
+- 2026-05-10: design-md-spec.md now absorbs the full guizang components discipline as presentation component semantics: shell, type roles, chrome/foot, kicker/tag, callout, stats, channel cards, rowlines, pillars, figures, icons, ghost text, highlights, and motion-bearing fragments.
+- 2026-05-10: skeletons.md now has a guizang-inspired pre-flight layer for page family, energy, tone, media slot, motion pattern, and image-slot guardrails before @design writes visual files.
+- 2026-05-10: codeck-design image asset work now uses a fluid contract instead of fixed image modes. @design starts from slide need and slot, then improves, adapts, generates, composes, draws with HTML/SVG, or skips raster work. Asset examples live in asset-guide.md and DESIGN.md has an Image Assets section.
 - 2026-05-10: slock-style deck room. `/codeck` is the single user entry. MEMORY.md replaces the old project file as room index; channel/tasks/threads/roles hold expanded role turns, work tickets, open decisions, and lane memory. Fixed lanes are @orchestrator, @outline, @design, @review, @speech, and @export; dynamic personas still come from diagnosis.md. AskUser is capped at 2 rounds and only allowed for Project Init, Deck Intent, Design Direction, Export Format, and Speech Style.
 - 2026-05-10: removed the old auxiliary design artifact from the runtime protocol. @design now stores design state in DESIGN.md and roles/design.md; skeletons.md now uses the narrative grid skeleton as the default structure.
 - 2026-04-22: codeck-design + codeck-review: design-dna.json → DESIGN.md migration. Adopted Google design.md format (YAML front matter for machine-readable tokens + Markdown prose for design rationale). New files: design-md-spec.md (format spec), design-md-guide.md (token → CSS mapping). Removed: design-dna-schema.md, design-dna-guide.md. Isomorphic mapping process unchanged — output format changed from JSON to DESIGN.md.

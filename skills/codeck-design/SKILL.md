@@ -20,6 +20,7 @@ description: |
 Write boundaries:
 
 - May write `$DECK_DIR/DESIGN.md`, `$DECK_DIR/custom.css`, `$DECK_DIR/slides.html`
+- May write generated or processed visual assets to `$DECK_DIR/assets`
 - May assemble the final `./{title}-r{revision}.html` in the user's project directory
 - May update `$DECK_DIR/roles/design.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/channel/YYYY-MM-DD.md`
 - Must not rewrite `deck.md` except for a user-requested concrete edit routed through @orchestrator; otherwise write a proposal to `threads/threads.md`
@@ -67,7 +68,7 @@ Only state verified facts. For unrendered results, say "will" not "is".
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
-mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
+mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles" "$DECK_DIR/assets"
 bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
@@ -110,6 +111,56 @@ Multiple references → find the intersection. If references conflict with no cl
 References inform the mapping, not override it. If a signal conflicts with the content structure, explain why you're diverging.
 
 Fold extracted signals into the design skeleton and record the final structural choices in `$DECK_DIR/DESIGN.md`.
+
+## Image Asset Work
+
+Image work belongs to `@design`. It is not a separate user command and not a fixed menu of image types.
+
+Handle any visual asset the deck needs:
+
+- improve user-provided images
+- crop, resize, recolor, de-noise, or normalize ratio
+- clean screenshots and make UI readable on stage
+- redesign messy screenshots into slide-safe assets
+- generate missing visuals
+- compose several assets into one clearer visual
+- skip raster images when HTML, CSS, or SVG is more accurate
+
+Decision order:
+
+1. What job must the visual do on this slide?
+2. What slot and ratio does the skeleton require?
+3. Does the user already provide a usable asset?
+4. Can HTML, CSS, or SVG express it better than raster?
+5. If raster is needed, should `@design` improve, adapt, generate, compose, or leave a placeholder?
+
+Default behavior:
+
+- Preserve the meaning of user-provided images.
+- Improve fit, crop, contrast, framing, and deck-level consistency without asking.
+- Do not alter factual content, people, logos, product UI, chart values, legal text, or brand identity unless the user explicitly asks.
+- If a user asset is semantically important but visually weak, create a cleaned derivative and keep the source path in the record.
+- If no asset exists and the slide needs one, generate or compose an asset.
+- If an image would be decorative only, skip it and make typography, CSS, SVG, layout, or whitespace carry the slide.
+
+AskUser is allowed only when image work changes meaning or deck direction:
+
+- replacing a real product screenshot with a stylized version
+- changing a person's appearance or identity cues
+- inventing a scene that could be mistaken for documentation
+- removing or altering brand, legal, or factual content
+- choosing between visual approaches that change the deck's tone
+
+Do not ask whether to crop, improve contrast, normalize ratios, clean a screenshot, create a placeholder, or use an asset already present.
+
+Read `references/asset-guide.md` before asset work. Its shapes are examples, not modes. If none fit, invent the right asset shape.
+
+Record image work in:
+
+- `DESIGN.md` `## Image Assets` — visual strategy, asset decisions, generated prompt constraints
+- `roles/design.md` `## Asset Work` — current lane state and generated/processed files
+- `MEMORY.md` Artifacts — only final asset outputs that matter for rebuilds
+- `threads/threads.md` — any needed `deck.md` asset-manifest update, because `@outline` owns `deck.md`
 
 ## Design skeletons
 
@@ -244,6 +295,8 @@ Flow: YAML front matter tokens → `:root` CSS variables → layout primitives �
 
 ### slides.html
 
+Before writing `slides.html`, read `DESIGN.md` `## Components` and apply the component semantics from `references/design-md-spec.md`.
+
 ```html
 <!-- ====== 1. Cover ====== -->
 <section class="slide slide-cover" data-notes="Opening: lead with the problem, not the product">
@@ -271,7 +324,22 @@ Flow: YAML front matter tokens → `:root` CSS variables → layout primitives �
 
 ### Asset references
 
-Read `references/asset-guide.md` for full examples of inline/poster/extract asset patterns. Three levels: `inline` (base64 via assemble.sh), `poster` (cover image + play icon), `extract` (code blocks + CSS charts).
+Read `references/asset-guide.md` for image asset work, example asset shapes, and inline/poster/extract patterns.
+
+Generated and processed assets go in `$DECK_DIR/assets/`.
+
+Naming:
+
+```text
+{slide-number}-{semantic-name}-{work}.{ext}
+```
+
+Examples:
+
+- `03-dashboard-clean.png`
+- `04-system-map-generated.png`
+- `06-founder-photo-crop.jpg`
+- `08-ui-redesign.png`
 
 ### Write + assemble
 

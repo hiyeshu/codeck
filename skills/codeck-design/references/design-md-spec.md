@@ -121,15 +121,41 @@ Sections use `##` headings. They can be omitted, but those present must appear i
 | 4 | Layout | Grid system, columns, alignment tendency, content density, section rhythm |
 | 5 | Elevation & Depth | Shadow style, depth cues, level descriptions |
 | 6 | Shapes | Border usage, divider style |
-| 7 | Components | Button/card/navigation/modal/list design intent |
+| 7 | Components | Presentation component semantics: shell, type roles, chrome, foot, kicker, callout, stats, rowlines, pillars, figures, icons, ghost text, highlights, and fragment roles |
 | 8 | Visual Effects | Background effects, particles, glass, text effects, fragment entrances, motion philosophy, easing, duration scale |
-| 9 | Do's and Don'ts | Focal strategy, whitespace usage, contrast level, ornamentation, what to avoid |
+| 9 | Image Assets | Asset strategy, generated/processed image decisions, prompt constraints, source preservation |
+| 10 | Do's and Don'ts | Focal strategy, whitespace usage, contrast level, ornamentation, what to avoid |
 
 ### Section details
 
 **## Overview** — the creative soul. This is where the isomorphic mapping lives. Describe the structural analogy between the content and the design (e.g., "layered business proposal → Ravel's Bolero: simple to complex, each page adds a layer"). Include mood, visual metaphor, era influence, genre, personality traits. This section replaces `design_style.aesthetic` from the old schema.
 
+**## Components** — presentation component semantics. Describe how the deck uses shell metadata, type roles, chrome, foot, kickers, tags, callouts, stats, channel/platform cards, rowlines, pillars, figures, captions, icons, ghost text, highlights, and motion-bearing fragments. These are semantic roles, not copied class names from any template.
+
+Component rules:
+
+- **Slide shell** — every slide needs a clear page role, content area, and optional metadata shell. Hero slides are for visual-dominant moments: cover, section turn, question, quote, or close. Body slides carry proof, process, explanation, and comparison.
+- **Theme cadence** — light, dark, and hero treatments create rhythm. Do not run more than three pages with the same tone unless the content intentionally wants monotony.
+- **Type roles** — display type is for hero titles, quotes, and big numbers. Body type is for readable explanation. Mono or metadata type is for labels, captions, page chrome, small system text, code, and structural tags. Do not mix these jobs randomly.
+- **Chrome and foot** — chrome and foot are navigation metadata, not slide content. Chrome says where we are. Foot gives page context, source, or act marker. They should stay short and stable.
+- **Kicker** — kicker is the page hook above the main title. It must be specific to the page and must not repeat chrome. Good kickers are short: "But", "Proof", "Phase 01", "The Turn". Bad kickers are generic: "Introduction", "Overview", or the same phrase as chrome.
+- **Tag** — tags are small capsules for constraints, states, audiences, or short attributes. Use a handful, not a tag cloud.
+- **Callout** — callouts carry one sharp quoted or emphasized thought. They are not generic cards. A callout needs one main sentence, optional source, and enough whitespace to feel intentional.
+- **Stats** — stats use a fixed hierarchy: label, number, note. Use them when the number is the object. Keep the number visually dominant and the note short. Do not let more than four to six stats compete.
+- **Platform or channel card** — use when showing channels, products, communities, or surfaces with one clear metric or status. It is a stat variant, not a generic card.
+- **Rowline** — rowlines compare compact named items. Structure: key, explanation, metadata. Good for files, roles, steps, constraints, and capability lists. Bad for prose paragraphs.
+- **Pillar** — pillars are for three or four conceptual supports. Each pillar must be parallel in grammar, scale, and visual weight. If they are not parallel, use rowlines or narrative text instead.
+- **Figure** — figures are evidence or atmosphere inside a skeleton slot. Fit the slot before choosing crop. Align figures to the body area, not the title top. Use contain fit for UI, diagrams, charts, and text-bearing images. Crop photos from the bottom first. Do not bottom-pin figures.
+- **Caption** — captions identify the figure or source. Keep them short. Captions are not a second paragraph.
+- **Placeholder** — if an asset is missing but the slot matters, use a visible placeholder that states the intended asset. Do not pretend missing evidence exists.
+- **Icons** — icons are structural marks, not decoration. Use them sparingly, keep a single stroke logic, and never use emoji as icons.
+- **Ghost text** — ghost text is atmosphere. Use one oversized word, number, or symbol behind content at low contrast. It must not compete with readable content.
+- **Highlight** — highlights mark one to three words. Do not highlight full sentences or whole paragraphs.
+- **Motion-bearing fragments** — motion attaches to semantic blocks, not every tiny child. Use cascade for normal reveals, line reveal for quotes, directional reveal for before/after, and stepped reveal for pipelines.
+
 **## Visual Effects** — codeck extension section. The Google spec preserves unknown sections without error. Describe background effects, particle systems, glassmorphism, text effects, cursor effects, SVG animations, and fragment entrance types. For effects beyond CSS+SVG, describe the intent. This section replaces `visual_effects` from the old schema. Also include motion philosophy, easing curves, and duration scale (micro/normal/macro) here.
+
+**## Image Assets** — codeck extension section. Describe how user images, generated assets, cleaned screenshots, composites, and HTML/SVG alternatives support the deck. Start from slide need and slot, not from fixed image categories. Include source-preservation rules, ratio strategy, generated prompt constraints, and a table of generated or processed assets when applicable. This section must not override `skeletons.md`: the skeleton owns page rhythm, slide families, and image slots; `Image Assets` only records how assets serve those slots. If there is no image work, write "Not applicable — this deck uses typography, CSS, and SVG as the visual system."
 
 **## Do's and Don'ts** — design guardrails. Derived from the old `design_style.visual_language`, `composition`, and `imagery` fields. Describe complexity level, ornamentation, whitespace usage, visual weight distribution, focal strategy, contrast level, texture usage, hierarchy method, balance type, flow direction, photo treatment, illustration style, graphic elements.
 
