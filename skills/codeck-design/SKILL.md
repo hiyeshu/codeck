@@ -67,10 +67,17 @@ Only state verified facts. For unrendered results, say "will" not "is".
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles" "$DECK_DIR/assets"
-bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 ```
 
 Read `$DECK_DIR/MEMORY.md`, `$DECK_DIR/tasks/tasks.md`, `$DECK_DIR/threads/threads.md`, and `$DECK_DIR/roles/design.md`.
@@ -265,7 +272,14 @@ The slide engine (navigation, fragments, overview, speaker mode, progress bar, F
 **Bash assembles the final HTML:**
 
 ```bash
-ENGINE_DIR="$HOME/.claude/skills/codeck-design/scripts"
+CODECK_DESIGN_DIR="${CODECK_DESIGN_DIR:-}"
+if [ -z "$CODECK_DESIGN_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck-design" "$HOME/.codex/skills/codeck-design" "$HOME/.claude/skills/codeck-design"; do
+    if [ -d "$d/scripts" ]; then CODECK_DESIGN_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_DESIGN_DIR" ] || { echo "codeck-design scripts not found" >&2; exit 1; }
+ENGINE_DIR="$CODECK_DESIGN_DIR/scripts"
 
 REV=$(ls ./*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
 REV=$((${REV:-0} + 1))

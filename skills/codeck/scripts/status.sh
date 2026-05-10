@@ -114,7 +114,10 @@ fi
 # ─── Meta ───
 _meta=""
 if [ -n "$CODECK_CONTENT_PATH" ]; then
-  _pages=$(grep -c '^## ' "$CODECK_CONTENT_PATH" 2>/dev/null || echo 0)
+  _pages=$(grep -Ec '^##[[:space:]]+Slide([[:space:]]+[0-9]+|[[:space:]]|$)' "$CODECK_CONTENT_PATH" 2>/dev/null || echo 0)
+  if [ "$_pages" -eq 0 ] 2>/dev/null; then
+    _pages=$(grep -Ec '^###[[:space:]]+Slide([[:space:]]+[0-9]+|[[:space:]]|$)' "$CODECK_CONTENT_PATH" 2>/dev/null || echo 0)
+  fi
   [ "$_pages" -gt 0 ] && _meta="${_pages}p"
 fi
 if [ -n "$CODECK_HTML_PATH" ]; then

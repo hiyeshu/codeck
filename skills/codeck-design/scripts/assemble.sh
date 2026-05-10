@@ -11,6 +11,19 @@ TITLE="$2"
 LANG="${3:-zh-CN}"
 ENGINE_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+_base64_one_line() {
+  local file="$1"
+  if base64 --help 2>&1 | grep -q -- '-w'; then
+    base64 -w0 "$file"
+  elif base64 -i "$file" >/dev/null 2>&1; then
+    base64 -i "$file" | tr -d '\n'
+  elif command -v openssl >/dev/null 2>&1; then
+    openssl base64 -A -in "$file"
+  else
+    base64 "$file" | tr -d '\n'
+  fi
+}
+
 # Check required files.
 [ -f "${DECK_DIR}/slides.html" ] || { echo "ERROR: ${DECK_DIR}/slides.html not found" >&2; exit 1; }
 [ -f "${DECK_DIR}/custom.css" ] || { echo "ERROR: ${DECK_DIR}/custom.css not found" >&2; exit 1; }
@@ -76,7 +89,7 @@ if [ -d "${DECK_DIR}/assets" ]; then
       ico)  mime="image/x-icon" ;;
       *)    continue ;;  # Skip non-images.
     esac
-    b64=$(base64 -w0 "$asset" 2>/dev/null || base64 "$asset" 2>/dev/null)
+    b64=$(_base64_one_line "$asset")
     datauri="data:${mime};base64,${b64}"
     # Replace assets/filename references in HTML (src="assets/..." or url(assets/...)).
     LC_ALL=C sed -i "s|assets/${filename}|${datauri}|g" "$TMPFILE" 2>/dev/null || \

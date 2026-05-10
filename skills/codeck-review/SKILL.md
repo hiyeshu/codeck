@@ -40,10 +40,17 @@ Fallback: senior publishing editor with an eye for detail.
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
-bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 ```
 
 Gate check: if no assembled HTML exists (`./*-r*.html`), run `/codeck` to generate/rebuild the deck first.
@@ -144,7 +151,7 @@ Check that AI-generated content doesn't break the engine:
 
 ### 7. Visual quality
 
-Compare against the DESIGN.md intent and visual-floor benchmarks (`~/.claude/skills/codeck-design/references/visual-floor.md`).
+Compare against the DESIGN.md intent and visual-floor benchmarks in the installed `codeck-design/references/visual-floor.md`.
 
 - **Surface depth** — does the deck have material quality (gradients, shadows, glass, noise, blend modes)? Or flat colored rectangles?
 - **Type as design** — are headings visually commanding (large scale, tight tracking, gradient fill, weight contrast)? Or default-looking text?
@@ -179,7 +186,14 @@ Only ask when there is a real user-owned decision: conflicting source materials,
 3. Re-run assemble.sh
 
 ```bash
-ENGINE_DIR="$HOME/.claude/skills/codeck-design/scripts"
+CODECK_DESIGN_DIR="${CODECK_DESIGN_DIR:-}"
+if [ -z "$CODECK_DESIGN_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck-design" "$HOME/.codex/skills/codeck-design" "$HOME/.claude/skills/codeck-design"; do
+    if [ -d "$d/scripts" ]; then CODECK_DESIGN_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_DESIGN_DIR" ] || { echo "codeck-design scripts not found" >&2; exit 1; }
+ENGINE_DIR="$CODECK_DESIGN_DIR/scripts"
 REV=$(ls ./*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
 bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{title}" "{language}" \
   > "./{title}-r${REV}.html"
@@ -205,6 +219,13 @@ Write review findings and fixes to `$DECK_DIR/review.md`:
 ```
 
 If a finding needs `@outline` or `@design` to change their owned source beyond a scoped fix, add it to `threads/threads.md` and hand off the task. Do not silently rewrite their owned artifact.
+
+Review is not complete until all four are true:
+
+- `review.md` exists
+- scoped fixes, if any, have been re-assembled into the latest HTML
+- `tasks/tasks.md` marks the review ticket done
+- `$DECK_DIR/.reviewed` has been touched after the latest HTML write
 
 After review:
 

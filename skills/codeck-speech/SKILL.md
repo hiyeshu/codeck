@@ -33,10 +33,17 @@ Read `$DECK_DIR/diagnosis.md`. If a speech role is recommended, use it. Otherwis
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
-bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 ```
 
 Read:

@@ -25,10 +25,17 @@ Write boundaries:
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
-bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 ```
 
 Read `$DECK_DIR/MEMORY.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/threads/threads.md`.
@@ -124,7 +131,14 @@ Default: keep placeholders in export. If user says "embed video", extract path f
 **Option A (recommended): LibreOffice**
 
 ```bash
-EXPORT_SCRIPTS="$HOME/.claude/skills/codeck-export/pptx/scripts"
+CODECK_EXPORT_DIR="${CODECK_EXPORT_DIR:-}"
+if [ -z "$CODECK_EXPORT_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck-export" "$HOME/.codex/skills/codeck-export" "$HOME/.claude/skills/codeck-export"; do
+    if [ -d "$d/pptx/scripts" ]; then CODECK_EXPORT_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_EXPORT_DIR" ] || { echo "codeck-export scripts not found" >&2; exit 1; }
+EXPORT_SCRIPTS="$CODECK_EXPORT_DIR/pptx/scripts"
 python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pdf ./*-r*.html
 python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pptx ./*-r*.html
 ```
@@ -146,7 +160,14 @@ Check: pages complete (no truncation), backgrounds render, fonts display correct
 Generate thumbnails:
 
 ```bash
-EXPORT_SCRIPTS="$HOME/.claude/skills/codeck-export/pptx/scripts"
+CODECK_EXPORT_DIR="${CODECK_EXPORT_DIR:-}"
+if [ -z "$CODECK_EXPORT_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck-export" "$HOME/.codex/skills/codeck-export" "$HOME/.claude/skills/codeck-export"; do
+    if [ -d "$d/pptx/scripts" ]; then CODECK_EXPORT_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_EXPORT_DIR" ] || { echo "codeck-export scripts not found" >&2; exit 1; }
+EXPORT_SCRIPTS="$CODECK_EXPORT_DIR/pptx/scripts"
 python "$EXPORT_SCRIPTS/thumbnail.py" ./*-r*.pptx
 ```
 

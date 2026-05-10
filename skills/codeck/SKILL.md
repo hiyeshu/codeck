@@ -13,7 +13,7 @@ description: |
 
 # codeck — Deck Room Entry
 
-Open the deck room, scan materials, diagnose project state, route work to role lanes, and show the role channel as work moves.
+Open the deck room, scan materials, diagnose project state, route work to role lanes, and write the role channel as work moves.
 
 Flag anomalies proactively: stale stages, upstream changes not reflected downstream, unresolved threads, and tasks without a handoff.
 
@@ -38,7 +38,20 @@ Dynamic role persona:
 - The fixed handle owns the work. The dynamic person shapes the judgment.
 - Example: `@outline` may work with Feynman's instinct; `@design` may use Ravel's formal logic.
 
-Default user-facing output is expanded channel, not a hidden summary. Show the handoff:
+Default user-facing output is compact: judgment, artifact, next action. The expanded role channel is written to `channel/YYYY-MM-DD.md`; show it only when the user asks to see the channel.
+
+Compact response shape:
+
+```markdown
+codeck: {state}
+
+I read this as {task}. I {did/will do} {action}.
+
+Artifact: `{path}`
+Next: `{next command or next lane}`
+```
+
+When the user asks to see the channel, show the handoff:
 
 ```markdown
 @orchestrator
@@ -226,7 +239,7 @@ After a lane works:
 1. Update the task ticket.
 2. Update `MEMORY.md` Active Context, Latest Channel Summary, Task Index, and Artifacts.
 3. Append the role exchange to today's channel file.
-4. Show the expanded channel in the response.
+4. Keep the user response compact unless the user asked for the channel.
 
 ## Two directories
 
@@ -239,11 +252,18 @@ Scan materials in `.`. Write intermediate artifacts to `$DECK_DIR`. Output final
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
-bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
 
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 ```
 
 Initialize the room before asking anything:
@@ -264,14 +284,10 @@ Track AskUser rounds for this run. Stop at 2. If another decision remains, use t
 Scan the **current directory** (the user's project), not DECK_DIR.
 
 ```bash
-EXCLUDE='! -path "./node_modules/*" ! -path "./.git/*" ! -path "./.claude/*" ! -path "./dist/*" ! -path "./build/*" ! -name "CLAUDE.md" ! -name "TODOS.md" ! -name "README.md" ! -name "DESIGN.md" ! -name "*.test.*" ! -name "*.spec.*" ! -name "*.config.*"'
-
-echo "=== TEXT ===" && eval find . -maxdepth 4 -type f \( -name "*.md" -o -name "*.txt" -o -name "*.rtf" -o -name "*.org" -o -name "*.rst" \) $EXCLUDE 2>/dev/null | head -20
-echo "=== DOCS ===" && eval find . -maxdepth 4 -type f \( -name "*.pdf" -o -name "*.docx" -o -name "*.doc" -o -name "*.pptx" -o -name "*.ppt" -o -name "*.key" -o -name "*.pages" -o -name "*.xlsx" -o -name "*.xls" -o -name "*.numbers" \) $EXCLUDE 2>/dev/null | head -20
-echo "=== IMAGES ===" && eval find . -maxdepth 4 -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" -o -name "*.gif" -o -name "*.svg" -o -name "*.ico" -o -name "*.bmp" -o -name "*.tiff" \) $EXCLUDE 2>/dev/null | head -20
-echo "=== DATA ===" && eval find . -maxdepth 4 -type f \( -name "*.csv" -o -name "*.tsv" -o -name "*.json" -o -name "*.yaml" -o -name "*.yml" -o -name "*.xml" \) $EXCLUDE 2>/dev/null | head -20
-echo "=== MEDIA ===" && eval find . -maxdepth 4 -type f \( -name "*.mp4" -o -name "*.mov" -o -name "*.mp3" -o -name "*.wav" -o -name "*.m4a" -o -name "*.webm" \) $EXCLUDE 2>/dev/null | head -10
+bash "$CODECK_SKILL_DIR/scripts/scan-materials.sh" .
 ```
+
+Do not use `eval find` for material scan. If the script is unavailable, use a plain `find` with explicit `! -path` exclusions.
 
 ---
 
@@ -404,7 +420,7 @@ status.sh already outputs the dashboard. Below it, add:
 1. **Materials** — file types and counts from Phase 2
 2. **STALE** — one-line explanation if any stage is stale
 3. **Threads** — unresolved decisions from `threads/threads.md`, only if any are open
-4. **Channel** — expanded role exchange for this run
+4. **Channel** — only if the user asks to see the internal channel
 
 Don't redraw the table.
 
@@ -420,9 +436,9 @@ This is the first moment the user sees the system *think*. Don't dump three role
 
 Keep it short. Three paragraphs, not three pages. The point is: the user should feel their content was *seen*, not just processed.
 
-### Expanded channel
+### Channel visibility
 
-Every `/codeck` response includes the role channel for the work just done or about to happen. Keep each role block short and action-bearing.
+Every `/codeck` run writes the role channel to `channel/YYYY-MM-DD.md`. User responses stay compact by default. If the user asks for the channel, show the role blocks for the work just done or about to happen.
 
 Use handles, not stage names:
 

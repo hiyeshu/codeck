@@ -2,7 +2,7 @@
 
 ## Members
 
-codeck/SKILL.md: Deck room entry. Initializes MEMORY.md + channel/tasks/threads/roles, scans materials, diagnoses content, routes work across fixed role lanes, shows expanded channel.
+codeck/SKILL.md: Deck room entry. Initializes MEMORY.md + channel/tasks/threads/roles, scans materials, diagnoses content, routes work across fixed role lanes, writes expanded channel to file and keeps user output compact by default.
 codeck-outline/SKILL.md: @outline lane. Role activation → bundled Deck Intent → story arc → title smithing. Outputs deck.md and mirrors outline.md for compatibility.
 codeck-outline/references/checklist.md: Outline self-review checklist.
 codeck-design/SKILL.md: @design lane. Role activation → skeleton selection → DESIGN.md isomorphic mapping → structured design archive → AI writes custom.css + slides.html → assemble.sh assembles single HTML.
