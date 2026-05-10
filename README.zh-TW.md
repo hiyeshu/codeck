@@ -4,7 +4,7 @@
 
 **你做了一個複雜的東西，但說不清楚。codeck 幫你把它講明白。**
 
-[線上演示 →](https://codeck.sh/codeck-intro)
+[線上演示 →](https://codeck.sh/codeck%2Dintro)
 
 [English](README.md) | [简体中文](README.zh.md) | 繁體中文 | [日本語](README.ja.md) | [한국어](README.ko.md)
 
@@ -12,22 +12,22 @@
 
 你有一個資料夾，裡面是筆記、文件、資料、圖片。你想做一套簡報。你輸入 `/codeck`。
 
-codeck 讀完你的檔案，搞清楚你的內容*到底在講什麼*，然後請來合適的人幫忙——一個編輯負責結構，一個設計師負責視覺，一個審稿人用你最難搞的聽眾的眼光來挑刺。每個「人」都是從你內容的具體難點推導出來的，不是從名單裡挑的。
+codeck 打開一個 deck room。它讀完你的檔案，搞清楚你的內容*到底在講什麼*，然後請來合適的人幫忙——一個編輯負責結構，一個設計師負責視覺，一個審稿人用你最難搞的聽眾的眼光來挑刺。每個「人」都是固定工位裡的動態人格，不是模板選項。
 
 產出是一個 HTML 檔案。沒有模板。沒有固定的投影片類型。每頁自由 HTML——AI 可以為你的內容發明任何視覺形式。
 
 ## 怎麼用
 
 ```
-/codeck          掃描素材，診斷內容，推薦角色
+/codeck          打開 deck room，掃描素材，診斷內容
     ↓
-/codeck-outline  編輯規劃敘事結構，鍛造每個標題
+@outline         編輯規劃敘事結構，鍛造每個標題
     ↓
-/codeck-design   設計師找到和你論證結構同形的視覺語言
+@design          設計師找到和你論證結構同形的視覺語言
     ↓
-/codeck-review   你最嚴格的聽眾逐頁審查，直接改
-    ├── /codeck-export   PDF / PPTX
-    └── /codeck-speech   逐字演講稿 + 舞台指示
+@review          你最嚴格的聽眾逐頁審查，直接改
+    ├── @export  PDF / PPTX
+    └── @speech  逐字演講稿 + 舞台指示
 ```
 
 ## 三個想法
@@ -82,4 +82,4 @@ npx skills add hiyeshu/codeck
 
 ## License
 
-Apache-2.0
+MIT

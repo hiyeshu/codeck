@@ -2,14 +2,22 @@
 name: codeck-speech
 version: 2.1.0
 description: |
-  Speech writer role. Reads deck content, asks about style and duration,
-  generates a verbatim speech transcript with stage directions. Outputs
-  $DECK_DIR/speech.md. Use whenever the user says "speech",
-  "speaker notes", "script", "how to present", "talk track",
-  "presentation notes", or wants help preparing to present a deck.
+  Internal speech module for /codeck. Reads deck content, asks about
+  style and duration only when missing, generates a verbatim speech
+  transcript with stage directions. Outputs $DECK_DIR/speech.md.
 ---
 
-# codeck speech
+# codeck speech — @speech lane
+
+`@speech` owns the talk track, presenter rhythm, and fragment-synced notes.
+
+Write boundaries:
+
+- May write `$DECK_DIR/speech.md`
+- May update HTML `data-notes` in `$DECK_DIR/slides.html`
+- May update `$DECK_DIR/roles/speech.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/channel/YYYY-MM-DD.md`
+- Must not rewrite `deck.md`, `DESIGN.md`, `custom.css`, `review.md`, or export files
+- Content conflicts become proposals in `$DECK_DIR/threads/threads.md`
 
 ## Role activation
 
@@ -26,33 +34,67 @@ Read `$DECK_DIR/diagnosis.md`. If a speech role is recommended, use it. Otherwis
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
+mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
+bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
 Read:
+- **MEMORY.md** — known style, duration, language, defaults, open threads
+- **tasks/tasks.md / threads/threads.md** — current ticket and unresolved decisions
 - **HTML** (latest `*-r*.html`) — actual slide content
-- **outline.md** — structure, arc, user intent
-- **design-notes.md** — visual intent (speech rhythm should match visual rhythm)
+- **deck.md / outline.md** — structure, arc, user intent
+- **DESIGN.md / roles/design.md** — visual intent and selected skeleton (speech rhythm should match visual rhythm)
 
-If no HTML and no outline, suggest `/codeck-design` or `/codeck-outline` first.
+If no HTML and no outline, run `/codeck` to build the missing deck state first.
 
 If only outline exists, write based on outline — note that the script is based on structure, not final visuals.
 
-**Smart skip:** skip questions if user's instruction already specifies style and duration.
+**Smart skip:** skip AskUser if the user's instruction, `MEMORY.md`, `deck.md`, `outline.md`, or existing `speech.md` already specifies style and duration.
+
+Before writing, claim the work ticket:
+
+```markdown
+@orchestrator
+Owner: @speech. Task: create presenter script and sync data-notes.
+
+@speech
+I claim the speech pass. I will write `speech.md`, sync fragment notes, and leave source conflicts in threads.
+```
+
+Append the exchange to today's channel file and update `tasks/tasks.md`.
 
 ## Questions
 
-### Q1: Style
+Speech Style is one allowed AskUser moment under `/codeck`.
+
+Ask only once, and only when style or duration is missing. Bundle both into one choice so the user is deciding the speech shape, not filling a form.
+
+```text
+codeck needs the speech shape.
+
+Current read: {deck audience and rhythm}.
+
+I suggest {recommended package} because {reason}.
+
+A) {style + duration package} (recommended)
+B) {contrasting style + duration package}
+C) {deeper/shorter package}
+```
+
+Use these defaults when the deck gives no signal:
 
 - A) TED — conversational, story-driven, breathing room
 - B) Formal — structured, precise language
 - C) Casual — natural, humor ok
 
-### Q2: Duration
-
 - A) 5 min — lightning, ~1000 words
 - B) 15 min — standard, ~3000 words
 - C) 30+ min — deep dive, ~6000 words
+
+If the user does not answer, use the recommended package and write `assumed default` to `MEMORY.md`.
+
+Record the final style and duration in `speech.md` front matter and `MEMORY.md`.
 
 ## Generate
 
@@ -64,7 +106,7 @@ Write a complete, readable-aloud transcript. Page by page.
 
 1. **One section per slide** — matches the deck
 2. **Transitions** — natural bridges between pages
-3. **Stage directions** — write in the same language as the transcript. Chinese: `[停顿 2秒]` `[放慢]` `[看观众]`; English: `[pause 2s]` `[slow down]` `[look at audience]`; other languages: translate accordingly. The speaker must understand them without switching languages.
+3. **Stage directions** — write stage directions in the same language as the transcript. For English, use `[pause 2s]`, `[slow down]`, `[look at audience]`. For other languages, translate the stage directions so the speaker never has to switch languages while presenting.
 4. **Word count** — ~200 words/min Chinese, ~130 words/min English
 5. **Source-based** — no fabricated data
 6. **Strong opening** — story, data, or question
@@ -84,8 +126,7 @@ Write a complete, readable-aloud transcript. Page by page.
 |-------|-------|-------|----------|
 | 1 | ... | ... | ... |
 
-- A) Help me trim the ones over time
-- B) I'll manage it myself
+If a section is over budget, trim it directly before writing the final script. Do not ask another question.
 
 ## Write back HTML data-notes (fragment-synced)
 
@@ -176,9 +217,19 @@ totalEstimate: "{estimate}"
 
 ## Done
 
+After writing:
+
+1. Update `MEMORY.md` Active Context, Latest Channel Summary, Task Index, and Artifacts.
+2. Mark the `@speech` task done in `tasks/tasks.md`.
+3. If script work exposed a content issue, add it to `threads/threads.md`.
+4. Append the handoff to today's channel file.
+
 Point to the single strongest moment in the script — the line or pause that will land hardest:
 
 > codeck speech done.
+>
+> @speech
+> I wrote `speech.md`, synced fragment notes, and recorded the speech shape in memory.
 >
 > Strongest moment: {slide N — what happens and why it works. e.g., "Slide 4, the three-second pause after the question. That silence is where the audience decides you're worth listening to."}
 >
@@ -187,4 +238,4 @@ Point to the single strongest moment in the script — the line or pause that wi
 > Output: `$DECK_DIR/speech.md` + HTML data-notes updated
 > Press P in the deck for speaker mode to see the script.
 >
-> All done. Need to export? `/codeck-export`. Check progress anytime with `/codeck`.
+> Export: `/codeck export`. Overview: `/codeck`.

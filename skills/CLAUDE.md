@@ -2,20 +2,21 @@
 
 ## Members
 
-codeck/SKILL.md: Entry dashboard. Material scan + content diagnosis (3 signals: domain, expression challenge, audience starting point) + dynamic role recommendation + pipeline status.
-codeck-outline/SKILL.md: Editor role. Role activation → narrative questions → story arc → title smithing. Outputs outline.md (with user intent section).
+codeck/SKILL.md: Deck room entry. Initializes MEMORY.md + channel/tasks/threads/roles, scans materials, diagnoses content, routes work across fixed role lanes, shows expanded channel.
+codeck-outline/SKILL.md: @outline lane. Role activation → bundled Deck Intent → story arc → title smithing. Outputs deck.md and mirrors outline.md for compatibility.
 codeck-outline/references/checklist.md: Outline self-review checklist.
-codeck-design/SKILL.md: Designer role. Role activation → DESIGN.md isomorphic mapping → structured design archive → AI writes custom.css + slides.html → assemble.sh assembles single HTML.
-codeck-design/references/: Design archive specs (design-md-spec.md format definition + design-md-guide.md mapping rules + checklist.md design self-review).
-codeck/scripts/status.sh: Shared status detection. File detection + timestamp staleness + NEXT recommendation, called by all skills.
+codeck-design/SKILL.md: @design lane. Role activation → skeleton selection → DESIGN.md isomorphic mapping → structured design archive → AI writes custom.css + slides.html → assemble.sh assembles single HTML.
+codeck-design/references/: Design archive specs (skeletons.md narrative grid skeleton + design-md-spec.md format definition + design-md-guide.md mapping rules + checklist.md design self-review).
+codeck/scripts/init-room.sh: Creates the slock-style deck room workspace (MEMORY.md, channel/tasks/threads/roles) and imports legacy project memory when present.
+codeck/scripts/status.sh: Shared status detection. File detection + MEMORY status + timestamp staleness + machine-readable NEXT/CONTENT/HTML/STALE exports, called by all skills.
 codeck-design/scripts/: Fixed slide engine (engine.js + engine.css + assemble.sh). Navigation, fragments (4 entrance types), overview, speaker mode, clamp responsive system.
-codeck-review/SKILL.md: Reviewer role (inverse selection: listener most likely to struggle). Six-dimension review + direct HTML fixes, decision summary appends to design-notes.md.
-codeck-export/SKILL.md: Publisher role. HTML as single source of truth, PDF (Playwright) / PPTX export + QA.
+codeck-review/SKILL.md: @review lane (inverse selection: listener most likely to struggle). Six-dimension review + scoped HTML fixes, decision summary in review.md and MEMORY.md.
+codeck-export/SKILL.md: @export lane. HTML as single source of truth, PDF (Playwright) / PPTX export + QA.
 codeck-export/pptx/: PPTX tools (PptxGenJS, thumbnail.py, soffice.py).
 codeck-export/pdf/: PDF tools (pypdf/reportlab reference, form filling).
-codeck-speech/SKILL.md: Speech writer role. Role activation → verbatim transcript + stage directions + time budget + write back HTML data-notes.
+codeck-speech/SKILL.md: @speech lane. Role activation → verbatim transcript + stage directions + time budget + write back HTML data-notes.
 CONVENTIONS.md: Skill authoring conventions (frontmatter / description / directory structure / evals).
-LICENSE: Apache-2.0.
+LICENSE: MIT.
 
 ## Dependencies
 
@@ -24,6 +25,8 @@ Downstream: Claude skill runtime
 
 ## Changelog
 
+- 2026-05-10: slock-style deck room. `/codeck` is the single user entry. MEMORY.md replaces the old project file as room index; channel/tasks/threads/roles hold expanded role turns, work tickets, open decisions, and lane memory. Fixed lanes are @orchestrator, @outline, @design, @review, @speech, and @export; dynamic personas still come from diagnosis.md. AskUser is capped at 2 rounds and only allowed for Project Init, Deck Intent, Design Direction, Export Format, and Speech Style.
+- 2026-05-10: removed the old auxiliary design artifact from the runtime protocol. @design now stores design state in DESIGN.md and roles/design.md; skeletons.md now uses the narrative grid skeleton as the default structure.
 - 2026-04-22: codeck-design + codeck-review: design-dna.json → DESIGN.md migration. Adopted Google design.md format (YAML front matter for machine-readable tokens + Markdown prose for design rationale). New files: design-md-spec.md (format spec), design-md-guide.md (token → CSS mapping). Removed: design-dna-schema.md, design-dna-guide.md. Isomorphic mapping process unchanged — output format changed from JSON to DESIGN.md.
 - 2026-03-30: codeck-design: image physics — added perceptual principles for image use (scarcity, scale, rhythm) to visual-floor.md. Added gotcha pointing to generate-image skill for on-demand image generation into $DECK_DIR/assets/. No rules on placement — principles that inspire AI to make its own decisions.
 - 2026-03-30: codeck-design + codeck-review: perceptual compensation rewrite. Removed aesthetic constraints (cover symmetry, content density caps, cover signal-to-noise) that limited AI creativity. Added perceptual blind spot rules: projector color loss (#333→black), Windows thin font rendering, contrast fatigue relief, height breakpoint checklist, visual weight = content importance. Rules now target what AI can't see about human perception, not what humans disagree about aesthetically.

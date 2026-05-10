@@ -12,19 +12,21 @@ codeck outputs a **single HTML file**, assembled by `assemble.sh`:
 
 Engine code is fixed. AI handles content and visuals only.
 
-## Pipeline
+## Deck room
 
 ```
-Materials → content diagnosis (3 signals) → dynamic role selection
+/codeck opens ~/.codeck/projects/{slug}/
   ↓
-outline.md (narrative structure + user intent)
+MEMORY.md + channel/ + tasks/ + threads/ + roles/
   ↓
-custom.css + slides.html → assemble.sh → single HTML
+@outline → deck.md (+ legacy outline.md)
   ↓
-review → export (PDF/PPTX) → speech
+@design → DESIGN.md + custom.css + slides.html → assemble.sh → single HTML
+  ↓
+@review → export (PDF/PPTX) / speech
 ```
 
-Core idea: skills handle process and format. Knowledge comes from dynamically summoned "people" — role names activate the AI's knowledge network.
+Core idea: fixed role lanes own artifacts; dynamic people from diagnosis.md shape the judgment inside those lanes.
 
 ## Three diagnostic signals
 
@@ -38,7 +40,7 @@ Skills installed at `~/.claude/skills/codeck*/`.
 
 Two directories at runtime:
 - **cwd** — the user's project. codeck reads materials here, writes final deliverables here (HTML, PDF, PPTX).
-- **`~/.codeck/projects/{slug}/`** — codeck's workspace. Reads and writes intermediate artifacts here (diagnosis.md, outline.md, design-notes.md, DESIGN.md, custom.css, slides.html, speech.md).
+- **`~/.codeck/projects/{slug}/`** — codeck's deck room. Reads and writes MEMORY.md, channel/tasks/threads/roles, diagnosis.md, deck.md, legacy outline.md, DESIGN.md, custom.css, slides.html, review.md, and speech.md.
 
 ## Repository
 

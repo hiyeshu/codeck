@@ -13,7 +13,17 @@ description: |
   or wants to turn an outline into actual slides.
 ---
 
-# codeck design
+# codeck design — @design lane
+
+`@design` owns visual direction, design skeleton, design archive, HTML source, and assembled HTML.
+
+Write boundaries:
+
+- May write `$DECK_DIR/DESIGN.md`, `$DECK_DIR/custom.css`, `$DECK_DIR/slides.html`
+- May assemble the final `./{title}-r{revision}.html` in the user's project directory
+- May update `$DECK_DIR/roles/design.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/channel/YYYY-MM-DD.md`
+- Must not rewrite `deck.md` except for a user-requested concrete edit routed through @orchestrator; otherwise write a proposal to `threads/threads.md`
+- Must not edit `review.md`, `speech.md`, or export files
 
 ## Role activation
 
@@ -33,14 +43,22 @@ The role is chosen for structural match, not domain:
 
 Apply their formal logic directly. Don't explain their principles — embody them in every visual choice.
 
-If `diagnosis.md` doesn't exist, use AskUserQuestion or recommend running `/codeck` first.
+If `diagnosis.md` doesn't exist, run `/codeck` entry logic first when possible. Do not ask a generic setup question.
 
-## AskUserQuestion format
+## AskUser Policy
 
-1. **Re-ground** — "codeck design, {current step}"
-2. **Simplify** — plain language
-3. **Recommend** — suggestion + reason
-4. **Options** — choices
+Use the shared `/codeck` AskUser Policy.
+
+Design Direction is the only AskUser moment in this skill. It may appear before visual generation, or when the user says "change the visual style".
+
+Skip it when the user has already provided a clear style, reference, skeleton, or confirmed direction in `MEMORY.md`, `roles/design.md`, `deck.md`, `outline.md`, or `DESIGN.md`.
+
+The AskUser shape:
+
+1. **Re-ground** — "codeck design, Design Direction"
+2. **Current read** — content structure and visual implication
+3. **Recommendation** — one direction and why
+4. **Options** — 2-3 mutually exclusive visual directions
 
 Only state verified facts. For unrendered results, say "will" not "is".
 
@@ -49,19 +67,32 @@ Only state verified facts. For unrendered results, say "will" not "is".
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
+mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
+bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-Read `$DECK_DIR/outline.md` — page structure, content points, user intent, note to designer.
+Read `$DECK_DIR/MEMORY.md`, `$DECK_DIR/tasks/tasks.md`, `$DECK_DIR/threads/threads.md`, and `$DECK_DIR/roles/design.md`.
+Read `$DECK_DIR/deck.md` first if it exists; otherwise read `$DECK_DIR/outline.md` — page structure, content points, user intent, note to designer.
 Read `$DECK_DIR/diagnosis.md` — role, domain, expression challenge.
 
-If outline.md doesn't exist, use AskUserQuestion:
-- A) Run `/codeck-outline` first
-- B) Skip — I'll describe what I want
+If neither `deck.md` nor `outline.md` exists, route back to `/codeck` to create the content source. Do not ask "run outline first?"
 
 ## Role transition
 
-Read the "note to designer" at the end of outline.md. Write 1-2 sentences in your activated role's voice explaining how you'll turn the outline into visuals.
+Read the "note to designer" at the end of `deck.md` or `outline.md`. Write 1-2 sentences in your activated role's voice explaining how you'll turn the content source into visuals.
+
+Before writing visual files, claim the work ticket:
+
+```markdown
+@orchestrator
+Owner: @design. Task: turn deck content into visual source and assembled HTML.
+
+@design
+I claim the design pass. I will write `DESIGN.md`, `custom.css`, `slides.html`, assemble HTML, and hand off to @review.
+```
+
+Append the exchange to today's channel file and update `tasks/tasks.md`.
 
 ## Reference extraction (optional)
 
@@ -78,13 +109,48 @@ Multiple references → find the intersection. If references conflict with no cl
 
 References inform the mapping, not override it. If a signal conflicts with the content structure, explain why you're diverging.
 
-Write extracted signals to `$DECK_DIR/design-notes.md` under `## References`.
+Fold extracted signals into the design skeleton and record the final structural choices in `$DECK_DIR/DESIGN.md`.
+
+## Design skeletons
+
+Read `references/skeletons.md` before writing `DESIGN.md`.
+
+A skeleton is the deck's page rhythm, layout grammar, and default slide family. It is not a theme, template, or asset pack.
+
+Selection order:
+
+1. Explicit user style, brand, reference, screenshot, or existing `DESIGN.md`
+2. Current skeleton in `$DECK_DIR/roles/design.md`
+3. `diagnosis.md` expression challenge plus the content's formal structure
+4. The narrative grid skeleton, adapted to the deck's argument
+
+Default skeleton:
+
+| Skeleton | Use for |
+|----------|---------|
+| `narrative-grid` | argument-led decks with clear page roles, hero/body rhythm, stable media slots, data posters, quotes, pipelines, and before/after pages |
+
+User references modify the skeleton; they do not replace the room protocol. Extract structural rules, name the variant, and record it in `DESIGN.md` and `roles/design.md`. Do not create a new permanent skeleton file unless the user asks.
+
+Record the selected skeleton in `DESIGN.md` `## Overview` as `Skeleton: {name}` and in `roles/design.md` under `## Current Skeleton`.
 
 ## DESIGN.md: isomorphic mapping → design archive
 
-Two steps: find the isomorphic mapping (conceptual), then output DESIGN.md (specification).
+Three steps: select the skeleton, find the isomorphic mapping (conceptual), then output DESIGN.md (specification).
 
-### Step 1: Isomorphic mapping
+### Step 1: Select skeleton
+
+Use `references/skeletons.md` and the current deck structure. Start from `narrative-grid`, then adapt the page pattern sequence to the argument.
+
+The skeleton answers:
+
+- Which slide families exist?
+- How does density change across the deck?
+- What visual element carries the argument?
+- How much variation is allowed between pages?
+- What must the reviewer protect?
+
+### Step 2: Isomorphic mapping
 
 Extract the **formal structure** from the outline (not the content itself):
 - Tension curve — narrative tension-release rhythm
@@ -96,7 +162,7 @@ Find structurally similar things in your role's knowledge domain:
 
 > A layered business proposal → Ravel's Bolero → visually simple to complex, each page adds a layer, color gradually saturates
 >
-> A contrastive technical argument → Go (围棋) attack and defense → black-white contrast dominant, each turn uses one accent color as a "move"
+> A contrastive technical argument → Go attack and defense → black-white contrast dominant, each turn uses one accent color as a "move"
 >
 > A structured explanation that builds understanding → architectural blueprint → warm off-white ground, precise lines, information revealed through spatial hierarchy, not through darkness
 >
@@ -104,7 +170,7 @@ Find structurally similar things in your role's knowledge domain:
 
 Even flat lists have a formal structure (accumulation, enumeration, crescendo). Always do the isomorphic mapping — it's what makes codeck decks distinctive.
 
-### Step 2: Generate DESIGN.md
+### Step 3: Generate DESIGN.md
 
 Read `references/design-md-spec.md` — the codeck DESIGN.md format spec, based on [Google design.md](https://github.com/google-labs-code/design.md). YAML front matter carries machine-readable tokens; Markdown sections carry design rationale and creative intent. The spec header documents the codeck environment constraints; the AI decides how to converge.
 
@@ -114,11 +180,17 @@ Write to `$DECK_DIR/DESIGN.md`.
 
 ## Style reveal
 
-Show the user three things: (1) their content's formal structure, (2) the isomorphic match and why it's structural not decorative, (3) concrete visual consequences.
+This is the Design Direction AskUser moment.
+
+Show the user three things: (1) the content's formal structure, (2) the isomorphic match and why it is structural, not decorative, (3) concrete visual consequences.
+
+Offer 2-3 directions. Make the recommendation explicit.
 
 - A) Go with this (recommended)
 - B) I have a different idea
 - C) Show me a few directions to choose from
+
+If the user does not answer, use A. Write `assumed default` to `MEMORY.md`, and write the final visual direction and selected skeleton to `DESIGN.md` and `roles/design.md`.
 
 ## Visual impact — quality gate
 
@@ -191,7 +263,7 @@ Flow: YAML front matter tokens → `:root` CSS variables → layout primitives �
 
 **Conventions:**
 - Each `<section class="slide" data-notes="...">` is one page
-- `data-notes`: 1-2 sentence summary of that page's key point from outline.md
+- `data-notes`: 1-2 sentence summary of that page's key point from `deck.md` / `outline.md`
 - Separate pages with comments: `<!-- ====== N. Title ====== -->`
 - Free HTML inside — no block type restrictions
 - `data-f="N"`: fragment stepping (lower N appears first)
@@ -213,7 +285,7 @@ If slides.html is long and a single write fails, write the first few pages then 
 
 After assembling, check the final HTML:
 
-1. **Page count** — matches outline.md?
+1. **Page count** — matches `deck.md` / `outline.md`?
 2. **Comment anchors** — every page has `<!-- ====== N. Title ====== -->`?
 3. **data-notes** — every slide section has the attribute?
 4. **CSS variables** — `:root` defines `--bg`, `--fg`, `--accent`, `--font-body`, `--font-heading`?
@@ -223,42 +295,30 @@ After assembling, check the final HTML:
 
 Fix issues directly (Edit custom.css or slides.html, re-assemble). Don't ask the user.
 
-## design-notes.md
-
-Write to `$DECK_DIR/design-notes.md`:
-
-```markdown
-# Design Notes
-
-## Role
-{Activated role name}
-
-## Isomorphic mapping
-{Formal structure analysis: tension curve, information density, argument topology, emotional arc}
-{Isomorphic found in role's knowledge domain}
-{Translated visual strategy}
-
-## Style direction
-{User-confirmed direction}
-
-## Key decisions
-- {Decision and reason}
-- ...
-
-## Note to reviewer
-> {1-2 sentences in the role's voice: design intent and the one thing worth watching}
-```
-
 ## Iteration
 
-> codeck design — HTML generated. Anything to adjust?
->
-> You can say "change slide 3 title to xxx" or "switch to a warm palette".
+Do not use AskUser for generic iteration.
 
-- A) I want changes
-- B) Looks good, next step
+If the user asks for a visual change, edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, then re-run assemble.sh. If the change requires `deck.md`, write a proposal in `threads/threads.md` and hand the ticket to @outline. Revision number stays the same for same-turn fixes. For a new user request later, create the next revision.
 
-Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run assemble.sh. Revision number stays the same (overwrites same r{n}.html). After 3 rounds, suggest moving on.
+End with the output path and the highest-signal note about what changed. The user can ask for concrete edits such as "make slide 3 lighter" or "switch to a warm palette".
+
+## Handoff
+
+After assembling and self-review:
+
+1. Update `MEMORY.md` Active Context, Latest Channel Summary, Task Index, and Artifacts.
+2. Mark the `@design` task done in `tasks/tasks.md`.
+3. If content or style needs a user decision, write it to `threads/threads.md`.
+4. Append the handoff to today's channel file:
+
+```markdown
+@design
+I wrote `DESIGN.md`, `custom.css`, `slides.html`, and assembled the HTML. The next owner is @review.
+
+@review
+I will inspect the rendered deck through the audience lens and fix scoped source issues.
+```
 
 ## Gotchas
 
@@ -280,8 +340,11 @@ Option A → Edit `$DECK_DIR/slides.html` or `$DECK_DIR/custom.css`, re-run asse
 
 > codeck design complete.
 >
+> @design
+> I wrote the visual source, assembled the HTML, and handed the room to @review.
+>
 > {One sentence — cite the DESIGN.md isomorphic mapping}
 >
 > Output: `./{title}-r{revision}.html` (in user's project directory)
-> Intermediates: `$DECK_DIR/DESIGN.md` + `$DECK_DIR/design-notes.md`
-> Next: `/codeck-review`
+> Intermediates: `$DECK_DIR/DESIGN.md`
+> Next: `/codeck` will inspect and fix.

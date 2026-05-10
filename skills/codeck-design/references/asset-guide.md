@@ -1,6 +1,6 @@
 # Asset References Guide
 
-outline.md asset list marks each resource's level:
+`deck.md` / `outline.md` asset list marks each resource's level:
 
 ## inline
 Images use `assets/` path (assemble.sh auto-base64). SVG inline directly.

@@ -8,7 +8,17 @@ description: |
   "inspect", "audit", "proofread", or wants feedback on a rendered deck.
 ---
 
-# codeck review
+# codeck review — @review lane
+
+`@review` owns audience resistance, quality review, and scoped fixes.
+
+Write boundaries:
+
+- May write `$DECK_DIR/review.md`
+- May fix `$DECK_DIR/slides.html` and `$DECK_DIR/custom.css` when the issue is scoped and source-backed
+- May update `$DECK_DIR/roles/review.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/channel/YYYY-MM-DD.md`
+- Must not rewrite `deck.md`, `DESIGN.md`, `speech.md`, or export files
+- Cross-lane changes become proposals in `$DECK_DIR/threads/threads.md`
 
 ## Role activation
 
@@ -31,21 +41,36 @@ Fallback: senior publishing editor with an eye for detail.
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
+mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
+bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-Gate check: if no assembled HTML exists (`./*-r*.html`), suggest running `/codeck-design` first.
+Gate check: if no assembled HTML exists (`./*-r*.html`), run `/codeck` to generate/rebuild the deck first.
 
 If custom.css + slides.html exist but no assembled HTML, re-run assemble.sh.
 
 ## Context
 
-Read `$DECK_DIR/outline.md` — page structure, user intent.
-Read `$DECK_DIR/design-notes.md` — designer's decisions and note to reviewer.
+Read `$DECK_DIR/MEMORY.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/threads/threads.md`.
+Read `$DECK_DIR/deck.md` first if it exists; otherwise read `$DECK_DIR/outline.md` — page structure, user intent.
+Read `$DECK_DIR/roles/design.md` — current design skeleton, lane memory, and handoff guardrails.
 Read `$DECK_DIR/DESIGN.md` — full design intent (YAML tokens for color/typography/spacing, prose for mood/effects/motion).
 Read `$DECK_DIR/diagnosis.md` — role activation.
 
-**Role transition:** if design-notes.md has a "note to reviewer", respond in your activated role's voice.
+**Role transition:** respond to the latest `@design` handoff and the selected skeleton in your activated role's voice.
+
+Before review, claim the work ticket:
+
+```markdown
+@orchestrator
+Owner: @review. Task: inspect rendered deck and fix scoped issues.
+
+@review
+I claim the review pass. I will write `review.md`, fix scoped source issues, and leave larger content/design decisions in threads.
+```
+
+Append the exchange to today's channel file and update `tasks/tasks.md`.
 
 ## Target
 
@@ -73,7 +98,7 @@ Content issues → fix slides.html.
 - Fabricated data or statistics?
 - Accurate terminology?
 - data-notes substantive, not repeating the title?
-- Page count matches outline.md?
+- Page count matches `deck.md` / `outline.md`?
 
 Content issues → fix slides.html.
 
@@ -91,7 +116,7 @@ Content issues → fix slides.html.
 
 ### 4. Visual hierarchy
 - Clear eye guidance? Title → body hierarchy?
-- Whitespace intentional? (Sparse can be deliberate — check design-notes before adding content)
+- Whitespace intentional? (Sparse can be deliberate — check DESIGN.md and roles/design.md before adding content)
 - Color matches content mood from DESIGN.md `## Overview`?
 - Type scale ratio ≥ 2.5:1 heading/body?
 
@@ -101,7 +126,7 @@ Style issues → fix custom.css.
 - Type hierarchy consistent within same slide types?
 - Similar layouts consistent?
 - No hardcoded color values? All CSS variables?
-- Intentional variation (color drift, density) ≠ inconsistency — check design-notes
+- Intentional variation (color drift, density) is not inconsistency — check DESIGN.md and roles/design.md
 
 Style issues → fix custom.css. Hardcoded colors in slides.html too.
 
@@ -135,17 +160,19 @@ Style issues → fix custom.css.
 
 Before flagging a visual "inconsistency," check if it's intentional:
 
-- **Color varies across slides** → check DESIGN.md `## Visual Effects` or design-notes for "color drift". Intentional variation is not a bug.
+- **Color varies across slides** → check DESIGN.md `## Visual Effects` and the selected skeleton for color drift. Intentional variation is not a bug.
 - **A slide is mostly empty** → check if it's a breathing page (one element + whitespace = deliberate pacing). Don't fill it.
 - **Slide density alternates** → check for density inversion pattern. Forte → piano is a technique.
 - **Title is extremely large (>80px)** → check visual-floor benchmarks. 88–120px is normal for impact slides.
 - **Background changes between slides** → this is deck-level technique, not inconsistency.
 
-Rule: if design-notes.md documents a creative decision, don't override it. Flag it only if the execution is broken (e.g. contrast too low to read), not because it's unconventional.
+Rule: if DESIGN.md or roles/design.md documents a creative decision, don't override it. Flag it only if the execution is broken (e.g. contrast too low to read), not because it's unconventional.
 
 ## Fixes
 
-Fix directly. Only ask user for judgment calls (content tradeoffs, style preferences).
+Fix directly. Do not use AskUser for light review, HTML generation, saving, or re-assembly.
+
+Only ask when there is a real user-owned decision: conflicting source materials, mutually exclusive claims, legal/commercial wording, or a style tradeoff that changes the deck direction.
 
 1. Determine: custom.css or slides.html
 2. Edit the file
@@ -162,13 +189,32 @@ Overwrite same revision. Max 3 rounds.
 
 ## Decision summary
 
-Append to `$DECK_DIR/design-notes.md`:
+Write review findings and fixes to `$DECK_DIR/review.md`:
 
 ```markdown
-## Review — {ISO date}
+# Review
 
-Fixed {N} issues. {one line: what and why}
-Remaining risk: {none / slide N: risk}
+## Summary
+{N} issues found. {N} fixed automatically.
+
+## Fixes
+- {slide/file}: {what changed and why}
+
+## Needs user decision
+{none | conflict that cannot be resolved without user judgment}
+```
+
+If a finding needs `@outline` or `@design` to change their owned source beyond a scoped fix, add it to `threads/threads.md` and hand off the task. Do not silently rewrite their owned artifact.
+
+After review:
+
+1. Update `MEMORY.md` Active Context, Latest Channel Summary, Task Index, and Artifacts.
+2. Mark the `@review` task done in `tasks/tasks.md`.
+3. Append the handoff to today's channel file:
+
+```markdown
+@review
+I wrote `review.md`, fixed scoped issues, and marked remaining decisions in threads. Next owner: @export or @speech.
 ```
 
 ## Done
@@ -177,11 +223,14 @@ Highlight the single most impactful fix — the one that changed the most about 
 
 > codeck review done. Fixed {N} issues.
 >
+> @review
+> I inspected the rendered deck, fixed scoped issues, and left unresolved decisions in threads.
+>
 > Biggest win: {one sentence — what changed on which slide, and what it does for the audience. e.g., "Slide 5 had three competing text blocks. Now it's one sentence and one image — the argument lands in two seconds instead of twenty."}
 >
 > {one line — can this go on stage? Any remaining risks?}
 >
-> Next: `/codeck-export` or `/codeck-speech`
+> Next: `/codeck export PDF` or `/codeck speech script`
 
 ```bash
 touch "$DECK_DIR/.reviewed"

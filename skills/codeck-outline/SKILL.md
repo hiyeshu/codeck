@@ -3,12 +3,23 @@ name: codeck-outline
 version: 2.1.0
 description: |
   Editor role. Reads local materials, asks narrative questions, plans
-  story arc. Outputs $DECK_DIR/outline.md. Use whenever the user says
+  story arc. Outputs $DECK_DIR/deck.md and mirrors $DECK_DIR/outline.md
+  for compatibility. Use whenever the user says
   "outline", "plan slides", "organize materials", "structure",
   "table of contents", "narrative", or wants to structure content into a presentation.
 ---
 
-# codeck outline — Editor
+# codeck outline — @outline lane
+
+`@outline` owns narrative structure and canonical deck content.
+
+Write boundaries:
+
+- May write `$DECK_DIR/deck.md`
+- Must mirror `$DECK_DIR/outline.md` for legacy compatibility
+- May update `$DECK_DIR/roles/outline.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/channel/YYYY-MM-DD.md`
+- Must not edit `DESIGN.md`, `custom.css`, `slides.html`, `review.md`, `speech.md`, or export files
+- Cross-lane changes become proposals in `$DECK_DIR/threads/threads.md`
 
 ## Role activation
 
@@ -33,10 +44,24 @@ Fallback if no diagnosis: curious magazine editor who asks "why" and won't accep
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
+mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
+bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-Read `$DECK_DIR/diagnosis.md` if it exists.
+Read `$DECK_DIR/MEMORY.md`, `$DECK_DIR/tasks/tasks.md`, `$DECK_DIR/threads/threads.md`, and `$DECK_DIR/diagnosis.md` if they exist.
+
+Before writing content, claim the work ticket:
+
+```markdown
+@orchestrator
+Owner: @outline. Task: structure deck content. Artifact: deck.md.
+
+@outline
+I claim the narrative pass. I will write `deck.md`, mirror `outline.md`, and hand off to @design.
+```
+
+Append that exchange to `$DECK_DIR/channel/YYYY-MM-DD.md` and reflect the ticket in `tasks/tasks.md`.
 
 ## Step 1: Scan materials
 
@@ -67,7 +92,7 @@ Rule of thumb: can the HTML still be emailed? Yes → inline. No → poster or e
 mkdir -p "$DECK_DIR/assets"
 ```
 
-If 0 files found, ask user: provide topic verbally or add files first.
+If 0 files found, use the Deck Intent AskUser moment: ask for the topic/core goal once, or tell the user to add files and run `/codeck` again.
 
 ## Step 1.5: Material diagnosis
 
@@ -78,64 +103,46 @@ Silent checks on materials:
 3. **Presentation fit** — slide-ready or needs restructuring?
 4. **Image assets** — content images (architecture, charts) or decorative?
 
-All clear → continue silently. Issues → summarize in one AskUserQuestion.
+All clear → continue silently. If materials conflict in a way that changes the deck direction, summarize the conflict in the Deck Intent AskUser round.
 
-Results go into outline.md's "Material summary" section.
+Results go into `deck.md` and mirrored `outline.md` under "Material summary".
 
-## Step 2: Mode
+## Step 2: Deck Intent
 
-- A) Collaborative — you answer questions, I plan structure, confirm each step
-- B) Fast — I decide everything, you review at the end
-- C) Expert — you write the outline, I optimize
+Use the shared `/codeck` AskUser Policy. Deck Intent is one allowed AskUser moment.
 
-Fast mode: skip Q1 and Q1.5, but **still ask Q2, Q3, Q4**.
-Expert mode: user writes outline, you review and suggest improvements.
+Do not ask for "mode". Default to fast: decide, write, and let the user edit after output.
 
-**Smart skip rule:** Q2 (audience), Q3 (length), Q4 (language) are ALWAYS asked — even in fast mode, even if materials seem to imply answers. These are user intent, not facts you can infer. Only skip Q1/Q1.5 if the user's instruction already contains a clear core message.
+Before asking, fill these fields from the user request, materials, `MEMORY.md`, `deck.md`, or `outline.md`:
 
-## Step 3: Questions
+- Core message
+- Audience
+- Duration / slide count
+- Language
 
-### Q1: Core message
+Skip any field that is already clear. If all four are clear enough, do not ask.
 
-> If the audience remembers one thing, what should it be?
+If one or more missing fields would change the deck, ask one bundled question:
 
-- A) I'll tell you
-- B) Extract from materials
-- C) Not sure yet
+```text
+codeck needs to lock the presentation scene.
 
-Skip if user already stated their core message explicitly.
+Current read: {what the materials imply}.
 
-### Q1.5: Intent exploration (open conversation, no options)
+I suggest {recommended scene} because {one concrete reason from the materials}.
 
-After confirming core message, explore deeper intent through natural dialogue:
+A) {recommended full intent package}
+B) {different audience/goal package}
+C) {different depth/language package}
+```
 
-1. "Why do you care about this topic?"
-2. "Any expressions or styles you want to avoid?"
-3. "Anything you haven't figured out yet?"
-4. "How should the audience feel afterward?"
+Options must be mutually exclusive packages, not separate mini-questions. A good option includes audience, duration, language, and goal in one line.
 
-Not mandatory. "Nothing special" → skip. Answers go into outline.md user intent section.
+If the user does not answer, use the recommended option and write it to `MEMORY.md` as `assumed default`.
 
-Fast mode: skip Q1.5.
+Optional intent exploration is allowed only when the user volunteers it. Do not ask "why do you care?", "what should they feel?", or style-avoidance questions unless the answer is needed to resolve a material conflict.
 
-### Q2: Audience (always ask)
-
-- A) Technical peers — jargon ok
-- B) Non-technical decision makers — plain language
-- C) Mixed audience
-- D) Teaching / sharing
-
-### Q3: Length (always ask)
-
-- A) Concise (4-6 slides)
-- B) Standard (7-10 slides)
-- C) Detailed (11-15 slides)
-
-### Q4: Language (always ask)
-
-- A) Chinese
-- B) English
-- C) Mixed
+Record the result in both `MEMORY.md` and `deck.md` / `outline.md`.
 
 ## Research to fill gaps
 
@@ -182,9 +189,11 @@ Five strategies: Direct assertion, Question, Tension/contrast, Concrete image, U
 2. Want to hear more? No → switch strategy.
 3. Sounds human? AI-flavored → rewrite.
 
-Present outline to user for confirmation.
+Write the outline. Do not ask for confirmation before generating files.
 
-## Step 5: Write $DECK_DIR/outline.md
+## Step 5: Write $DECK_DIR/deck.md and $DECK_DIR/outline.md
+
+`deck.md` is the canonical content source. `outline.md` is a compatibility mirror for current design/review modules until the migration finishes.
 
 ```markdown
 # Outline: {topic}
@@ -199,6 +208,14 @@ Present outline to user for confirmation.
 - Audience: {description}
 - Length: {N slides}
 - Language: {language}
+- Intent source: {inferred from materials | user answered | assumed default}
+- Assumed defaults: {none | list defaults and why}
+
+## AskUser log
+
+| Moment | Answer | Source |
+|--------|--------|--------|
+| Deck Intent | {answer package} | {user answered | assumed default | skipped: inferred from materials} |
 
 ## Story arc
 
@@ -241,10 +258,27 @@ Level: inline / poster / extract. No assets → write "none".
 
 ## Self-review
 
-Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, check outline.md.
+Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, check `deck.md` and mirrored `outline.md`.
 
 - Pass 1: structural issues → auto-fix
-- Pass 2: content quality → auto-fix mechanical issues, ask for judgment calls
+- Pass 2: content quality → auto-fix mechanical issues. Ask only for real user-owned content conflicts.
+
+## Handoff
+
+After writing and self-review:
+
+1. Update `MEMORY.md` Active Context, Latest Channel Summary, Task Index, and Artifacts.
+2. Mark the `@outline` task done in `tasks/tasks.md`.
+3. If content needs a user decision, add or update a row in `threads/threads.md`.
+4. Append the handoff to today's channel file:
+
+```markdown
+@outline
+I finished `deck.md` and mirrored `outline.md`. The next owner is @design.
+
+@design
+I will read `deck.md`, `diagnosis.md`, and the design thread before writing visual files.
+```
 
 ## Done
 
@@ -252,9 +286,12 @@ Show the single sharpest title transformation — the one where the before/after
 
 > codeck outline done.
 >
+> @outline
+> I wrote `deck.md`, mirrored `outline.md`, and handed the room to @design.
+>
 > Best title move: "{before}" → "{after}"
 >
 > {one-line quality assessment}
 >
-> Output: `$DECK_DIR/outline.md`
-> Next: `/codeck-design` to generate slides.
+> Output: `$DECK_DIR/deck.md` + `$DECK_DIR/outline.md`
+> Next: `/codeck` will generate slides.

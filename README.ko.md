@@ -4,7 +4,7 @@
 
 **복잡한 걸 만들었는데, 설명이 안 된다. codeck이 말로 풀어준다.**
 
-[Live demo →](https://codeck.sh/codeck-intro)
+[Live demo →](https://codeck.sh/codeck%2Dintro)
 
 [English](README.md) | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | 한국어
 
@@ -12,22 +12,22 @@
 
 폴더에 메모, 문서, 데이터, 이미지가 있다. 프레젠테이션을 만들고 싶다. `/codeck`을 입력한다.
 
-codeck은 파일을 읽고, 당신의 콘텐츠가 *진짜 무엇을 말하는지* 파악한 뒤, 적합한 사람을 데려온다. 구조를 잡는 편집자, 비주얼을 담당하는 디자이너, 가장 까다로운 청중의 눈으로 검토하는 리뷰어. 각 "사람"은 당신 콘텐츠의 고유한 난제에서 도출된다. 목록에서 고르는 게 아니다.
+codeck은 deck room을 연다. 파일을 읽고, 당신의 콘텐츠가 *진짜 무엇을 말하는지* 파악한 뒤, 적합한 사람을 데려온다. 구조를 잡는 편집자, 비주얼을 담당하는 디자이너, 가장 까다로운 청중의 눈으로 검토하는 리뷰어. 각 "사람"은 고정 역할 레인 안에서 움직이는 동적 페르소나다. 템플릿이 아니다.
 
 결과물은 하나의 HTML 파일. 템플릿 없음. 슬라이드 타입 제약 없음. 각 페이지는 자유로운 HTML로 구성된다. AI는 당신의 콘텐츠에 필요한 어떤 시각적 형식이든 만들어낼 수 있다.
 
 ## 사용법
 
 ```
-/codeck          소재 스캔, 콘텐츠 진단, 역할 추천
+/codeck          deck room 열기, 소재 스캔, 콘텐츠 진단
     ↓
-/codeck-outline  편집자가 서사 구조를 설계하고 제목을 벼린다
+@outline         편집자가 서사 구조를 설계하고 제목을 벼린다
     ↓
-/codeck-design   디자이너가 논증 구조와 동형인 시각 언어를 찾는다
+@design          디자이너가 논증 구조와 동형인 시각 언어를 찾는다
     ↓
-/codeck-review   가장 까다로운 청중이 모든 슬라이드를 검수하고 직접 수정
-    ├── /codeck-export   PDF / PPTX
-    └── /codeck-speech   발표 원고 + 무대 지시
+@review          가장 까다로운 청중이 모든 슬라이드를 검수하고 직접 수정
+    ├── @export  PDF / PPTX
+    └── @speech  발표 원고 + 무대 지시
 ```
 
 ## 세 가지 아이디어
@@ -82,4 +82,4 @@ npx skills add hiyeshu/codeck
 
 ## License
 
-Apache-2.0
+MIT

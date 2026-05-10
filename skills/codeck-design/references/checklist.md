@@ -7,18 +7,18 @@ Design produces two files and one assembly step. Check in order:
 2. After writing slides.html → Pass 2
 3. After running assemble.sh → Pass 3
 
-AUTO-FIX means fix it directly. ASK means check with the user.
+Auto-fix means fix it directly. Ask only for user-owned content conflicts.
 
 ## Output Format
 
 ```
-Review ({artifact}): N issues (X auto-fixed, Y need input)
+Review ({artifact}): N issues (X auto-fixed, Y need user decision)
 
 **AUTO-FIXED:**
 - [issue] → fixed
 
-**NEEDS INPUT:**
-- [issue] Suggestion: {fix}
+**NEEDS USER DECISION:**
+- [issue] {why it cannot be resolved from sources}
 ```
 
 All clear: `Review ({artifact}): all good.`
@@ -51,8 +51,8 @@ All clear: `Review ({artifact}): all good.`
 
 ## Pass 2 — slides.html
 
-### [HIGH] Slide count matches outline
-- Slide count matches outline.md
+### [HIGH] Slide count matches content source
+- Slide count matches `deck.md` / `outline.md`
 - Mismatch → AUTO-FIX: add missing slides or remove extras
 
 ### [HIGH] Slide structure correct
@@ -69,7 +69,7 @@ All clear: `Review ({artifact}): all good.`
 
 ### [MEDIUM] data-notes quality
 - Not a repeat of the title; contains specific talking points
-- Empty or hollow → AUTO-FIX: extract key points from outline.md
+- Empty or hollow → AUTO-FIX: extract key points from `deck.md` / `outline.md`
 
 ### [HIGH] Fragment continuity
 - Within each slide, `data-f` attributes must start at 1, increment by 1, no gaps, no duplicates
@@ -77,7 +77,7 @@ All clear: `Review ({artifact}): all good.`
 
 ### [LOW] Data authenticity
 - Data comes from source materials, not invented
-- Suspicious → ASK: flag as "this data needs verification"
+- Suspicious → AUTO-FIX if source-backed; otherwise record in review.md as "needs verification" without blocking
 
 ---
 
@@ -97,7 +97,7 @@ All clear: `Review ({artifact}): all good.`
 
 ### [LOW] Color consistency
 - Prefer CSS classes or `var()` over inline `style="color: #xxx"` — inline colors won't follow theme changes
-- Excessive hard-coded colors → ASK: suggest using CSS variables
+- Excessive hard-coded colors → AUTO-FIX: move them into CSS variables or classes
 
 ---
 

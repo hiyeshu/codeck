@@ -4,7 +4,7 @@
 
 **You built something complex. codeck helps you explain it.**
 
-[Live demo →](https://codeck.sh/codeck-intro)
+[Live demo →](https://codeck.sh/codeck%2Dintro)
 
 English | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
@@ -12,22 +12,22 @@ English | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md) | [日�
 
 You have a folder of notes, docs, data, and images. You want a presentation. You type `/codeck`.
 
-codeck reads your files, figures out what your content is *really about*, then brings in the right people to help — an editor for structure, a designer for visuals, a reviewer who thinks like your toughest audience member. Each "person" is a role derived from your content's specific challenges, not picked from a list.
+codeck opens a deck room. It reads your files, figures out what your content is *really about*, then brings in the right people to help — an editor for structure, a designer for visuals, a reviewer who thinks like your toughest audience member. Each "person" is a dynamic persona inside a fixed role lane, not a template choice.
 
 The result is a single HTML file. No templates. No slide-type vocabulary. Free HTML per slide — the AI can invent any visual form your content needs.
 
 ## How it works
 
 ```
-/codeck          scan materials, diagnose content, recommend roles
+/codeck          opens the deck room, scans materials, diagnoses content
     ↓
-/codeck-outline  editor structures the narrative, smiths every title
+@outline         structures the narrative, smiths every title
     ↓
-/codeck-design   designer finds visual form that mirrors your argument's shape
+@design          finds visual form that mirrors your argument's shape
     ↓
-/codeck-review   your toughest listener reviews every slide, fixes directly
-    ├── /codeck-export   PDF / PPTX
-    └── /codeck-speech   verbatim script with stage directions
+@review          your toughest listener reviews every slide, fixes directly
+    ├── @export  PDF / PPTX
+    └── @speech  verbatim script with stage directions
 ```
 
 ## Three ideas
@@ -86,4 +86,4 @@ The slide engine's navigation UI is inspired by [Slidev](https://github.com/slid
 
 ## License
 
-Apache-2.0
+MIT
