@@ -128,9 +128,11 @@ Sections use `##` headings. They can be omitted, but those present must appear i
 
 ### Section details
 
-**## Overview** — the creative soul. This is where the isomorphic mapping lives. Describe the structural analogy between the content and the design (e.g., "layered business proposal → Ravel's Bolero: simple to complex, each page adds a layer"). Include mood, visual metaphor, era influence, genre, personality traits. This section replaces `design_style.aesthetic` from the old schema.
+**## Overview** — the creative soul. This is where the isomorphic mapping lives. Describe the structural analogy between the content and the design (e.g., "layered business proposal → Ravel's Bolero: simple to complex, each page adds a layer"). Include mood, visual metaphor, era influence, genre, personality traits. This section replaces `design_style.aesthetic` from the old schema. It must include `Theme preset: {name}` from `theme-presets.md` or `Theme preset: custom-{name} — {reason}`.
 
-**## Components** — presentation component semantics. Describe how the deck uses shell metadata, type roles, chrome, foot, kickers, tags, callouts, stats, channel/platform cards, rowlines, pillars, figures, captions, icons, ghost text, highlights, and motion-bearing fragments. These are semantic roles, not copied class names from any template.
+**## Layout** — grid system, columns, alignment tendency, content density, section rhythm, and page recipe mapping. It must include `Layout recipes: {recipe list}` from `layout-recipes.md` and a short mapping of recipes to slide roles.
+
+**## Components** — presentation component semantics. Describe how the deck uses shell metadata, type roles, chrome, foot, kickers, tags, callouts, stats, channel/platform cards, rowlines, pillars, figures, captions, icons, ghost text, highlights, and motion-bearing fragments. These are semantic roles, not copied class names from any template. It must include `Component recipes: {recipe list}` from `component-recipes.md`.
 
 Component rules:
 
@@ -155,13 +157,25 @@ Component rules:
 
 **## Visual Effects** — codeck extension section. The Google spec preserves unknown sections without error. Describe background effects, particle systems, glassmorphism, text effects, cursor effects, SVG animations, and fragment entrance types. For effects beyond CSS+SVG, describe the intent. This section replaces `visual_effects` from the old schema. Also include motion philosophy, easing curves, and duration scale (micro/normal/macro) here.
 
-**## Image Assets** — codeck extension section. Describe how user images, generated assets, cleaned screenshots, composites, and HTML/SVG alternatives support the deck. Start from slide need and slot, not from fixed image categories. Include source-preservation rules, ratio strategy, generated prompt constraints, and a table of generated or processed assets when applicable. This section must not override `skeletons.md`: the skeleton owns page rhythm, slide families, and image slots; `Image Assets` only records how assets serve those slots. If there is no image work, write "Not applicable — this deck uses typography, CSS, and SVG as the visual system."
+**## Image Assets** — codeck extension section. Describe how user images, generated assets, cleaned screenshots, composites, and HTML/SVG alternatives support the deck. Start from slide need and slot, not from fixed image categories. Include source-preservation rules, ratio strategy, generated prompt constraints, and a table of generated or processed assets when applicable. This section must not override `skeletons.md`: the skeleton owns page rhythm, slide families, and image slots; `Image Assets` only records how assets serve those slots. It must include `Image prompt recipes: {recipe list}` from `image-prompts.md`, or `Image prompt recipes: none — {reason}`. If there is no image work, write "Not applicable — this deck uses typography, CSS, and SVG as the visual system."
 
 **## Do's and Don'ts** — design guardrails. Derived from the old `design_style.visual_language`, `composition`, and `imagery` fields. Describe complexity level, ornamentation, whitespace usage, visual weight distribution, focal strategy, contrast level, texture usage, hierarchy method, balance type, flow direction, photo treatment, illustration style, graphic elements.
 
 ## Completeness rule
 
 Every section must be populated with deliberate decisions. No placeholder text. For sections that don't apply, write "Not applicable — [reason]" rather than omitting. Complete DESIGN.md forces deliberate decisions across all dimensions.
+
+`DESIGN.md` is an archive, not a sketch. A valid archive is long enough to drive another agent's CSS/HTML without guessing. The minimum bar is:
+
+- YAML front matter with the complete token groups in this spec
+- all 10 Markdown sections in the required order
+- at least 90 nonblank lines total
+- explicit recipe selections: `Theme preset:`, `Layout recipes:`, `Component recipes:`, and `Image prompt recipes:`
+- Overview, Components, Visual Effects, and Do's and Don'ts have at least 8 nonblank lines each
+- every other required section has at least 4 nonblank lines
+- no `TBD`, `TODO`, vague placeholder, or bare "Not applicable" without a reason
+
+Run `scripts/validate-design.sh "$DECK_DIR/DESIGN.md"` before writing `custom.css`. If validation fails, revise DESIGN.md; do not compensate by inventing missing decisions inside CSS.
 
 ## Example
 

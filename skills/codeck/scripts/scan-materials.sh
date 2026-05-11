@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# [INPUT]: accepts a project root whose files may become deck materials.
+# [OUTPUT]: prints grouped candidate materials without mutating the project.
+# [POS]: codeck/scripts material probe; feeds diagnosis and outline without reading room history.
+# [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 # codeck scan-materials — deterministic material scan for the current project.
 # Usage: bash scan-materials.sh [ROOT]
 

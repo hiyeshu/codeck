@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# [INPUT]: accepts a deck-room path plus the current project directory.
+# [OUTPUT]: prints the pipeline dashboard and machine-readable room state.
+# [POS]: codeck/scripts status probe; reads current truth without changing room files.
+# [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 # codeck status — pipeline dashboard (no ANSI colors, works everywhere)
 # Usage: bash status.sh "$DECK_DIR"
 
@@ -17,8 +21,6 @@ _mtime() { stat -c '%Y' "$1" 2>/dev/null || stat -f '%m' "$1" 2>/dev/null; }
 CODECK_CONTENT_PATH=""
 if _has "$DECK_DIR/deck.md"; then
   CODECK_CONTENT_PATH="$DECK_DIR/deck.md"
-elif _has "$DECK_DIR/outline.md"; then
-  CODECK_CONTENT_PATH="$DECK_DIR/outline.md"
 fi
 
 CODECK_MEMORY=$(_has "$DECK_DIR/MEMORY.md" && echo done || echo none)

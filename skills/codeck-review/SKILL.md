@@ -3,10 +3,17 @@ name: codeck-review
 version: 2.1.0
 description: |
   Reviewer role. Opens rendered HTML, inspects every slide visually,
-  fixes problems in custom.css or slides.html and re-assembles.
+  fixes problems in custom.css or slides.html and rebuilds through build-html.sh.
   Use whenever the user says "review", "QA", "check slides",
   "inspect", "audit", "proofread", or wants feedback on a rendered deck.
 ---
+
+<!--
+[INPUT]: Depends on rendered HTML, DESIGN.md, deck content, MEMORY.md, and threads/threads.md.
+[OUTPUT]: Provides review.md, scoped fixes, and user-owned decisions for unresolved issues.
+[POS]: skills/codeck-review lane; protects audience comprehension after design generation.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
 
 # codeck review — @review lane
 
@@ -53,14 +60,21 @@ bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
 bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 ```
 
-Gate check: if no assembled HTML exists (`./*-r*.html`), run `/codeck` to generate/rebuild the deck first.
+Gate check: a valid assembled HTML is a self-contained engine deck, not merely any `./*-r*.html` file.
 
-If custom.css + slides.html exist but no assembled HTML, re-run assemble.sh.
+Valid assembled HTML must:
+
+- contain `openPresenter`
+- contain `codeck-presenter`
+- contain `BroadcastChannel`
+- contain no `<link rel="stylesheet" ...>` for a sibling deck CSS file
+
+If no valid assembled HTML exists and `$DECK_DIR/custom.css` + `$DECK_DIR/slides.html` exist, re-run `build-html.sh`. If the latest `*-r*.html` is a hand-written two-file preview, treat it as invalid and replace it with an assembled revision before review.
 
 ## Context
 
-Read `$DECK_DIR/MEMORY.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/threads/threads.md`.
-Read `$DECK_DIR/deck.md` first if it exists; otherwise read `$DECK_DIR/outline.md` — page structure, user intent.
+Read `$DECK_DIR/MEMORY.md`, active rows in `$DECK_DIR/tasks/tasks.md`, and open rows in `$DECK_DIR/threads/threads.md`. Do not read `channel/YYYY-MM-DD.md` unless debugging history.
+Read `$DECK_DIR/deck.md` — page structure, user intent. Ignore legacy `outline.md`; if `deck.md` is missing, route back to `/codeck`.
 Read `$DECK_DIR/roles/design.md` — current design skeleton, lane memory, and handoff guardrails.
 Read `$DECK_DIR/DESIGN.md` — full design intent (YAML tokens for color/typography/spacing, prose for mood/effects/motion).
 Read `$DECK_DIR/diagnosis.md` — role activation.
@@ -81,7 +95,7 @@ Append the exchange to today's channel file and update `tasks/tasks.md`.
 
 ## Target
 
-Review the assembled HTML (`./{title}-r{N}.html` in the user's project directory).
+Review the assembled HTML (`./{file-stem}-r{N}.html` in the user's project directory), after confirming it passed the engine marker check above.
 
 Three layers:
 - engine.css + engine.js — fixed, don't touch
@@ -105,7 +119,7 @@ Content issues → fix slides.html.
 - Fabricated data or statistics?
 - Accurate terminology?
 - data-notes substantive, not repeating the title?
-- Page count matches `deck.md` / `outline.md`?
+- Page count matches `deck.md`?
 
 Content issues → fix slides.html.
 
@@ -177,13 +191,13 @@ Rule: if DESIGN.md or roles/design.md documents a creative decision, don't overr
 
 ## Fixes
 
-Fix directly. Do not use AskUser for light review, HTML generation, saving, or re-assembly.
+Fix directly. Do not use Decision Ask for light review, HTML generation, saving, or final build.
 
-Only ask when there is a real user-owned decision: conflicting source materials, mutually exclusive claims, legal/commercial wording, or a style tradeoff that changes the deck direction.
+Only create a Decision Ask when there is a real user-owned decision: conflicting source materials, mutually exclusive claims, legal/commercial wording, or a style tradeoff that changes the deck direction. Record it in `threads/threads.md` before rendering it; if no structured AskUser UI is available and the decision is blocking, stop before changing the owned source artifact.
 
 1. Determine: custom.css or slides.html
 2. Edit the file
-3. Re-run assemble.sh
+3. Run `build-html.sh`
 
 ```bash
 CODECK_DESIGN_DIR="${CODECK_DESIGN_DIR:-}"
@@ -194,16 +208,14 @@ if [ -z "$CODECK_DESIGN_DIR" ]; then
 fi
 [ -n "$CODECK_DESIGN_DIR" ] || { echo "codeck-design scripts not found" >&2; exit 1; }
 ENGINE_DIR="$CODECK_DESIGN_DIR/scripts"
-REV=$(ls ./*-r*.html 2>/dev/null | grep -oP 'r\K\d+' | sort -n | tail -1)
-bash "$ENGINE_DIR/assemble.sh" "$DECK_DIR" "{title}" "{language}" \
-  > "./{title}-r${REV}.html"
+bash "$ENGINE_DIR/build-html.sh" "$DECK_DIR" "{file-stem}" "{language}" "."
 ```
 
-Overwrite same revision. Max 3 rounds.
+Review fixes create a new validated revision. Max 3 rounds.
 
 ## Decision summary
 
-Write review findings and fixes to `$DECK_DIR/review.md`:
+Write the latest valid review findings and fixes to `$DECK_DIR/review.md`. If the current HTML was not built through `build-html.sh` or is stale, mark prior findings superseded before writing the new review:
 
 ```markdown
 # Review
@@ -223,7 +235,8 @@ If a finding needs `@outline` or `@design` to change their owned source beyond a
 Review is not complete until all four are true:
 
 - `review.md` exists
-- scoped fixes, if any, have been re-assembled into the latest HTML
+- scoped fixes, if any, have been rebuilt into the latest validated HTML
+- latest HTML contains speaker mode engine markers and has no external stylesheet link
 - `tasks/tasks.md` marks the review ticket done
 - `$DECK_DIR/.reviewed` has been touched after the latest HTML write
 

@@ -7,6 +7,13 @@ description: |
   transcript with stage directions. Outputs $DECK_DIR/speech.md.
 ---
 
+<!--
+[INPUT]: Depends on deck content, HTML notes, MEMORY.md, tasks/tasks.md, and threads/threads.md.
+[OUTPUT]: Provides speech.md and fragment-synced HTML data-notes.
+[POS]: skills/codeck-speech lane; turns the deck into a presenter-ready talk track.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
+
 # codeck speech — @speech lane
 
 `@speech` owns the talk track, presenter rhythm, and fragment-synced notes.
@@ -48,16 +55,18 @@ bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 
 Read:
 - **MEMORY.md** — known style, duration, language, defaults, open threads
-- **tasks/tasks.md / threads/threads.md** — current ticket and unresolved decisions
+- **tasks/tasks.md / threads/threads.md** — active tickets and open decisions only
 - **HTML** (latest `*-r*.html`) — actual slide content
-- **deck.md / outline.md** — structure, arc, user intent
+- **deck.md** — structure, arc, user intent; ignore legacy `outline.md`
 - **DESIGN.md / roles/design.md** — visual intent and selected skeleton (speech rhythm should match visual rhythm)
 
-If no HTML and no outline, run `/codeck` to build the missing deck state first.
+If no HTML and no `deck.md`, run `/codeck` to build the missing deck state first.
 
-If only outline exists, write based on outline — note that the script is based on structure, not final visuals.
+If only `deck.md` exists, write based on `deck.md` — note that the script is based on structure, not final visuals.
 
-**Smart skip:** skip AskUser if the user's instruction, `MEMORY.md`, `deck.md`, `outline.md`, or existing `speech.md` already specifies style and duration.
+Do not read `channel/YYYY-MM-DD.md` unless debugging history.
+
+**Smart skip:** skip Decision Ask if the user's instruction, `MEMORY.md`, open `threads/threads.md` rows, `deck.md`, or existing `speech.md` already specifies style and duration.
 
 Before writing, claim the work ticket:
 
@@ -73,9 +82,9 @@ Append the exchange to today's channel file and update `tasks/tasks.md`.
 
 ## Questions
 
-Speech Style is one allowed AskUser moment under `/codeck`.
+Speech Style is one allowed Decision Ask moment under `/codeck`.
 
-Ask only once, and only when style or duration is missing. Bundle both into one choice so the user is deciding the speech shape, not filling a form.
+Use the shared `/codeck` Decision Ask Policy. Create one `D-YYYYMMDD-NN` decision only when style or duration is missing. Bundle both into one choice so the user is deciding the speech shape, not filling a form.
 
 ```text
 codeck needs the speech shape.
@@ -99,7 +108,7 @@ Use these defaults when the deck gives no signal:
 - B) 15 min — standard, ~3000 words
 - C) 30+ min — deep dive, ~6000 words
 
-If the user does not answer, use the recommended package and write `assumed default` to `MEMORY.md`.
+If the decision is non-blocking and the user does not answer, use the recommended package and write `assumed default` to `MEMORY.md`. If the speech commitment is blocking and no structured AskUser UI is available, leave it open in `threads/threads.md` and stop before writing `speech.md`.
 
 Record the final style and duration in `speech.md` front matter and `MEMORY.md`.
 

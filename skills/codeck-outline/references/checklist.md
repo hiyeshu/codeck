@@ -1,6 +1,6 @@
 # Outline self-review checklist
 
-Check `$DECK_DIR/deck.md` and mirrored `$DECK_DIR/outline.md` after writing. Auto-fix directly. Ask only for real user-owned content conflicts.
+Check `$DECK_DIR/deck.md` after writing. Auto-fix directly. Ask only for real user-owned content conflicts.
 
 ## Pass 1 — Structural (AUTO-FIX)
 
@@ -13,8 +13,9 @@ Check `$DECK_DIR/deck.md` and mirrored `$DECK_DIR/outline.md` after writing. Aut
 - Missing → infer from content
 
 ### [MEDIUM] Page count
-- 5-15 pages is typical, not mandatory
-- Under 5 or over 15 → AUTO-FIX if density demands it; record the reason as an assumed default
+- Page count is derived from duration: 15 minutes ≈ 10 pages, 30 minutes ≈ 20 pages, 45 minutes ≈ 25-30 pages
+- Direct slide-count prompt found → AUTO-FIX: replace with duration-derived page count and record the rule
+- Derived count does not match duration → AUTO-FIX unless the user explicitly requested a custom page count
 
 ### [HIGH] No duplicate pages
 - Two pages making the same point?
@@ -35,7 +36,7 @@ Check `$DECK_DIR/deck.md` and mirrored `$DECK_DIR/outline.md` after writing. Aut
 - Found → AUTO-FIX: rewrite with specifics
 
 ### [LOW] User intent section
-- `deck.md` / `outline.md` "User intent" section filled (not all "not specified")?
+- `deck.md` "User intent" section filled (not all "not specified")?
 - Missing → AUTO-FIX: infer from materials or record "not specified"; do not prompt
 
 ## Suppressions

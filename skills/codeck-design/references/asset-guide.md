@@ -1,6 +1,6 @@
 # Asset References Guide
 
-`deck.md` / `outline.md` asset list marks each resource's level:
+`deck.md` asset list marks each resource's level:
 
 ## Asset Work Contract
 

@@ -1,13 +1,20 @@
 ---
 name: codeck-outline
-version: 2.1.0
+version: 2.2.0
 description: |
   Editor role. Reads local materials, asks narrative questions, plans
-  story arc. Outputs $DECK_DIR/deck.md and mirrors $DECK_DIR/outline.md
-  for compatibility. Use whenever the user says
+  story arc. Outputs $DECK_DIR/deck.md as the sole content source.
+  Use whenever the user says
   "outline", "plan slides", "organize materials", "structure",
   "table of contents", "narrative", or wants to structure content into a presentation.
 ---
+
+<!--
+[INPUT]: Depends on local materials, MEMORY.md, threads/threads.md, diagnosis.md, and prior deck.md.
+[OUTPUT]: Provides deck.md with narrative structure and Decision Log.
+[POS]: skills/codeck-outline lane; owns canonical deck content before design consumes it.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
 
 # codeck outline — @outline lane
 
@@ -16,7 +23,6 @@ description: |
 Write boundaries:
 
 - May write `$DECK_DIR/deck.md`
-- Must mirror `$DECK_DIR/outline.md` for legacy compatibility
 - May update `$DECK_DIR/roles/outline.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/channel/YYYY-MM-DD.md`
 - Must not edit `DESIGN.md`, `custom.css`, `slides.html`, `review.md`, `speech.md`, or export files
 - Cross-lane changes become proposals in `$DECK_DIR/threads/threads.md`
@@ -49,7 +55,7 @@ bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-Read `$DECK_DIR/MEMORY.md`, `$DECK_DIR/tasks/tasks.md`, `$DECK_DIR/threads/threads.md`, and `$DECK_DIR/diagnosis.md` if they exist.
+Read `$DECK_DIR/MEMORY.md`, active rows in `$DECK_DIR/tasks/tasks.md`, open rows in `$DECK_DIR/threads/threads.md`, `$DECK_DIR/deck.md`, and `$DECK_DIR/diagnosis.md` if they exist. Do not read `channel/YYYY-MM-DD.md` unless debugging history. Ignore legacy `outline.md` during normal generation.
 
 Before writing content, claim the work ticket:
 
@@ -58,7 +64,7 @@ Before writing content, claim the work ticket:
 Owner: @outline. Task: structure deck content. Artifact: deck.md.
 
 @outline
-I claim the narrative pass. I will write `deck.md`, mirror `outline.md`, and hand off to @design.
+I claim the narrative pass. I will write `deck.md` and hand off to @design.
 ```
 
 Append that exchange to `$DECK_DIR/channel/YYYY-MM-DD.md` and reflect the ticket in `tasks/tasks.md`.
@@ -92,7 +98,7 @@ Rule of thumb: can the HTML still be emailed? Yes → inline. No → poster or e
 mkdir -p "$DECK_DIR/assets"
 ```
 
-If 0 files found, use the Deck Intent AskUser moment: ask for the topic/core goal once, or tell the user to add files and run `/codeck` again.
+If 0 files found, use the Deck Intent Decision Ask moment: create a room decision for the topic/core goal once, or tell the user to add files and run `/codeck` again.
 
 ## Step 1.5: Material diagnosis
 
@@ -103,26 +109,36 @@ Silent checks on materials:
 3. **Presentation fit** — slide-ready or needs restructuring?
 4. **Image assets** — content images (architecture, charts) or decorative?
 
-All clear → continue silently. If materials conflict in a way that changes the deck direction, summarize the conflict in the Deck Intent AskUser round.
+All clear → continue silently. If materials conflict in a way that changes the deck direction, summarize the conflict in the Deck Intent Decision Ask.
 
-Results go into `deck.md` and mirrored `outline.md` under "Material summary".
+Results go into `deck.md` under "Material summary".
 
 ## Step 2: Deck Intent
 
-Use the shared `/codeck` AskUser Policy. Deck Intent is one allowed AskUser moment.
+Use the shared `/codeck` Decision Ask Policy. Deck Intent is one allowed Decision Ask moment.
 
 Do not ask for "mode". Default to fast: decide, write, and let the user edit after output.
 
-Before asking, fill these fields from the user request, materials, `MEMORY.md`, `deck.md`, or `outline.md`:
+Before creating a Decision Ask, fill these fields from the user request, materials, `MEMORY.md`, open `threads/threads.md` rows, and `deck.md`:
 
 - Core message
-- Audience
-- Duration / slide count
+- Audience scene: industry internal / commercial launch / demo day / private session
+- Duration: 15 minutes / 30 minutes / 45 minutes
 - Language
 
-Skip any field that is already clear. If all four are clear enough, do not ask.
+Do not ask for slide count. Derive page count from duration:
 
-If one or more missing fields would change the deck, ask one bundled question:
+| Duration | Derived page count |
+|----------|--------------------|
+| 15 minutes | about 10 pages |
+| 30 minutes | about 20 pages |
+| 45 minutes | about 25-30 pages |
+
+If the user explicitly provides a custom duration, derive the page count from the same rhythm and record the reason. A very short deck is not a default package; use it only when the user explicitly asks for a short teaser or the material cannot support more.
+
+Skip any field that is already clear. If all four are clear enough, do not ask and record `skipped: inferred from room/materials` in the Decision Log.
+
+If one or more missing fields would change the deck, create one `D-YYYYMMDD-NN` decision in `threads/threads.md` and render one bundled question:
 
 ```text
 codeck needs to lock the presentation scene.
@@ -131,18 +147,18 @@ Current read: {what the materials imply}.
 
 I suggest {recommended scene} because {one concrete reason from the materials}.
 
-A) {recommended full intent package}
-B) {different audience/goal package}
-C) {different depth/language package}
+A) {recommended scene}, {15/30/45 minutes}, {derived page count}, {language}, {goal}
+B) {different scene or depth}, {15/30/45 minutes}, {derived page count}, {language}, {goal}
+C) {different scene or depth}, {15/30/45 minutes}, {derived page count}, {language}, {goal}
 ```
 
-Options must be mutually exclusive packages, not separate mini-questions. A good option includes audience, duration, language, and goal in one line.
+Options must be mutually exclusive packages, not separate mini-questions. A good option includes audience scene, duration, derived page count, language, and goal in one line.
 
-If the user does not answer, use the recommended option and write it to `MEMORY.md` as `assumed default`.
+If the decision is non-blocking and the user does not answer, use the recommended option and write it to `MEMORY.md` as `assumed default`. If it is blocking in a runtime without structured AskUser UI, stop before writing `deck.md`.
 
 Optional intent exploration is allowed only when the user volunteers it. Do not ask "why do you care?", "what should they feel?", or style-avoidance questions unless the answer is needed to resolve a material conflict.
 
-Record the result in both `MEMORY.md` and `deck.md` / `outline.md`.
+Record the result in both `MEMORY.md` and `deck.md`.
 
 ## Research to fill gaps
 
@@ -191,9 +207,9 @@ Five strategies: Direct assertion, Question, Tension/contrast, Concrete image, U
 
 Write the outline. Do not ask for confirmation before generating files.
 
-## Step 5: Write $DECK_DIR/deck.md and $DECK_DIR/outline.md
+## Step 5: Write $DECK_DIR/deck.md
 
-`deck.md` is the canonical content source. `outline.md` is a compatibility mirror for current design/review modules until the migration finishes.
+`deck.md` is the canonical content source. Do not create or update `outline.md`.
 
 ```markdown
 # Outline: {topic}
@@ -205,17 +221,19 @@ Write the outline. Do not ask for confirmation before generating files.
 ## Basics
 
 - Core message: {one-sentence thesis}
+- Audience scene: {industry internal | commercial launch | demo day | private session | custom}
 - Audience: {description}
-- Length: {N slides}
+- Duration: {15 minutes | 30 minutes | 45 minutes | custom}
+- Page count: {derived from duration, e.g. about 10 pages}
 - Language: {language}
 - Intent source: {inferred from materials | user answered | assumed default}
 - Assumed defaults: {none | list defaults and why}
 
-## AskUser log
+## Decision log
 
-| Moment | Answer | Source |
-|--------|--------|--------|
-| Deck Intent | {answer package} | {user answered | assumed default | skipped: inferred from materials} |
+| ID | Moment | Answer | Source |
+|----|--------|--------|--------|
+| {D-YYYYMMDD-NN or none} | Deck Intent | {answer package} | {user answered | assumed default | skipped: inferred from room/materials} |
 
 ## Story arc
 
@@ -258,7 +276,7 @@ Level: inline / poster / extract. No assets → write "none".
 
 ## Self-review
 
-Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, check `deck.md` and mirrored `outline.md`.
+Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, then check `deck.md`.
 
 - Pass 1: structural issues → auto-fix
 - Pass 2: content quality → auto-fix mechanical issues. Ask only for real user-owned content conflicts.
@@ -274,7 +292,7 @@ After writing and self-review:
 
 ```markdown
 @outline
-I finished `deck.md` and mirrored `outline.md`. The next owner is @design.
+I finished `deck.md`. The next owner is @design.
 
 @design
 I will read `deck.md`, `diagnosis.md`, and the design thread before writing visual files.
@@ -287,11 +305,11 @@ Show the single sharpest title transformation — the one where the before/after
 > codeck outline done.
 >
 > @outline
-> I wrote `deck.md`, mirrored `outline.md`, and handed the room to @design.
+> I wrote `deck.md` and handed the room to @design.
 >
 > Best title move: "{before}" → "{after}"
 >
 > {one-line quality assessment}
 >
-> Output: `$DECK_DIR/deck.md` + `$DECK_DIR/outline.md`
+> Output: `$DECK_DIR/deck.md`
 > Next: `/codeck` will generate slides.

@@ -7,6 +7,13 @@ description: |
   /codeck; this skill defines the export behavior.
 ---
 
+<!--
+[INPUT]: Depends on latest assembled HTML, MEMORY.md, tasks/tasks.md, and threads/threads.md.
+[OUTPUT]: Provides PDF/PPTX exports and export QA notes.
+[POS]: skills/codeck-export lane; publishes the reviewed deck from room state to final artifacts.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
+
 # codeck export — @export lane
 
 Minimum conversation, maximum output. Export the deck to the user's format.
@@ -38,7 +45,7 @@ bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
 bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 ```
 
-Read `$DECK_DIR/MEMORY.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/threads/threads.md`.
+Read `$DECK_DIR/MEMORY.md`, active rows in `$DECK_DIR/tasks/tasks.md`, and open rows in `$DECK_DIR/threads/threads.md`. Do not read `channel/YYYY-MM-DD.md` unless debugging history.
 
 Gate check: if no assembled HTML exists (`./*-r*.html`), run `/codeck` to generate/rebuild the deck first.
 
@@ -56,15 +63,15 @@ Append the exchange to today's channel file and update `tasks/tasks.md`.
 
 ## Step 2: Format
 
-Export Format is one allowed AskUser moment under `/codeck`.
+Export Format is one allowed Decision Ask moment under `/codeck`.
 
-Skip AskUser when the user names a target:
+Use the shared `/codeck` Decision Ask Policy. Skip Decision Ask when the user names a target:
 
 - `PDF`, `print`, `save as PDF` → export PDF
 - `PPTX`, `PowerPoint`, `slides file` → export PPTX
 - `all`, `both` → export PDF and PPTX
 
-If the user only says "export", ask once:
+If the user only says "export", create a non-blocking `D-YYYYMMDD-NN` decision in `threads/threads.md` and render once:
 
 ```text
 codeck needs the export format.
@@ -78,7 +85,7 @@ B) PPTX
 C) PDF + PPTX
 ```
 
-If the user does not answer, export PDF and write `assumed default` to `MEMORY.md`.
+If the user does not answer or structured AskUser UI is unavailable, export PDF and write `assumed default` to `MEMORY.md`.
 
 Do not offer HTML as an export choice. HTML is the preview/source artifact.
 
@@ -122,7 +129,7 @@ console.log(`done: ${baseName}.pdf`);
 
 ### Poster assets
 
-`.media-poster` elements in slides.html are video/audio placeholders. Original file paths are in the caption and `deck.md` / `outline.md` asset manifest.
+`.media-poster` elements in slides.html are video/audio placeholders. Original file paths are in the caption and `deck.md` asset manifest.
 
 Default: keep placeholders in export. If user says "embed video", extract path from caption, use `slide.addMedia({ path: "..." })` for PPTX.
 
