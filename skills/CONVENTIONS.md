@@ -10,11 +10,12 @@ Aligned with [anthropic/skills](https://github.com/anthropics/skills) standard. 
 
 ## Frontmatter
 
-Standard fields only:
+Required fields plus the `version` extension. codeck-aligned skills all carry a `version` so the changelog in `skills/CLAUDE.md` lines up with each lane's released state.
 
 ```yaml
 ---
 name: codeck-xxx
+version: 2.x.y
 description: |
   {what it does}. {trigger scenarios}.
 ---
@@ -22,12 +23,12 @@ description: |
 
 - `name` (required): skill identifier. codeck sub-skills use `codeck-` prefix.
 - `description` (required): function + trigger scenarios, pushy style (see below).
+- `version` (required for codeck lanes): semver-ish string. Bump when SKILL.md protocol changes.
 
-Non-standard fields (version, allowed-tools, triggers) go in body comments:
+Other non-standard fields (allowed-tools, triggers, etc.) still go in body comments:
 
 ```markdown
 <!-- codeck metadata
-version: 2.0.0
 triggers: /codeck
 -->
 ```

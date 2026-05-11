@@ -8,20 +8,26 @@
 codeck/CLAUDE.md: Entry lane map. Defines codeck/ ownership boundaries and the room document contract.
 codeck/SKILL.md: Deck room entry. Initializes MEMORY.md + channel/tasks/threads/roles, defines room document rank, Decision Ask semantics, scans materials, diagnoses content, routes work across fixed role lanes, writes expanded channel to file and keeps user output compact by default.
 codeck/scripts/CLAUDE.md: Script map for room bootstrap, material scanning, and status probes.
-codeck-outline/SKILL.md: @outline lane. Role activation → bundled Deck Intent Decision Ask → story arc → title smithing. Outputs deck.md as the sole content source.
-codeck-outline/references/checklist.md: Outline self-review checklist.
-codeck-design/SKILL.md: @design lane. Role activation → skeleton selection → DESIGN.md isomorphic mapping → structured design archive → AI writes custom.css + slides.html → build-html.sh validates and assembles single HTML.
-codeck-design/references/CLAUDE.md: Reference library map for design archive specs, skeletons, visual recipes, theme presets, component recipes, image prompts, and quality gates.
-codeck-design/references/: Design reference library (theme-presets.md visual systems + layout-recipes.md page structures + component-recipes.md reusable components + image-prompts.md asset prompts + skeletons.md deck rhythm + design-md-spec.md format definition + design-md-guide.md mapping rules + checklist.md design self-review + visual-floor.md quality benchmarks).
 codeck/scripts/init-room.sh: Creates the slock-style deck room workspace (MEMORY.md, channel/tasks/threads/roles), seeds the Room Truth Contract, and imports legacy project memory when present.
 codeck/scripts/scan-materials.sh: Deterministic material scanner for the current project; excludes generated/runtime folders and prints grouped candidates.
 codeck/scripts/status.sh: Shared status detection. File detection + MEMORY status + timestamp staleness + machine-readable NEXT/CONTENT/HTML/STALE exports, called by all skills.
+
+codeck-outline/SKILL.md: @outline lane. Role activation → bundled Deck Intent Decision Ask → story arc → title smithing. Outputs deck.md as the sole content source.
+codeck-outline/references/checklist.md: Outline self-review checklist.
+
+codeck-design/SKILL.md: @design lane. Role activation → skeleton selection → DESIGN.md isomorphic mapping → structured design archive → AI writes custom.css + slides.html → build-html.sh validates and assembles single HTML.
+codeck-design/references/CLAUDE.md: Reference library map for design archive specs, skeletons, visual recipes, theme presets, component recipes, image prompts, and quality gates.
+codeck-design/references/: Design reference library (theme-presets.md visual systems + layout-recipes.md page structures + component-recipes.md reusable components + image-prompts.md asset prompts + skeletons.md deck rhythm + design-md-spec.md format definition + design-md-guide.md mapping rules + checklist.md design self-review + visual-floor.md quality benchmarks).
 codeck-design/scripts/: Fixed slide engine plus validation guards (engine.js + engine.css + assemble.sh + validate-design.sh + build-html.sh). Navigation, fragments (4 entrance types), overview, speaker mode, clamp responsive system, DESIGN.md completeness validation, and self-contained HTML validation.
+
 codeck-review/SKILL.md: @review lane (inverse selection: listener most likely to struggle). Six-dimension review + scoped HTML fixes, decision summary in review.md and MEMORY.md.
+
 codeck-export/SKILL.md: @export lane. HTML as single source of truth, PDF (Playwright) / PPTX export + QA.
 codeck-export/pptx/: PPTX tools (PptxGenJS, thumbnail.py, soffice.py).
 codeck-export/pdf/: PDF tools (pypdf/reportlab reference, form filling).
+
 codeck-speech/SKILL.md: @speech lane. Role activation → verbatim transcript + stage directions + time budget + write back HTML data-notes.
+
 CONVENTIONS.md: Skill authoring conventions (frontmatter / description / directory structure / evals).
 LICENSE: MIT.
 
@@ -32,6 +38,7 @@ Downstream: Claude skill runtime
 
 ## Changelog
 
+- 2026-05-11: Skill audit pass. Realigned root `AGENTS.md` with `CLAUDE.md` and the deck-room protocol; declared the three-runtime probe order (agents → codex → claude) at the top level. `codeck-outline` Setup now uses the shared `CODECK_SKILL_DIR` fallback like the other lanes and calls `scan-materials.sh` instead of `eval find`. Step numbering in `codeck-outline` patched (Step 3 = Research). `codeck-review` completion gate now correctly reads "all five". `codeck-export` PPTX fallback points at `$CODECK_EXPORT_DIR/pptx/pptxgenjs.md`. CONVENTIONS.md now accepts `version` in frontmatter (matches every shipped SKILL.md). Members list re-ordered to group scripts under their owning lane.
 - 2026-05-11: README and conventions now state the core architecture as "a skill is a channel": /codeck is the entry channel, sub-skills are internal role channels with write boundaries and room-backed handoffs.
 - 2026-05-11: codeck-design now has a guizang-level visual ingredient layer without importing template runtime: theme-presets.md, layout-recipes.md, component-recipes.md, and image-prompts.md. DESIGN.md must record Theme preset, Layout recipes, Component recipes, and Image prompt recipes before validation passes.
 - 2026-05-11: Removed the legacy outline.md mirror. @outline writes only deck.md; downstream lanes and status.sh no longer read outline.md as a fallback.
