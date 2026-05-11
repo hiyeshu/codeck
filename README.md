@@ -2,7 +2,7 @@
 
 # codeck
 
-**You built something complex. codeck helps you explain it.**
+**Turn complex work into a deck people can follow.**
 
 [Live demo →](https://codeck.sh/codeck-intro)
 
