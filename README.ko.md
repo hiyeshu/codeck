@@ -2,9 +2,9 @@
 
 # codeck
 
-**복잡한 걸 만들었는데, 설명이 안 된다. codeck이 말로 풀어준다.**
+**skill은 channel이다. codeck은 deck room이다.**
 
-[Live demo →](https://codeck.sh/codeck%2Dintro)
+[Live demo →](https://codeck.sh/codeck-intro)
 
 [English](README.md) | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | 한국어
 
@@ -12,27 +12,21 @@
 
 폴더에 메모, 문서, 데이터, 이미지가 있다. 프레젠테이션을 만들고 싶다. `/codeck`을 입력한다.
 
-codeck은 deck room을 연다. 파일을 읽고, 당신의 콘텐츠가 *진짜 무엇을 말하는지* 파악한 뒤, 적합한 사람을 데려온다. 구조를 잡는 편집자, 비주얼을 담당하는 디자이너, 가장 까다로운 청중의 눈으로 검토하는 리뷰어. 각 "사람"은 고정 역할 레인 안에서 움직이는 동적 페르소나다. 템플릿이 아니다.
+codeck은 지속되는 deck room을 연다. 각 codeck skill은 그 room에 channel로 들어간다: outline, design, review, speech, export.
+
+channel에는 주소, 쓰기 경계, room files, handoff가 있다. room은 현재 deck state를 `~/.codeck/projects/{slug}/`에 보관하므로 chat memory에 의존하지 않고 다음 실행에서도 이어서 작업할 수 있다.
 
 결과물은 하나의 HTML 파일. 템플릿 없음. 슬라이드 타입 제약 없음. 각 페이지는 자유로운 HTML로 구성된다. AI는 당신의 콘텐츠에 필요한 어떤 시각적 형식이든 만들어낼 수 있다.
 
 ## 사용법
 
-```
-/codeck          deck room 열기, 소재 스캔, 콘텐츠 진단
-    ↓
-@outline         편집자가 서사 구조를 설계하고 제목을 벼린다
-    ↓
-@design          디자이너가 논증 구조와 동형인 시각 언어를 찾는다
-    ↓
-@review          가장 까다로운 청중이 모든 슬라이드를 검수하고 직접 수정
-    ├── @export  PDF / PPTX
-    └── @speech  발표 원고 + 무대 지시
-```
+`/codeck`은 room을 열고 프로젝트를 읽는다. outline channel은 이야기를 잡는다. design channel은 이야기에 시각 형식을 준다. review channel은 가장 까다로운 청중처럼 되묻는다. speech와 export channel은 발표와 배포를 준비한다.
+
+handoff는 chat history가 아니라 room에 남는다.
 
 ## 세 가지 아이디어
 
-**규칙이 아니라, 사람을 부른다.** codeck은 디자인 가이드라인을 하드코딩하지 않는다. 실존 인물 — 사상가, 디자이너, 편집자 — 을 선택한다. 그 사람의 *사고방식*이 콘텐츠의 과제와 맞기 때문이다. 예를 들어, 보이지 않는 것을 자명하게 만들어야 하는 논증이라면 Feynman을 부를 수 있다. 물리학 이야기라서가 아니다. 그게 Feynman이 *하는 일*이기 때문이다. 이름이 AI의 지식 네트워크를 깨운다.
+**skill은 channel이다.** codeck은 팀인 척하는 긴 prompt가 아니다. 각 skill은 room 안에서 하나의 channel을 가진다. 무엇을 듣고, 무엇을 쓰고, 누구에게 handoff할지가 정해져 있다.
 
 **동형 사상.** 디자인 전에 codeck은 콘텐츠의 *형식 구조*를 분석한다. 긴장 곡선, 정보 밀도, 감정 아크. 그리고 다른 영역에서 구조적으로 대응하는 것을 찾는다. 악곡, 회화 양식, 건축 원리. 슬라이드는 당신의 논증을 *담기만* 하는 게 아니라, 논증과 *같은 모양*을 한다. (호프스태터 『괴델, 에셔, 바흐』에서 영감.)
 

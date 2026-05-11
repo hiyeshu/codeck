@@ -2,9 +2,9 @@
 
 # codeck
 
-**複雑なものを作った。でも、うまく説明できない。codeck が言葉にする手助けをする。**
+**skill は channel。codeck は deck room。**
 
-[Live demo →](https://codeck.sh/codeck%2Dintro)
+[Live demo →](https://codeck.sh/codeck-intro)
 
 [English](README.md) | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md) | 日本語 | [한국어](README.ko.md)
 
@@ -12,27 +12,21 @@
 
 フォルダにメモ、ドキュメント、データ、画像がある。プレゼンを作りたい。`/codeck` と打つ。
 
-codeck は deck room を開く。ファイルを読み、あなたのコンテンツが*本当は何を語っているか*を見抜き、適切な人物を連れてくる。構成を担当する編集者、ビジュアルを担当するデザイナー、最も手厳しい聴衆の目線でチェックするレビュアー。それぞれの「人物」は固定された役割レーンの中で動く動的なペルソナだ。テンプレートではない。
+codeck は永続的な deck room を開く。各 codeck skill は、その room に channel として入る。outline、design、review、speech、export。
+
+channel にはアドレス、書き込み境界、room files、handoff がある。room は現在の deck state を `~/.codeck/projects/{slug}/` に保持するので、chat memory に頼らず次の実行でも続きから作業できる。
 
 出力は単一の HTML ファイル。テンプレートなし。スライドタイプの制約なし。各ページは自由な HTML で構成される。AI はあなたのコンテンツに必要などんな視覚表現でも発明できる。
 
 ## 使い方
 
-```
-/codeck          deck room を開き、素材をスキャン、内容を診断
-    ↓
-@outline         編集者が物語構造を設計、タイトルを鍛える
-    ↓
-@design          デザイナーが議論の構造と同形の視覚言語を見つける
-    ↓
-@review          最も厳しい聴衆が全スライドを検査、直接修正
-    ├── @export  PDF / PPTX
-    └── @speech  逐語スクリプト + ステージディレクション
-```
+`/codeck` が room を開き、プロジェクトを読む。outline channel がストーリーを形にする。design channel がストーリーに視覚形式を与える。review channel が最も手厳しい聴衆のように問い返す。speech と export channel が発表と配布を準備する。
+
+handoff は chat history ではなく room に残る。
 
 ## 3つのアイデア
 
-**ルールではなく、人を呼ぶ。** codeck はデザインガイドラインをハードコードしない。実在の人物——思想家、デザイナー、編集者——を選ぶ。その人の*思考法*がコンテンツの課題に合っているから。例えば、見えないものを自明にする必要がある議論には、Feynman を呼ぶかもしれない。物理の話だからではない。それが Feynman の*やり方*だから。人名が AI の知識ネットワークを起動する。
+**skill は channel。** codeck は、チームのふりをした長い prompt ではない。各 skill は room の中に 1 つの channel を持つ。何を受け取り、何を書き、誰へ handoff するかが決まっている。
 
 **同型写像。** デザインの前に、codeck はコンテンツの*形式構造*を分析する。テンションカーブ、情報密度、感情のアーク。そして別の領域から構造的に対応するものを見つける。楽曲、絵画様式、建築原理。スライドはあなたの議論を*格納する*だけでなく、議論と*同じ形をしている*。（ホフスタッター『ゲーデル、エッシャー、バッハ』に触発。）
 

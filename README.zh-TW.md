@@ -2,9 +2,9 @@
 
 # codeck
 
-**你做了一個複雜的東西，但說不清楚。codeck 幫你把它講明白。**
+**一個 skill 是一個 channel。codeck 是一個 deck room。**
 
-[線上演示 →](https://codeck.sh/codeck%2Dintro)
+[線上演示 →](https://codeck.sh/codeck-intro)
 
 [English](README.md) | [简体中文](README.zh.md) | 繁體中文 | [日本語](README.ja.md) | [한국어](README.ko.md)
 
@@ -12,27 +12,21 @@
 
 你有一個資料夾，裡面是筆記、文件、資料、圖片。你想做一套簡報。你輸入 `/codeck`。
 
-codeck 打開一個 deck room。它讀完你的檔案，搞清楚你的內容*到底在講什麼*，然後請來合適的人幫忙——一個編輯負責結構，一個設計師負責視覺，一個審稿人用你最難搞的聽眾的眼光來挑刺。每個「人」都是固定工位裡的動態人格，不是模板選項。
+codeck 打開一個持久的 deck room。每個 codeck skill 都作為一個 channel 進入這個 room：outline、design、review、speech、export。
+
+channel 有地址、寫入邊界、房間檔案和 handoff。room 把當前 deck 狀態保存在 `~/.codeck/projects/{slug}/`，所以跨執行繼續工作，不依賴聊天記憶。
 
 產出是一個 HTML 檔案。沒有模板。沒有固定的投影片類型。每頁自由 HTML——AI 可以為你的內容發明任何視覺形式。
 
 ## 怎麼用
 
-```
-/codeck          打開 deck room，掃描素材，診斷內容
-    ↓
-@outline         編輯規劃敘事結構，鍛造每個標題
-    ↓
-@design          設計師找到和你論證結構同形的視覺語言
-    ↓
-@review          你最嚴格的聽眾逐頁審查，直接改
-    ├── @export  PDF / PPTX
-    └── @speech  逐字演講稿 + 舞台指示
-```
+`/codeck` 打開 room 並讀取專案。outline channel 組織故事，design channel 賦予視覺形式，review channel 像最難搞的聽眾一樣追問。speech 和 export channel 準備交付。
+
+handoff 留在 room 裡，不靠聊天歷史。
 
 ## 三個想法
 
-**請人，不是定規則。** codeck 不硬編碼設計指南，而是選擇真實的人——思想家、設計師、編輯——他們的*思維方式*和你內容的挑戰匹配。假設你的論證需要讓看不見的東西變得顯而易見：codeck 可能請來 Feynman。不是因為你在講物理，而是因為這就是 Feynman *做的事*。人名啟動 AI 對這個人工作方式的知識。
+**一個 skill 是一個 channel。** codeck 不是一個超長 prompt 假裝成團隊。每個 skill 在 room 裡擁有一個 channel：它回應什麼、寫什麼、交給誰。
 
 **同構映射。** 設計之前，codeck 分析你內容的*形式結構*——張力曲線、資訊密度、情緒弧線。然後從另一個領域找到結構上的對應：一首樂曲、一種繪畫風格、一個建築原則。你的投影片不只是*裝著*你的論證——它們*長得像*你的論證。（受侯世達《乙乙乙》啟發。）
 
