@@ -2,7 +2,7 @@
 
 # codeck
 
-**Turn complex work into a deck people can follow.**
+**A skill is a channel. codeck is a deck room.**
 
 [Live demo →](https://codeck.sh/codeck-intro)
 
