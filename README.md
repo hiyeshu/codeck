@@ -12,29 +12,21 @@ English | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md) | [日�
 
 You have a folder of notes, docs, data, and images. You want a presentation. You type `/codeck`.
 
-codeck opens a persistent deck room, reads your files, figures out what your content is *really about*, then brings in the right channels to help: outline, design, review, speech, and export.
+codeck opens a persistent deck room. Each codeck skill enters that room as a channel: outline, design, review, speech, and export.
 
-A skill is a channel: it has an address, a write boundary, room files, and a handoff. The room keeps the current deck state in `~/.codeck/projects/{slug}/`, so work can continue across runs without relying on chat memory.
+A channel has an address, a write boundary, room files, and a handoff. The room keeps the current deck state in `~/.codeck/projects/{slug}/`, so work can continue across runs without relying on chat memory.
 
 The result is a single HTML file. No templates. No slide-type vocabulary. Free HTML per slide — the AI can invent any visual form your content needs.
 
 ## How it works
 
-```
-/codeck          opens the deck room, scans materials, diagnoses content
-    ↓
-codeck-outline  structures the narrative, writes deck.md
-    ↓
-codeck-design   writes DESIGN.md, custom.css, slides.html, then builds HTML
-    ↓
-codeck-review   your toughest listener reviews every slide, fixes directly
-    ├── codeck-export   PDF / PPTX
-    └── codeck-speech   verbatim script with stage directions
-```
+`/codeck` opens the room and reads the project. The outline channel shapes the story. The design channel gives the story visual form. The review channel pushes back like the hardest audience member. Speech and export channels prepare delivery.
+
+The handoff lives in the room, not in chat history.
 
 ## Three ideas
 
-**A skill is a channel.** codeck is not a single long prompt pretending to be a team. Each skill owns one channel with a clear artifact boundary. `deck.md` is content truth. `DESIGN.md` is design truth. `threads/threads.md` records decisions before the agent asks the user.
+**A skill is a channel.** codeck is not a single long prompt pretending to be a team. Each skill owns one channel in the room: what it listens for, what it writes, and who it hands off to.
 
 **Isomorphic mapping.** Before designing, codeck analyzes the *formal structure* of your content — its tension curve, information density, emotional arc. Then it finds a structural match from another domain: a piece of music, a painting style, an architectural principle. Your slides don't just *contain* your argument — they *look like* it. (Inspired by Hofstadter's *GEB*.)
 
