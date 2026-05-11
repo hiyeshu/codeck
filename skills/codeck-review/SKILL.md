@@ -232,7 +232,7 @@ Write the latest valid review findings and fixes to `$DECK_DIR/review.md`. If th
 
 If a finding needs `@outline` or `@design` to change their owned source beyond a scoped fix, add it to `threads/threads.md` and hand off the task. Do not silently rewrite their owned artifact.
 
-Review is not complete until all four are true:
+Review is not complete until all five are true:
 
 - `review.md` exists
 - scoped fixes, if any, have been rebuilt into the latest validated HTML

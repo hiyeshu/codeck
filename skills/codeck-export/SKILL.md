@@ -152,7 +152,7 @@ python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pptx ./*-r*.h
 
 **Option B (fallback): screenshot embed**
 
-If soffice unavailable, use Playwright to screenshot each page, then PptxGenJS to embed screenshots as slides. Read `export/pptx/pptxgenjs.md` for the API.
+If soffice unavailable, use Playwright to screenshot each page, then PptxGenJS to embed screenshots as slides. Read `$CODECK_EXPORT_DIR/pptx/pptxgenjs.md` for the API.
 
 ## Step 4: QA (required for PDF/PPTX)
 

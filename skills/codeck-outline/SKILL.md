@@ -49,10 +49,17 @@ Fallback if no diagnosis: curious magazine editor who asks "why" and won't accep
 
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
-bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
-bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
+bash "$CODECK_SKILL_DIR/scripts/status.sh" "$DECK_DIR"
 ```
 
 Read `$DECK_DIR/MEMORY.md`, active rows in `$DECK_DIR/tasks/tasks.md`, open rows in `$DECK_DIR/threads/threads.md`, `$DECK_DIR/deck.md`, and `$DECK_DIR/diagnosis.md` if they exist. Do not read `channel/YYYY-MM-DD.md` unless debugging history. Ignore legacy `outline.md` during normal generation.
@@ -71,16 +78,13 @@ Append that exchange to `$DECK_DIR/channel/YYYY-MM-DD.md` and reflect the ticket
 
 ## Step 1: Scan materials
 
-Scan the **current directory** (the user's project), not DECK_DIR.
+Scan the **current directory** (the user's project), not DECK_DIR. Use the shared `scan-materials.sh` probe so the exclusion list and grouping stay aligned with `/codeck`.
 
 ```bash
-EXCLUDE='! -path "./node_modules/*" ! -path "./.git/*" ! -path "./.claude/*" ! -path "./dist/*" ! -path "./build/*" ! -name "deck.*" ! -name "CLAUDE.md" ! -name "TODOS.md" ! -name "README.md" ! -name "DESIGN.md" ! -name "*.test.*" ! -name "*.spec.*" ! -name "*.config.*"'
-
-echo "=== TEXT ===" && eval find . -maxdepth 4 -type f \\\( -name '"*.md"' -o -name '"*.txt"' -o -name '"*.rtf"' -o -name '"*.org"' -o -name '"*.rst"' \\\) $EXCLUDE 2>/dev/null | head -20
-echo "=== DOCS ===" && eval find . -maxdepth 4 -type f \\\( -name '"*.pdf"' -o -name '"*.docx"' -o -name '"*.doc"' -o -name '"*.pptx"' -o -name '"*.ppt"' -o -name '"*.key"' -o -name '"*.pages"' -o -name '"*.xlsx"' -o -name '"*.xls"' -o -name '"*.numbers"' \\\) $EXCLUDE 2>/dev/null | head -20
-echo "=== IMAGES ===" && eval find . -maxdepth 4 -type f \\\( -name '"*.png"' -o -name '"*.jpg"' -o -name '"*.jpeg"' -o -name '"*.webp"' -o -name '"*.gif"' -o -name '"*.svg"' -o -name '"*.ico"' -o -name '"*.bmp"' -o -name '"*.tiff"' \\\) $EXCLUDE 2>/dev/null | head -20
-echo "=== DATA ===" && eval find . -maxdepth 4 -type f \\\( -name '"*.csv"' -o -name '"*.tsv"' -o -name '"*.json"' -o -name '"*.yaml"' -o -name '"*.yml"' -o -name '"*.xml"' \\\) $EXCLUDE 2>/dev/null | head -20
+bash "$CODECK_SKILL_DIR/scripts/scan-materials.sh" .
 ```
+
+Do not use `eval find` — the entry skill explicitly forbids it. If the probe is unavailable, fall back to a plain `find` with explicit `! -path` exclusions.
 
 User-provided structure is raw material — cut, merge, reorder freely.
 
@@ -160,7 +164,7 @@ Optional intent exploration is allowed only when the user volunteers it. Do not 
 
 Record the result in both `MEMORY.md` and `deck.md`.
 
-## Research to fill gaps
+## Step 3: Research to fill gaps
 
 If the materials are thin, the topic is unfamiliar, or key claims lack supporting evidence, **search the web** to strengthen the outline. Don't fabricate data — find it.
 

@@ -54,7 +54,7 @@ Two directories at runtime:
 ```
 codeck/
 ├── CLAUDE.md         # mirror of AGENTS.md for Claude runtime
-├── AGENTS.md         # agents/codex runtime entry
+├── AGENTS.md         # this file; agents/codex runtime entry
 ├── skills/
 │   ├── CLAUDE.md      # Member list + changelog
 │   ├── CONVENTIONS.md # Skill authoring conventions
