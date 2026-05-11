@@ -1,14 +1,31 @@
 ---
 name: codeck-outline
-version: 2.1.0
+version: 2.2.0
 description: |
   Editor role. Reads local materials, asks narrative questions, plans
-  story arc. Outputs $DECK_DIR/outline.md. Use whenever the user says
+  story arc. Outputs $DECK_DIR/deck.md as the sole content source.
+  Use whenever the user says
   "outline", "plan slides", "organize materials", "structure",
   "table of contents", "narrative", or wants to structure content into a presentation.
 ---
 
-# codeck outline — Editor
+<!--
+[INPUT]: Depends on local materials, MEMORY.md, threads/threads.md, diagnosis.md, and prior deck.md.
+[OUTPUT]: Provides deck.md with narrative structure and Decision Log.
+[POS]: skills/codeck-outline lane; owns canonical deck content before design consumes it.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
+
+# codeck outline — @outline lane
+
+`@outline` owns narrative structure and canonical deck content.
+
+Write boundaries:
+
+- May write `$DECK_DIR/deck.md`
+- May update `$DECK_DIR/roles/outline.md`, `$DECK_DIR/tasks/tasks.md`, and `$DECK_DIR/channel/YYYY-MM-DD.md`
+- Must not edit `DESIGN.md`, `custom.css`, `slides.html`, `review.md`, `speech.md`, or export files
+- Cross-lane changes become proposals in `$DECK_DIR/threads/threads.md`
 
 ## Role activation
 
@@ -33,10 +50,24 @@ Fallback if no diagnosis: curious magazine editor who asks "why" and won't accep
 ```bash
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 mkdir -p "$DECK_DIR"
+mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
+bash "$HOME/.claude/skills/codeck/scripts/init-room.sh" "$DECK_DIR"
 bash "$HOME/.claude/skills/codeck/scripts/status.sh" "$DECK_DIR"
 ```
 
-Read `$DECK_DIR/diagnosis.md` if it exists.
+Read `$DECK_DIR/MEMORY.md`, active rows in `$DECK_DIR/tasks/tasks.md`, open rows in `$DECK_DIR/threads/threads.md`, `$DECK_DIR/deck.md`, and `$DECK_DIR/diagnosis.md` if they exist. Do not read `channel/YYYY-MM-DD.md` unless debugging history. Ignore legacy `outline.md` during normal generation.
+
+Before writing content, claim the work ticket:
+
+```markdown
+@orchestrator
+Owner: @outline. Task: structure deck content. Artifact: deck.md.
+
+@outline
+I claim the narrative pass. I will write `deck.md` and hand off to @design.
+```
+
+Append that exchange to `$DECK_DIR/channel/YYYY-MM-DD.md` and reflect the ticket in `tasks/tasks.md`.
 
 ## Step 1: Scan materials
 
@@ -67,7 +98,7 @@ Rule of thumb: can the HTML still be emailed? Yes → inline. No → poster or e
 mkdir -p "$DECK_DIR/assets"
 ```
 
-If 0 files found, ask user: provide topic verbally or add files first.
+If 0 files found, use the Deck Intent Decision Ask moment: create a room decision for the topic/core goal once, or tell the user to add files and run `/codeck` again.
 
 ## Step 1.5: Material diagnosis
 
@@ -78,64 +109,56 @@ Silent checks on materials:
 3. **Presentation fit** — slide-ready or needs restructuring?
 4. **Image assets** — content images (architecture, charts) or decorative?
 
-All clear → continue silently. Issues → summarize in one AskUserQuestion.
+All clear → continue silently. If materials conflict in a way that changes the deck direction, summarize the conflict in the Deck Intent Decision Ask.
 
-Results go into outline.md's "Material summary" section.
+Results go into `deck.md` under "Material summary".
 
-## Step 2: Mode
+## Step 2: Deck Intent
 
-- A) Collaborative — you answer questions, I plan structure, confirm each step
-- B) Fast — I decide everything, you review at the end
-- C) Expert — you write the outline, I optimize
+Use the shared `/codeck` Decision Ask Policy. Deck Intent is one allowed Decision Ask moment.
 
-Fast mode: skip Q1 and Q1.5, but **still ask Q2, Q3, Q4**.
-Expert mode: user writes outline, you review and suggest improvements.
+Do not ask for "mode". Default to fast: decide, write, and let the user edit after output.
 
-**Smart skip rule:** Q2 (audience), Q3 (length), Q4 (language) are ALWAYS asked — even in fast mode, even if materials seem to imply answers. These are user intent, not facts you can infer. Only skip Q1/Q1.5 if the user's instruction already contains a clear core message.
+Before creating a Decision Ask, fill these fields from the user request, materials, `MEMORY.md`, open `threads/threads.md` rows, and `deck.md`:
 
-## Step 3: Questions
+- Core message
+- Audience scene: industry internal / commercial launch / demo day / private session
+- Duration: 15 minutes / 30 minutes / 45 minutes
+- Language
 
-### Q1: Core message
+Do not ask for slide count. Derive page count from duration:
 
-> If the audience remembers one thing, what should it be?
+| Duration | Derived page count |
+|----------|--------------------|
+| 15 minutes | about 10 pages |
+| 30 minutes | about 20 pages |
+| 45 minutes | about 25-30 pages |
 
-- A) I'll tell you
-- B) Extract from materials
-- C) Not sure yet
+If the user explicitly provides a custom duration, derive the page count from the same rhythm and record the reason. A very short deck is not a default package; use it only when the user explicitly asks for a short teaser or the material cannot support more.
 
-Skip if user already stated their core message explicitly.
+Skip any field that is already clear. If all four are clear enough, do not ask and record `skipped: inferred from room/materials` in the Decision Log.
 
-### Q1.5: Intent exploration (open conversation, no options)
+If one or more missing fields would change the deck, create one `D-YYYYMMDD-NN` decision in `threads/threads.md` and render one bundled question:
 
-After confirming core message, explore deeper intent through natural dialogue:
+```text
+codeck needs to lock the presentation scene.
 
-1. "Why do you care about this topic?"
-2. "Any expressions or styles you want to avoid?"
-3. "Anything you haven't figured out yet?"
-4. "How should the audience feel afterward?"
+Current read: {what the materials imply}.
 
-Not mandatory. "Nothing special" → skip. Answers go into outline.md user intent section.
+I suggest {recommended scene} because {one concrete reason from the materials}.
 
-Fast mode: skip Q1.5.
+A) {recommended scene}, {15/30/45 minutes}, {derived page count}, {language}, {goal}
+B) {different scene or depth}, {15/30/45 minutes}, {derived page count}, {language}, {goal}
+C) {different scene or depth}, {15/30/45 minutes}, {derived page count}, {language}, {goal}
+```
 
-### Q2: Audience (always ask)
+Options must be mutually exclusive packages, not separate mini-questions. A good option includes audience scene, duration, derived page count, language, and goal in one line.
 
-- A) Technical peers — jargon ok
-- B) Non-technical decision makers — plain language
-- C) Mixed audience
-- D) Teaching / sharing
+If the decision is non-blocking and the user does not answer, use the recommended option and write it to `MEMORY.md` as `assumed default`. If it is blocking in a runtime without structured AskUser UI, stop before writing `deck.md`.
 
-### Q3: Length (always ask)
+Optional intent exploration is allowed only when the user volunteers it. Do not ask "why do you care?", "what should they feel?", or style-avoidance questions unless the answer is needed to resolve a material conflict.
 
-- A) Concise (4-6 slides)
-- B) Standard (7-10 slides)
-- C) Detailed (11-15 slides)
-
-### Q4: Language (always ask)
-
-- A) Chinese
-- B) English
-- C) Mixed
+Record the result in both `MEMORY.md` and `deck.md`.
 
 ## Research to fill gaps
 
@@ -182,9 +205,11 @@ Five strategies: Direct assertion, Question, Tension/contrast, Concrete image, U
 2. Want to hear more? No → switch strategy.
 3. Sounds human? AI-flavored → rewrite.
 
-Present outline to user for confirmation.
+Write the outline. Do not ask for confirmation before generating files.
 
-## Step 5: Write $DECK_DIR/outline.md
+## Step 5: Write $DECK_DIR/deck.md
+
+`deck.md` is the canonical content source. Do not create or update `outline.md`.
 
 ```markdown
 # Outline: {topic}
@@ -196,9 +221,19 @@ Present outline to user for confirmation.
 ## Basics
 
 - Core message: {one-sentence thesis}
+- Audience scene: {industry internal | commercial launch | demo day | private session | custom}
 - Audience: {description}
-- Length: {N slides}
+- Duration: {15 minutes | 30 minutes | 45 minutes | custom}
+- Page count: {derived from duration, e.g. about 10 pages}
 - Language: {language}
+- Intent source: {inferred from materials | user answered | assumed default}
+- Assumed defaults: {none | list defaults and why}
+
+## Decision log
+
+| ID | Moment | Answer | Source |
+|----|--------|--------|--------|
+| {D-YYYYMMDD-NN or none} | Deck Intent | {answer package} | {user answered | assumed default | skipped: inferred from room/materials} |
 
 ## Story arc
 
@@ -241,10 +276,27 @@ Level: inline / poster / extract. No assets → write "none".
 
 ## Self-review
 
-Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, check outline.md.
+Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, then check `deck.md`.
 
 - Pass 1: structural issues → auto-fix
-- Pass 2: content quality → auto-fix mechanical issues, ask for judgment calls
+- Pass 2: content quality → auto-fix mechanical issues. Ask only for real user-owned content conflicts.
+
+## Handoff
+
+After writing and self-review:
+
+1. Update `MEMORY.md` Active Context, Latest Channel Summary, Task Index, and Artifacts.
+2. Mark the `@outline` task done in `tasks/tasks.md`.
+3. If content needs a user decision, add or update a row in `threads/threads.md`.
+4. Append the handoff to today's channel file:
+
+```markdown
+@outline
+I finished `deck.md`. The next owner is @design.
+
+@design
+I will read `deck.md`, `diagnosis.md`, and the design thread before writing visual files.
+```
 
 ## Done
 
@@ -252,9 +304,12 @@ Show the single sharpest title transformation — the one where the before/after
 
 > codeck outline done.
 >
+> @outline
+> I wrote `deck.md` and handed the room to @design.
+>
 > Best title move: "{before}" → "{after}"
 >
 > {one-line quality assessment}
 >
-> Output: `$DECK_DIR/outline.md`
-> Next: `/codeck-design` to generate slides.
+> Output: `$DECK_DIR/deck.md`
+> Next: `/codeck` will generate slides.

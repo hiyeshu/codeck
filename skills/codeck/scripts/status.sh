@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# [INPUT]: accepts a deck-room path plus the current project directory.
+# [OUTPUT]: prints the pipeline dashboard and machine-readable room state.
+# [POS]: codeck/scripts status probe; reads current truth without changing room files.
+# [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 # codeck status — pipeline dashboard (no ANSI colors, works everywhere)
 # Usage: bash status.sh "$DECK_DIR"
 
@@ -14,7 +18,13 @@ _html() {
 }
 _mtime() { stat -c '%Y' "$1" 2>/dev/null || stat -f '%m' "$1" 2>/dev/null; }
 
-CODECK_OUTLINE=$(_has "$DECK_DIR/outline.md" && echo done || echo none)
+CODECK_CONTENT_PATH=""
+if _has "$DECK_DIR/deck.md"; then
+  CODECK_CONTENT_PATH="$DECK_DIR/deck.md"
+fi
+
+CODECK_MEMORY=$(_has "$DECK_DIR/MEMORY.md" && echo done || echo none)
+[ -n "$CODECK_CONTENT_PATH" ] && CODECK_OUTLINE="done" || CODECK_OUTLINE="none"
 CODECK_CSS=$(_has "$DECK_DIR/custom.css" && echo done || echo none)
 CODECK_SLIDES=$(_has "$DECK_DIR/slides.html" && echo done || echo none)
 CODECK_HTML_PATH=$(_html)
@@ -44,8 +54,8 @@ _stage_export() {
 
 # Stale detection
 _stage_design_stale() {
-  if [ "$CODECK_HTML" = "done" ] && [ "$CODECK_OUTLINE" = "done" ] && [ -n "$CODECK_HTML_PATH" ]; then
-    local t_outline=$(_mtime "$DECK_DIR/outline.md")
+  if [ "$CODECK_HTML" = "done" ] && [ "$CODECK_OUTLINE" = "done" ] && [ -n "$CODECK_HTML_PATH" ] && [ -n "$CODECK_CONTENT_PATH" ]; then
+    local t_outline=$(_mtime "$CODECK_CONTENT_PATH")
     local t_html=$(_mtime "$CODECK_HTML_PATH")
     [ "$t_outline" -gt "$t_html" ] 2>/dev/null && echo stale && return
   fi
@@ -65,9 +75,16 @@ CODECK_STATUS_DESIGN=$(_stage_design)
 CODECK_STATUS_REVIEW=$(_stage_review)
 CODECK_STATUS_SPEECH=$(_stage_speech)
 CODECK_STATUS_EXPORT=$(_stage_export)
+CODECK_STALE=""
 
-[ "$(_stage_design_stale)" = "stale" ] && [ "$CODECK_STATUS_DESIGN" = "done" ] && CODECK_STATUS_DESIGN=stale
-[ "$(_stage_review_stale)" = "stale" ] && [ "$CODECK_STATUS_REVIEW" = "done" ] && CODECK_STATUS_REVIEW=stale
+if [ "$(_stage_design_stale)" = "stale" ] && [ "$CODECK_STATUS_DESIGN" = "done" ]; then
+  CODECK_STATUS_DESIGN=stale
+  CODECK_STALE="design"
+fi
+if [ "$(_stage_review_stale)" = "stale" ] && [ "$CODECK_STATUS_REVIEW" = "done" ]; then
+  CODECK_STATUS_REVIEW=stale
+  [ -n "$CODECK_STALE" ] && CODECK_STALE="${CODECK_STALE},review" || CODECK_STALE="review"
+fi
 
 # ─── NEXT recommendation ───
 if [ "$CODECK_STATUS_OUTLINE" = "none" ]; then
@@ -90,16 +107,19 @@ fi
 
 # ─── Title ───
 _title="new deck"
-if [ -f "$DECK_DIR/outline.md" ]; then
-  _title=$(head -1 "$DECK_DIR/outline.md" | sed 's/^#* *//' | cut -c1-36)
+if [ -n "$CODECK_CONTENT_PATH" ]; then
+  _title=$(head -1 "$CODECK_CONTENT_PATH" | sed 's/^#* *//' | cut -c1-36)
 elif [ -n "$CODECK_HTML_PATH" ]; then
   _title=$(basename "$CODECK_HTML_PATH" | sed 's/-r[0-9]*\.html$//')
 fi
 
 # ─── Meta ───
 _meta=""
-if [ -f "$DECK_DIR/outline.md" ]; then
-  _pages=$(grep -c '^## ' "$DECK_DIR/outline.md" 2>/dev/null || echo 0)
+if [ -n "$CODECK_CONTENT_PATH" ]; then
+  _pages=$(grep -Ec '^##[[:space:]]+Slide([[:space:]]+[0-9]+|[[:space:]]|$)' "$CODECK_CONTENT_PATH" 2>/dev/null || echo 0)
+  if [ "$_pages" -eq 0 ] 2>/dev/null; then
+    _pages=$(grep -Ec '^###[[:space:]]+Slide([[:space:]]+[0-9]+|[[:space:]]|$)' "$CODECK_CONTENT_PATH" 2>/dev/null || echo 0)
+  fi
   [ "$_pages" -gt 0 ] && _meta="${_pages}p"
 fi
 if [ -n "$CODECK_HTML_PATH" ]; then
@@ -140,7 +160,14 @@ _sym export "$CODECK_STATUS_EXPORT"
 echo ""
 echo ""
 if [ -n "$CODECK_NEXT" ]; then
-  echo "  → /codeck-${CODECK_NEXT}"
+  case "$CODECK_NEXT" in
+    outline) echo "  → /codeck (plan structure)" ;;
+    design)  echo "  → /codeck (generate slides)" ;;
+    review)  echo "  → /codeck (inspect and fix)" ;;
+    speech)  echo "  → /codeck speech script" ;;
+    export)  echo "  → /codeck export PDF" ;;
+    *)       echo "  → /codeck" ;;
+  esac
 else
   echo "  ✓ all done"
 fi
@@ -148,5 +175,9 @@ echo ""
 
 # ─── Machine-readable exports (for AI) ───
 echo "DECK_DIR: $DECK_DIR"
-[ -n "$CODECK_HTML_PATH" ] && echo "HTML: $CODECK_HTML_PATH"
+echo "MEMORY: $CODECK_MEMORY"
+echo "NEXT: $CODECK_NEXT"
+echo "CONTENT: ${CODECK_CONTENT_PATH:-none}"
+echo "HTML: ${CODECK_HTML_PATH:-none}"
+echo "STALE: ${CODECK_STALE:-none}"
 exit 0

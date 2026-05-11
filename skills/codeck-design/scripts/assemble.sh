@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ─── codeck assemble ───
-# 拼装 engine + AI 内容 → 单 HTML（自包含，含内联资源）
-# 用法: assemble.sh <deck_dir> <title> [lang]
-# 输出到 stdout，调用方重定向到文件
+# Assemble engine + AI content into one self-contained HTML file.
+# Usage: assemble.sh <deck_dir> <title> [lang]
+# Writes to stdout; callers redirect to a file.
 
 set -euo pipefail
 
@@ -11,11 +11,24 @@ TITLE="$2"
 LANG="${3:-zh-CN}"
 ENGINE_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# 检查必需文件
+_base64_one_line() {
+  local file="$1"
+  if base64 --help 2>&1 | grep -q -- '-w'; then
+    base64 -w0 "$file"
+  elif base64 -i "$file" >/dev/null 2>&1; then
+    base64 -i "$file" | tr -d '\n'
+  elif command -v openssl >/dev/null 2>&1; then
+    openssl base64 -A -in "$file"
+  else
+    base64 "$file" | tr -d '\n'
+  fi
+}
+
+# Check required files.
 [ -f "${DECK_DIR}/slides.html" ] || { echo "ERROR: ${DECK_DIR}/slides.html not found" >&2; exit 1; }
 [ -f "${DECK_DIR}/custom.css" ] || { echo "ERROR: ${DECK_DIR}/custom.css not found" >&2; exit 1; }
 
-# ─── 拼装到临时文件 ───
+# ─── Assemble to temp file ───
 
 TMPFILE=$(mktemp)
 trap 'rm -f "$TMPFILE"' EXIT
@@ -32,7 +45,7 @@ cat <<EOF
 EOF
 
 cat "${ENGINE_DIR}/engine.css"
-printf '\n/* ====== 设计系统 + 页面样式 ====== */\n'
+printf '\n/* ====== Design system + slide styles ====== */\n'
 cat "${DECK_DIR}/custom.css"
 
 cat <<'EOF'
@@ -58,15 +71,15 @@ cat <<'EOF'
 EOF
 } > "$TMPFILE"
 
-# ─── 内联资源（assets/ → base64 data URI） ───
-# slides.html 里引用 assets/xxx.png 会变成 data:image/png;base64,...
-# 使最终 HTML 完全自包含
+# ─── Inline assets (assets/ → base64 data URI) ───
+# References to assets/xxx.png in slides.html become data:image/png;base64,...
+# This keeps the final HTML self-contained.
 
 if [ -d "${DECK_DIR}/assets" ]; then
   for asset in "${DECK_DIR}"/assets/*; do
     [ -f "$asset" ] || continue
     filename=$(basename "$asset")
-    # 推断 MIME 类型
+    # Infer MIME type.
     case "${filename##*.}" in
       png)  mime="image/png" ;;
       jpg|jpeg) mime="image/jpeg" ;;
@@ -74,11 +87,11 @@ if [ -d "${DECK_DIR}/assets" ]; then
       svg)  mime="image/svg+xml" ;;
       webp) mime="image/webp" ;;
       ico)  mime="image/x-icon" ;;
-      *)    continue ;;  # 跳过非图片
+      *)    continue ;;  # Skip non-images.
     esac
-    b64=$(base64 -w0 "$asset" 2>/dev/null || base64 "$asset" 2>/dev/null)
+    b64=$(_base64_one_line "$asset")
     datauri="data:${mime};base64,${b64}"
-    # 替换 HTML 中的 assets/filename 引用（src="assets/..." 或 url(assets/...)）
+    # Replace assets/filename references in HTML (src="assets/..." or url(assets/...)).
     LC_ALL=C sed -i "s|assets/${filename}|${datauri}|g" "$TMPFILE" 2>/dev/null || \
     LC_ALL=C sed -i '' "s|assets/${filename}|${datauri}|g" "$TMPFILE" 2>/dev/null || true
   done

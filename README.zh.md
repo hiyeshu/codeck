@@ -2,7 +2,7 @@
 
 # codeck
 
-**你做了一个复杂的东西，但说不清楚。codeck 帮你把它讲明白。**
+**一个 skill 是一个 channel。codeck 是一个 deck room。**
 
 [在线演示 →](https://codeck.sh/codeck-intro)
 
@@ -12,27 +12,21 @@
 
 你有一个文件夹，里面是笔记、文档、数据、图片。你想做一套演示文稿。你输入 `/codeck`。
 
-codeck 读完你的文件，搞清楚你的内容*到底在讲什么*，然后请来合适的人帮忙——一个编辑负责结构，一个设计师负责视觉，一个审稿人用你最难搞的听众的眼光来挑刺。每个"人"都是从你内容的具体难点推导出来的，不是从名单里挑的。
+codeck 打开一个持久的 deck room。每个 codeck skill 都作为一个 channel 进入这个 room：outline、design、review、speech、export。
+
+channel 有地址、写入边界、房间文件和 handoff。room 把当前 deck 状态保存在 `~/.codeck/projects/{slug}/`，所以跨运行继续工作，不依赖聊天记忆。
 
 产出是一个 HTML 文件。没有模板。没有固定的幻灯片类型。每页自由 HTML——AI 可以为你的内容发明任何视觉形式。
 
 ## 怎么用
 
-```
-/codeck          扫描素材，诊断内容，推荐角色
-    ↓
-/codeck-outline  编辑规划叙事结构，锻造每个标题
-    ↓
-/codeck-design   设计师找到和你论证结构同形的视觉语言
-    ↓
-/codeck-review   你最严格的听众逐页审查，直接改
-    ├── /codeck-export   PDF / PPTX
-    └── /codeck-speech   逐字演讲稿 + 舞台指示
-```
+`/codeck` 打开 room 并读取项目。outline channel 组织故事，design channel 赋予视觉形式，review channel 像最难搞的听众一样追问。speech 和 export channel 准备交付。
+
+handoff 留在 room 里，不靠聊天历史。
 
 ## 三个想法
 
-**请人，不是定规则。** codeck 不硬编码设计指南，而是选择真实的人——思想家、设计师、编辑——他们的*思维方式*和你内容的挑战匹配。假设你的论证需要让看不见的东西变得显而易见：codeck 可能请来 Feynman。不是因为你在讲物理，而是因为这就是 Feynman *做的事*。人名激活 AI 对这个人工作方式的知识。
+**一个 skill 是一个 channel。** codeck 不是一个超长 prompt 假装成团队。每个 skill 在 room 里拥有一个 channel：它响应什么、写什么、交给谁。
 
 **同构映射。** 设计之前，codeck 分析你内容的*形式结构*——张力曲线、信息密度、情绪弧线。然后从另一个领域找到结构上的对应：一首乐曲、一种绘画风格、一个建筑原则。你的幻灯片不只是*装着*你的论证——它们*长得像*你的论证。（受侯世达《集异壁》启发。）
 
@@ -82,4 +76,4 @@ npx skills add hiyeshu/codeck
 
 ## License
 
-Apache-2.0
+MIT

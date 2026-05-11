@@ -2,7 +2,7 @@
 
 # codeck
 
-**You built something complex. codeck helps you explain it.**
+**A skill is a channel. codeck is a deck room.**
 
 [Live demo →](https://codeck.sh/codeck-intro)
 
@@ -12,27 +12,21 @@ English | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md) | [日�
 
 You have a folder of notes, docs, data, and images. You want a presentation. You type `/codeck`.
 
-codeck reads your files, figures out what your content is *really about*, then brings in the right people to help — an editor for structure, a designer for visuals, a reviewer who thinks like your toughest audience member. Each "person" is a role derived from your content's specific challenges, not picked from a list.
+codeck opens a persistent deck room. Each codeck skill enters that room as a channel: outline, design, review, speech, and export.
+
+A channel has an address, a write boundary, room files, and a handoff. The room keeps the current deck state in `~/.codeck/projects/{slug}/`, so work can continue across runs without relying on chat memory.
 
 The result is a single HTML file. No templates. No slide-type vocabulary. Free HTML per slide — the AI can invent any visual form your content needs.
 
 ## How it works
 
-```
-/codeck          scan materials, diagnose content, recommend roles
-    ↓
-/codeck-outline  editor structures the narrative, smiths every title
-    ↓
-/codeck-design   designer finds visual form that mirrors your argument's shape
-    ↓
-/codeck-review   your toughest listener reviews every slide, fixes directly
-    ├── /codeck-export   PDF / PPTX
-    └── /codeck-speech   verbatim script with stage directions
-```
+`/codeck` opens the room and reads the project. The outline channel shapes the story. The design channel gives the story visual form. The review channel pushes back like the hardest audience member. Speech and export channels prepare delivery.
+
+The handoff lives in the room, not in chat history.
 
 ## Three ideas
 
-**Roles, not rules.** Instead of hard-coded design guidelines, codeck selects real people — thinkers, designers, editors — whose *way of thinking* matches your content's challenge. Say your argument needs to make the invisible feel obvious: codeck might bring in Feynman. Not because the topic is physics, but because that's what Feynman *does*. The name activates the AI's knowledge of how that person works.
+**A skill is a channel.** codeck is not a single long prompt pretending to be a team. Each skill owns one channel in the room: what it listens for, what it writes, and who it hands off to.
 
 **Isomorphic mapping.** Before designing, codeck analyzes the *formal structure* of your content — its tension curve, information density, emotional arc. Then it finds a structural match from another domain: a piece of music, a painting style, an architectural principle. Your slides don't just *contain* your argument — they *look like* it. (Inspired by Hofstadter's *GEB*.)
 
@@ -86,4 +80,4 @@ The slide engine's navigation UI is inspired by [Slidev](https://github.com/slid
 
 ## License
 
-Apache-2.0
+MIT
