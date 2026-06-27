@@ -1,0 +1,15 @@
+<!--
+[INPUT]: Referenced by .codex-plugin/plugin.json logo and composerIcon fields.
+[OUTPUT]: Provides the codeck plugin icon for Codex plugin UI.
+[POS]: .codex-plugin/assets display asset; unrelated to deck runtime assets.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="codeck">
+  <rect width="128" height="128" rx="28" fill="#0f172a"/>
+  <rect x="22" y="28" width="84" height="54" rx="8" fill="#eff6ff"/>
+  <rect x="32" y="39" width="44" height="7" rx="3.5" fill="#2563eb"/>
+  <rect x="32" y="53" width="64" height="5" rx="2.5" fill="#64748b"/>
+  <rect x="32" y="64" width="50" height="5" rx="2.5" fill="#94a3b8"/>
+  <path d="M48 98h32M64 82v16" stroke="#eff6ff" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="96" cy="32" r="10" fill="#38bdf8"/>
+</svg>

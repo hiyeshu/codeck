@@ -12,7 +12,7 @@
 
 폴더에 메모, 문서, 데이터, 이미지가 있다. 프레젠테이션을 만들고 싶다. `/codeck`을 입력한다.
 
-codeck은 지속되는 deck room을 연다. 각 codeck skill은 그 room에 channel로 들어간다: outline, design, review, speech, export.
+codeck은 지속되는 deck room을 연다. 사용자에게 보이는 skill은 하나이고, 내부 channel인 outline, design, review, speech, export로 작업을 라우팅한다.
 
 channel에는 주소, 쓰기 경계, room files, handoff가 있다. room은 현재 deck state를 `~/.codeck/projects/{slug}/`에 보관하므로 chat memory에 의존하지 않고 다음 실행에서도 이어서 작업할 수 있다.
 
@@ -26,7 +26,7 @@ handoff는 chat history가 아니라 room에 남는다.
 
 ## 세 가지 아이디어
 
-**skill은 channel이다.** codeck은 팀인 척하는 긴 prompt가 아니다. 각 skill은 room 안에서 하나의 channel을 가진다. 무엇을 듣고, 무엇을 쓰고, 누구에게 handoff할지가 정해져 있다.
+**skill은 channel이다.** codeck은 팀인 척하는 긴 prompt가 아니다. 이 skill이 하나의 room을 열고, 고정 lane들이 각자 쓰기 경계를 가진다. 무엇을 듣고, 무엇을 쓰고, 누구에게 handoff할지가 정해져 있다.
 
 **동형 사상.** 디자인 전에 codeck은 콘텐츠의 *형식 구조*를 분석한다. 긴장 곡선, 정보 밀도, 감정 아크. 그리고 다른 영역에서 구조적으로 대응하는 것을 찾는다. 악곡, 회화 양식, 건축 원리. 슬라이드는 당신의 논증을 *담기만* 하는 게 아니라, 논증과 *같은 모양*을 한다. (호프스태터 『괴델, 에셔, 바흐』에서 영감.)
 
@@ -55,6 +55,7 @@ npx skills add hiyeshu/codeck
 | `Esc` | 오버뷰 |
 | `F` | 전체 화면 |
 | `P` | 발표자 모드 |
+| `E` | 편집 모드 |
 
 터치: 좌우 스와이프로 탐색. 플로팅 툴바는 데스크톱에서 호버 시 표시, 모바일에서 상시 표시.
 

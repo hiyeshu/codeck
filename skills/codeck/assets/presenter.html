@@ -1,0 +1,34 @@
+<!--
+[INPUT]: Depends on icons.svg symbols and render-engine.js presenter action handlers.
+[OUTPUT]: Provides presenter-mode layout, controls, notes, next preview, and timer slots.
+[POS]: skills/codeck/assets build-time template; inlined by assemble.sh as PRESENTER_HTML.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
+<div class="pv-main"><div class="pv-viewport" id="pv-cur"></div></div>
+<div class="pv-side">
+  <div class="pv-next-wrap"><div class="pv-viewport" id="pv-next"></div></div>
+  <div class="pv-notes-wrap">
+    <div class="pv-notes-body" id="pv-notes"></div>
+  </div>
+</div>
+<div class="pv-toolbar">
+  <div class="pv-toolbar-group">
+    <button class="pv-btn" data-act="prev" data-tip="Previous (Left)"><svg class="ck-icon"><use href="#icon-left"/></svg></button>
+    <button class="pv-btn" data-act="next" data-tip="Next (Right)"><svg class="ck-icon"><use href="#icon-right"/></svg></button>
+    <span class="pv-counter" id="pv-counter"></span>
+  </div>
+  <div class="pv-toolbar-group">
+    <button class="pv-btn" data-act="overview" data-tip="Overview (Esc)"><svg class="ck-icon"><use href="#icon-grid"/></svg></button>
+    <button class="pv-btn" data-act="fullscreen" data-tip="Fullscreen (F)"><svg class="ck-icon"><use href="#icon-fullscreen"/></svg></button>
+  </div>
+  <div class="pv-toolbar-group">
+    <button class="pv-btn pv-btn-sm" data-act="zoom-out" data-tip="Zoom out"><svg class="ck-icon"><use href="#icon-zoomout"/></svg></button>
+    <button class="pv-btn pv-btn-sm" data-act="zoom-in" data-tip="Zoom in"><svg class="ck-icon"><use href="#icon-zoomin"/></svg></button>
+  </div>
+  <div class="pv-toolbar-group">
+    <button class="pv-btn pv-btn-sm" data-act="theme" data-tip="Toggle theme" id="pv-theme-btn"><svg class="ck-icon"><use href="#icon-sun"/></svg></button>
+  </div>
+  <div class="pv-toolbar-group pv-timer-group">
+    <span class="pv-time" id="pv-time" data-tip="Click: pause. Double-click: reset">00:00</span>
+  </div>
+</div>

@@ -12,7 +12,7 @@ English | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md) | [日�
 
 You have a folder of notes, docs, data, and images. You want a presentation. You type `/codeck`.
 
-codeck opens a persistent deck room. Each codeck skill enters that room as a channel: outline, design, review, speech, and export.
+codeck opens a persistent deck room. One user-facing skill routes work through internal channels: outline, design, review, speech, and export.
 
 A channel has an address, a write boundary, room files, and a handoff. The room keeps the current deck state in `~/.codeck/projects/{slug}/`, so work can continue across runs without relying on chat memory.
 
@@ -26,7 +26,7 @@ The handoff lives in the room, not in chat history.
 
 ## Three ideas
 
-**A skill is a channel.** codeck is not a single long prompt pretending to be a team. Each skill owns one channel in the room: what it listens for, what it writes, and who it hands off to.
+**A skill is a channel.** codeck is not a single long prompt pretending to be a team. The skill opens one room, then fixed lanes own clear write boundaries: what they listen for, what they write, and who they hand off to.
 
 **Isomorphic mapping.** Before designing, codeck analyzes the *formal structure* of your content — its tension curve, information density, emotional arc. Then it finds a structural match from another domain: a piece of music, a painting style, an architectural principle. Your slides don't just *contain* your argument — they *look like* it. (Inspired by Hofstadter's *GEB*.)
 
@@ -42,6 +42,17 @@ npx skills add hiyeshu/codeck
 
 Type `/codeck` to start.
 
+## Codex plugin shape
+
+This repository also carries a Cowart-style Codex plugin shell:
+
+```text
+.codex-plugin/plugin.json
+skills/codeck/SKILL.md
+```
+
+The plugin manifest exposes the same `skills/` directory. codeck does not declare an MCP server or local frontend app yet; the fixed deck runtime lives inside the skill and is inlined into each generated HTML file.
+
 ## The HTML file
 
 The output is a self-contained HTML file. Open it in any browser. No server, no build tools.
@@ -55,6 +66,7 @@ The output is a self-contained HTML file. Open it in any browser. No server, no 
 | `Esc` | Toggle overview grid |
 | `F` | Toggle fullscreen |
 | `P` | Open presenter mode |
+| `E` | Toggle editor mode |
 
 Touch: swipe left/right to navigate. A floating toolbar appears at the bottom on hover (desktop) or always visible (mobile).
 

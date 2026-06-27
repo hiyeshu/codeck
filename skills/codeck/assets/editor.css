@@ -1,0 +1,272 @@
+/*
+ * [INPUT]: 依赖 editor-engine.js 的 editor-mode/mark-mode 状态与编辑器 DOM。
+ * [OUTPUT]: 提供编辑工具栏、图片槽、标注高亮、批注气泡样式。
+ * [POS]: skills/codeck/assets 的编辑器样式扩展,由 assemble.sh 紧随 base.css 内联。
+ * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ */
+
+/* ═══════════════════════════════════════
+   Editor mode — in-browser text + image editing
+   Toggled by E key or toolbar pencil button.
+   ═══════════════════════════════════════ */
+
+/* Pin slide toolbar visible while editing */
+#app.editor-mode #slide-toolbar {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+/* Hide keyboard hints overlay in editor mode */
+#app.editor-mode #key-hints { display: none !important; }
+
+/* Text editing cursor */
+#app.editor-mode .slide[contenteditable="true"] { cursor: text; }
+#app.editor-mode .slide[contenteditable="true"]:focus { outline: none; }
+
+/* Image replacement affordance */
+#app.editor-mode .slide img {
+  cursor: pointer;
+  transition: filter 0.15s, box-shadow 0.15s;
+}
+#app.editor-mode .slide img:hover {
+  filter: brightness(0.72);
+  box-shadow: 0 0 0 3px var(--accent, #4af);
+}
+#app.editor-mode .slide img.drag-over {
+  filter: brightness(0.55);
+  box-shadow: 0 0 0 4px var(--accent, #4af);
+}
+
+/* Image placeholder slots — work in any mode so authors can
+   see unfilled slots, but only become interactive in editor mode. */
+[data-img-slot] {
+  position: relative;
+  display: block;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+[data-img-slot] img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+#app.editor-mode [data-img-slot] { cursor: pointer; }
+#app.editor-mode [data-img-slot]:empty {
+  border: 2px dashed rgba(128,128,128,0.35);
+  border-radius: 8px;
+  background: rgba(128,128,128,0.06);
+}
+#app.editor-mode [data-img-slot]:empty::before {
+  content: 'Click or drop image';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg, #ccc);
+  opacity: 0.55;
+  font-size: 14px;
+  font-family: var(--font-body, system-ui, sans-serif);
+  pointer-events: none;
+}
+#app.editor-mode [data-img-slot]:empty:hover {
+  border-color: var(--accent, #4af);
+  background: rgba(74,170,255,0.08);
+}
+#app.editor-mode [data-img-slot].drag-over {
+  border-color: var(--accent, #4af) !important;
+  background: rgba(74,170,255,0.14) !important;
+}
+
+/* ─── Editor toolbar ─── */
+#editor-toolbar {
+  position: fixed;
+  top: 16px; right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 999px;
+  z-index: 200;
+  user-select: none;
+}
+.ed-btn {
+  height: 32px;
+  min-width: 32px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s, background 0.15s;
+}
+.ed-btn:hover { color: #fff; background: rgba(255,255,255,0.12); }
+.ed-btn svg { width: 18px; height: 18px; }
+.ed-label { font-weight: 500; }
+.ed-btn-primary {
+  background: var(--accent, #4af);
+  color: #fff;
+}
+.ed-btn-primary:hover {
+  background: var(--accent, #4af);
+  filter: brightness(1.1);
+  color: #fff;
+}
+.ed-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255,255,255,0.18);
+  margin: 0 4px;
+}
+.ed-btn[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.ed-btn[data-tip]:hover::after { opacity: 1; }
+
+/* Light theme variants for editor toolbar */
+@media (prefers-color-scheme: light) {
+  #editor-toolbar { background: rgba(255,255,255,0.75); }
+  .ed-btn { color: rgba(0,0,0,0.65); }
+  .ed-btn:hover { color: #111; background: rgba(0,0,0,0.08); }
+  .ed-divider { background: rgba(0,0,0,0.12); }
+}
+[data-ui-theme="light"] #editor-toolbar { background: rgba(255,255,255,0.75); }
+[data-ui-theme="light"] .ed-btn { color: rgba(0,0,0,0.65); }
+[data-ui-theme="light"] .ed-btn:hover { color: #111; background: rgba(0,0,0,0.08); }
+[data-ui-theme="light"] .ed-divider { background: rgba(0,0,0,0.12); }
+[data-ui-theme="dark"] #editor-toolbar { background: rgba(0,0,0,0.6); }
+[data-ui-theme="dark"] .ed-btn { color: rgba(255,255,255,0.8); }
+[data-ui-theme="dark"] .ed-btn:hover { color: #fff; background: rgba(255,255,255,0.12); }
+[data-ui-theme="dark"] .ed-divider { background: rgba(255,255,255,0.18); }
+
+/* Mobile: anchor editor toolbar above the slide toolbar */
+@media (max-width: 768px) {
+  #editor-toolbar {
+    top: auto;
+    bottom: 64px;
+    right: 12px;
+    left: 12px;
+    justify-content: center;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Annotation (mark) mode — pins + highlights.
+   Visible in all modes so user sees marks during review.
+   ═══════════════════════════════════════ */
+
+/* Mark mode cursor */
+#app.mark-mode .slide { cursor: crosshair; }
+#app.mark-mode .slide *:not(#editor-toolbar):not(#slide-toolbar):not(.ck-pin) {
+  cursor: crosshair;
+}
+
+/* Active mark button */
+.ed-btn-active {
+  background: var(--accent, #4af);
+  color: #fff;
+}
+.ed-btn-active:hover {
+  background: var(--accent, #4af);
+  filter: brightness(1.1);
+  color: #fff;
+}
+
+/* Highlighted text marks (visible in all modes) */
+mark[data-ck-mark-type] {
+  background: #ffd54f;
+  color: #1a1a1a;
+  padding: 0 2px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255,213,79,0.5);
+}
+mark[data-ck-mark-type]::after {
+  content: ' ✎';
+  color: #b8860b;
+  font-size: 0.85em;
+}
+
+/* Pin markers */
+.ck-pin {
+  position: absolute;
+  z-index: 50;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+.ck-pin-dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  background: #e53935;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  margin: 0 auto;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.ck-pin-bubble {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 120px;
+  max-width: 260px;
+  padding: 8px 28px 8px 10px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: auto;
+  white-space: normal;
+}
+.ck-pin:hover .ck-pin-bubble { opacity: 1; }
+.ck-pin-close {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px;
+}
+.ck-pin-close:hover { color: #fff; }
+
+/* Light theme pin bubble */
+@media (prefers-color-scheme: light) {
+  .ck-pin-bubble { background: #fff; color: #1a1a1a; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+  .ck-pin-close { color: rgba(0,0,0,0.5); }
+  .ck-pin-close:hover { color: #000; }
+}
+[data-ui-theme="light"] .ck-pin-bubble { background: #fff; color: #1a1a1a; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+[data-ui-theme="light"] .ck-pin-close { color: rgba(0,0,0,0.5); }
+[data-ui-theme="light"] .ck-pin-close:hover { color: #000; }

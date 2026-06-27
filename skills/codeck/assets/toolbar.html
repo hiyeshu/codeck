@@ -1,0 +1,13 @@
+<!--
+[INPUT]: Depends on icons.svg symbols and render-engine.js toolbar action handlers.
+[OUTPUT]: Provides the main slide toolbar HTML fragment.
+[POS]: skills/codeck/assets build-time template; inlined by assemble.sh as TOOLBAR_HTML.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
+<button class="tb-btn" data-act="overview" data-tip="Overview (Esc)"><svg class="ck-icon"><use href="#icon-grid"/></svg></button>
+<button class="tb-btn" data-act="prev" data-tip="Previous (Left)"><svg class="ck-icon"><use href="#icon-left"/></svg></button>
+<span class="tb-counter" id="slide-counter"></span>
+<button class="tb-btn" data-act="next" data-tip="Next (Right)"><svg class="ck-icon"><use href="#icon-right"/></svg></button>
+<button class="tb-btn" data-act="presenter" data-tip="Presenter (P)"><svg class="ck-icon"><use href="#icon-presenter"/></svg></button>
+<button class="tb-btn" data-act="edit" data-tip="Edit (E)"><svg class="ck-icon"><use href="#icon-edit"/></svg></button>
+<button class="tb-btn" data-act="fullscreen" data-tip="Fullscreen (F)"><svg class="ck-icon"><use href="#icon-fullscreen"/></svg></button>

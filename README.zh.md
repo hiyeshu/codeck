@@ -12,7 +12,7 @@
 
 你有一个文件夹，里面是笔记、文档、数据、图片。你想做一套演示文稿。你输入 `/codeck`。
 
-codeck 打开一个持久的 deck room。每个 codeck skill 都作为一个 channel 进入这个 room：outline、design、review、speech、export。
+codeck 打开一个持久的 deck room。一个用户可见 skill 在内部 channel 之间路由工作：outline、design、review、speech、export。
 
 channel 有地址、写入边界、房间文件和 handoff。room 把当前 deck 状态保存在 `~/.codeck/projects/{slug}/`，所以跨运行继续工作，不依赖聊天记忆。
 
@@ -26,7 +26,7 @@ handoff 留在 room 里，不靠聊天历史。
 
 ## 三个想法
 
-**一个 skill 是一个 channel。** codeck 不是一个超长 prompt 假装成团队。每个 skill 在 room 里拥有一个 channel：它响应什么、写什么、交给谁。
+**一个 skill 是一个 channel。** codeck 不是一个超长 prompt 假装成团队。这个 skill 打开一个 room，然后固定 lanes 各自拥有清晰写入边界：响应什么、写什么、交给谁。
 
 **同构映射。** 设计之前，codeck 分析你内容的*形式结构*——张力曲线、信息密度、情绪弧线。然后从另一个领域找到结构上的对应：一首乐曲、一种绘画风格、一个建筑原则。你的幻灯片不只是*装着*你的论证——它们*长得像*你的论证。（受侯世达《集异壁》启发。）
 
@@ -55,6 +55,7 @@ npx skills add hiyeshu/codeck
 | `Esc` | 总览视图 |
 | `F` | 全屏 |
 | `P` | 演讲者模式 |
+| `E` | 编辑模式 |
 
 触屏：左右滑动翻页。底部浮动工具栏桌面端悬停显示，移动端常驻。
 

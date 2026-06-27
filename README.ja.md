@@ -12,7 +12,7 @@
 
 フォルダにメモ、ドキュメント、データ、画像がある。プレゼンを作りたい。`/codeck` と打つ。
 
-codeck は永続的な deck room を開く。各 codeck skill は、その room に channel として入る。outline、design、review、speech、export。
+codeck は永続的な deck room を開く。ユーザーから見える skill は 1 つで、その内部 channel として outline、design、review、speech、export にルーティングする。
 
 channel にはアドレス、書き込み境界、room files、handoff がある。room は現在の deck state を `~/.codeck/projects/{slug}/` に保持するので、chat memory に頼らず次の実行でも続きから作業できる。
 
@@ -26,7 +26,7 @@ handoff は chat history ではなく room に残る。
 
 ## 3つのアイデア
 
-**skill は channel。** codeck は、チームのふりをした長い prompt ではない。各 skill は room の中に 1 つの channel を持つ。何を受け取り、何を書き、誰へ handoff するかが決まっている。
+**skill は channel。** codeck は、チームのふりをした長い prompt ではない。この skill が 1 つの room を開き、固定 lane がそれぞれ書き込み境界を持つ。何を受け取り、何を書き、誰へ handoff するかが決まっている。
 
 **同型写像。** デザインの前に、codeck はコンテンツの*形式構造*を分析する。テンションカーブ、情報密度、感情のアーク。そして別の領域から構造的に対応するものを見つける。楽曲、絵画様式、建築原理。スライドはあなたの議論を*格納する*だけでなく、議論と*同じ形をしている*。（ホフスタッター『ゲーデル、エッシャー、バッハ』に触発。）
 
@@ -55,6 +55,7 @@ npx skills add hiyeshu/codeck
 | `Esc` | オーバービュー |
 | `F` | フルスクリーン |
 | `P` | プレゼンターモード |
+| `E` | 編集モード |
 
 タッチ：左右スワイプで操作。フローティングツールバーはデスクトップではホバーで表示、モバイルでは常時表示。
 

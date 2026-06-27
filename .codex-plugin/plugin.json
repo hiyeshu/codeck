@@ -1,0 +1,42 @@
+{
+  "name": "codeck",
+  "version": "3.0.0",
+  "description": "A Codex presentation room plugin that routes one user-facing skill through outline, design, review, export, and speech lanes.",
+  "author": {
+    "name": "hiyeshu",
+    "url": "https://codeck.sh"
+  },
+  "homepage": "https://codeck.sh/codeck-intro",
+  "keywords": [
+    "presentation",
+    "slides",
+    "deck",
+    "html",
+    "speaker-notes",
+    "presenter-mode"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "codeck",
+    "shortDescription": "Create, review, export, and present self-contained HTML decks from a persistent deck room.",
+    "longDescription": "codeck opens a project-local presentation workbench, scans source materials, routes work through fixed outline/design/review/export/speech lanes, and produces a self-contained HTML deck with presenter and editor modes. The plugin ships the fixed runtime and deterministic scripts; each user's deck state stays in their own project room.",
+    "developerName": "hiyeshu",
+    "category": "Productivity",
+    "websiteURL": "https://codeck.sh/codeck-intro",
+    "brandColor": "#2563EB",
+    "logo": "./.codex-plugin/assets/app-icon.svg",
+    "composerIcon": "./.codex-plugin/assets/app-icon.svg",
+    "capabilities": [
+      "Persistent deck room",
+      "Self-contained HTML decks",
+      "Presenter mode",
+      "Editor mode",
+      "PDF/PPTX export bridge"
+    ],
+    "defaultPrompt": [
+      "Use codeck to make a presentation from this project.",
+      "Review the latest codeck deck and fix scoped issues.",
+      "Export the latest codeck deck to PDF."
+    ]
+  }
+}

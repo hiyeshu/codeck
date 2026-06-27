@@ -1,0 +1,15 @@
+<!--
+[INPUT]: Depends on icons.svg symbols and render-engine.js editor action handlers.
+[OUTPUT]: Provides editor-mode toolbar controls for exit, undo, redo, save, mark, and feedback export.
+[POS]: skills/codeck/assets build-time template; inlined by assemble.sh as EDITOR_TOOLBAR_HTML.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
+<button class="ed-btn" data-act="exit" data-tip="Exit editor (E)"><svg class="ck-icon"><use href="#icon-exit"/></svg></button>
+<span class="ed-divider"></span>
+<button class="ed-btn" data-act="undo" data-tip="Undo (Ctrl+Z)"><svg class="ck-icon"><use href="#icon-undo"/></svg></button>
+<button class="ed-btn" data-act="redo" data-tip="Redo (Ctrl+Y)"><svg class="ck-icon"><use href="#icon-redo"/></svg></button>
+<span class="ed-divider"></span>
+<button class="ed-btn" data-act="mark" data-tip="Mark mode (M)" id="ed-mark-btn"><svg class="ck-icon"><use href="#icon-mark"/></svg></button>
+<button class="ed-btn" data-act="feedback" data-tip="Export feedback"><svg class="ck-icon"><use href="#icon-feedback"/></svg><span class="ed-label">Feedback</span></button>
+<span class="ed-divider"></span>
+<button class="ed-btn ed-btn-primary" data-act="save" data-tip="Save (Ctrl+S)"><svg class="ck-icon"><use href="#icon-save"/></svg><span class="ed-label">Save</span></button>

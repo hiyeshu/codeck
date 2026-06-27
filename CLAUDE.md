@@ -2,15 +2,26 @@
 
 ## Architecture
 
-codeck outputs a **single HTML file**, built by `build-html.sh` wrapping `assemble.sh`:
+codeck outputs a **single self-contained HTML file**, built by `build-html.sh` wrapping `assemble.sh`:
 
 | Author | File | Role |
 |--------|------|------|
-| Human (fixed) | `engine.js` + `engine.css` + `build-html.sh` | Navigation, fragments, overview, speaker mode, progress bar, final HTML validation |
+| Human (fixed) | `render-engine.js` + `assets/base.css` + `build-html.sh` + `validate-design.sh` | Navigation, fragments, overview, speaker mode, editor mode, progress bar, design/build validation |
+| Human (fixed) | `assets/toolbar.html`, `assets/presenter.html`, `assets/editor-toolbar.html`, `assets/icons.svg` | Toolbar, speaker-mode, editor-mode, and icon fragments inlined at build time |
+| Human (fixed) | `scripts/office/soffice.py` + `scripts/thumbnail.py` | PDF/PPTX export bridge and visual QA thumbnails |
 | AI (per deck) | `custom.css` | `:root` variables + layout primitives + per-page styles + mobile |
 | AI (per deck) | `slides.html` | `<section class="slide" data-notes="...">` free HTML |
 
 Engine code is fixed. AI handles content and visuals only.
+
+## Plugin shape
+
+codeck follows the Cowart-style repository shape:
+
+- `.codex-plugin/plugin.json` is the Codex plugin manifest.
+- `skills/` is the installable skill surface exposed by the plugin.
+- `skills/codeck/` is the single user-facing skill.
+- No MCP server or frontend app is declared until there is a real local service to run.
 
 ## Deck room
 
@@ -43,7 +54,7 @@ Room documents have rank:
 
 ## Directory structure
 
-Skills install into the active runtime's skills directory. codeck scripts probe these locations in order: `~/.agents/skills/codeck*/`, `~/.codex/skills/codeck*/`, `~/.claude/skills/codeck*/`. The first match wins, so the same SKILL.md works under Cursor agents, Codex CLI, and Claude.
+The single codeck skill installs into the active runtime's skills directory. codeck probes these locations in order: `~/.agents/skills/codeck/`, `~/.codex/skills/codeck/`, `~/.claude/skills/codeck/`. The first match wins, so the same SKILL.md works under Cursor agents, Codex CLI, and Claude. No glob — one skill directory.
 
 Two directories at runtime:
 - **cwd** — the user's project. codeck reads materials here, writes final deliverables here (HTML, PDF, PPTX).
@@ -55,16 +66,38 @@ Two directories at runtime:
 codeck/
 ├── CLAUDE.md         # mirror of AGENTS.md for Claude runtime
 ├── AGENTS.md         # agents/codex runtime entry
+├── .codex-plugin/
+│   ├── CLAUDE.md
+│   ├── plugin.json   # Codex plugin manifest
+│   └── assets/
+│       ├── CLAUDE.md
+│       └── app-icon.svg
 ├── skills/
-│   ├── CLAUDE.md      # Member list + changelog
-│   ├── CONVENTIONS.md # Skill authoring conventions
-│   ├── codeck/        # Entry dashboard
-│   │   ├── CLAUDE.md  # Entry lane map
-│   │   └── scripts/   # Room bootstrap + probes
-│   ├── codeck-outline/
-│   ├── codeck-design/
-│   ├── codeck-review/
-│   ├── codeck-export/
-│   └── codeck-speech/
+│   ├── CLAUDE.md
+│   └── codeck/       # single consolidated skill
+│       ├── CLAUDE.md
+│       ├── SKILL.md
+│       ├── references/
+│       │   ├── CLAUDE.md
+│       │   ├── workflow.md   # room contract + outline lane
+│       │   ├── design.md     # design lane + recipe library
+│       │   └── delivery.md   # review + export + speech lanes
+│       ├── scripts/
+│       │   ├── CLAUDE.md
+│       │   ├── assemble.sh
+│       │   ├── build-html.sh
+│       │   ├── validate-design.sh
+│       │   ├── render-engine.js
+│       │   ├── thumbnail.py
+│       │   └── office/
+│       │       ├── CLAUDE.md
+│       │       └── soffice.py
+│       └── assets/
+│           ├── CLAUDE.md
+│           ├── toolbar.html
+│           ├── presenter.html
+│           ├── editor-toolbar.html
+│           ├── icons.svg
+│           └── base.css
 └── README.md
 ```

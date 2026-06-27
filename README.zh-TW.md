@@ -12,7 +12,7 @@
 
 你有一個資料夾，裡面是筆記、文件、資料、圖片。你想做一套簡報。你輸入 `/codeck`。
 
-codeck 打開一個持久的 deck room。每個 codeck skill 都作為一個 channel 進入這個 room：outline、design、review、speech、export。
+codeck 打開一個持久的 deck room。一個使用者可見 skill 在內部 channel 之間路由工作：outline、design、review、speech、export。
 
 channel 有地址、寫入邊界、房間檔案和 handoff。room 把當前 deck 狀態保存在 `~/.codeck/projects/{slug}/`，所以跨執行繼續工作，不依賴聊天記憶。
 
@@ -26,7 +26,7 @@ handoff 留在 room 裡，不靠聊天歷史。
 
 ## 三個想法
 
-**一個 skill 是一個 channel。** codeck 不是一個超長 prompt 假裝成團隊。每個 skill 在 room 裡擁有一個 channel：它回應什麼、寫什麼、交給誰。
+**一個 skill 是一個 channel。** codeck 不是一個超長 prompt 假裝成團隊。這個 skill 打開一個 room，然後固定 lanes 各自擁有清晰寫入邊界：回應什麼、寫什麼、交給誰。
 
 **同構映射。** 設計之前，codeck 分析你內容的*形式結構*——張力曲線、資訊密度、情緒弧線。然後從另一個領域找到結構上的對應：一首樂曲、一種繪畫風格、一個建築原則。你的投影片不只是*裝著*你的論證——它們*長得像*你的論證。（受侯世達《乙乙乙》啟發。）
 
@@ -55,6 +55,7 @@ npx skills add hiyeshu/codeck
 | `Esc` | 總覽檢視 |
 | `F` | 全螢幕 |
 | `P` | 演講者模式 |
+| `E` | 編輯模式 |
 
 觸控螢幕：左右滑動翻頁。底部浮動工具列桌面端懸停顯示，行動裝置端常駐。
 

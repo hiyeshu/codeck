@@ -1,0 +1,25 @@
+<!--
+[INPUT]: Referenced by toolbar.html, presenter.html, editor-toolbar.html, and render-engine.js icon().
+[OUTPUT]: Provides the fixed SVG symbol sprite for codeck runtime controls.
+[POS]: skills/codeck/assets icon sprite; inlined into final HTML by assemble.sh.
+[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-->
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="icon-grid" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></symbol>
+  <symbol id="icon-left" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 4l-6 6 6 6"/></symbol>
+  <symbol id="icon-right" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 4l6 6-6 6"/></symbol>
+  <symbol id="icon-presenter" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="16" height="11" rx="1.5"/><path d="M7 17h6M10 14v3"/></symbol>
+  <symbol id="icon-fullscreen" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7V4a1 1 0 011-1h3M13 3h3a1 1 0 011 1v3M17 13v3a1 1 0 01-1 1h-3M7 17H4a1 1 0 01-1-1v-3"/></symbol>
+  <symbol id="icon-exitfs" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3v3a1 1 0 01-1 1H3M17 7h-3a1 1 0 01-1-1V3M13 17v-3a1 1 0 011-1h3M3 13h3a1 1 0 011 1v3"/></symbol>
+  <symbol id="icon-zoomin" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="6"/><path d="M10 7v6M7 10h6"/></symbol>
+  <symbol id="icon-zoomout" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="6"/><path d="M7 10h6"/></symbol>
+  <symbol id="icon-sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="4"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41"/></symbol>
+  <symbol id="icon-moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 11.5a7 7 0 01-9.5-6.5 7 7 0 109.5 6.5z"/></symbol>
+  <symbol id="icon-edit" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3l3 3-9 9-4 1 1-4 9-9z"/></symbol>
+  <symbol id="icon-save" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h11l3 3v9a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M7 4v4h7M7 12h6"/></symbol>
+  <symbol id="icon-undo" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8h8a4 4 0 010 8H8"/><path d="M5 8l3-3M5 8l3 3"/></symbol>
+  <symbol id="icon-redo" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 8H7a4 4 0 000 8h5"/><path d="M15 8l-3-3M15 8l-3 3"/></symbol>
+  <symbol id="icon-exit" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></symbol>
+  <symbol id="icon-mark" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h12v9l-3 3H4z"/><path d="M7 8h6M7 11h4"/></symbol>
+  <symbol id="icon-feedback" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h14v9H8l-4 4v-4H3z"/><path d="M7 8h6M7 11h4"/></symbol>
+</svg>
