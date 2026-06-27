@@ -51,11 +51,19 @@ This repository also carries a Cowart-style Codex plugin shell:
 skills/codeck/SKILL.md
 ```
 
-The plugin manifest exposes the same `skills/` directory. codeck does not declare an MCP server or local frontend app yet; the fixed deck runtime lives inside the skill and is inlined into each generated HTML file.
+The plugin manifest exposes the same `skills/` directory and a small MCP bridge for the local deck editor. The fixed deck runtime still lives inside the skill and is inlined into each generated HTML file; the local service only persists the latest UI selection, editor events, agent-marker inbox messages, assets, and revision snapshots in the user's deck room.
 
 ## The HTML file
 
 The output is a self-contained HTML file. Open it in any browser. No server, no build tools.
+
+For human-agent collaboration, codeck can also run a local deck editor service:
+
+```bash
+skills/codeck/scripts/start-deck-editor.sh ~/.codeck/projects/{slug}
+```
+
+The browser uses the HTML deck as the main canvas. In editor mode, slide elements get stable `data-ck-id` markers; clicks update `state/selection.json`, operations append to `events/`, and right-side agent marker requests go to `inbox/`. Assets and revision snapshots stay under `assets/` and `revisions/`, where Codex can read them through MCP and rebuild the next revision from source files.
 
 ### Keyboard shortcuts
 

@@ -16,6 +16,7 @@
     "presenter-mode"
   ],
   "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "codeck",
     "shortDescription": "Create, review, export, and present self-contained HTML decks from a persistent deck room.",
@@ -31,10 +32,14 @@
       "Self-contained HTML decks",
       "Presenter mode",
       "Editor mode",
+      "Local deck editor service",
+      "Observable UI selection",
+      "Agent marker inbox",
       "PDF/PPTX export bridge"
     ],
     "defaultPrompt": [
       "Use codeck to make a presentation from this project.",
+      "Open the codeck deck editor for the latest deck.",
       "Review the latest codeck deck and fix scoped issues.",
       "Export the latest codeck deck to PDF."
     ]

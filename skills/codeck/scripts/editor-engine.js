@@ -1,12 +1,21 @@
   /**
    * [INPUT]: 依赖 render-engine.js 的 slides/editor 状态与模板常量。
-   * [OUTPUT]: 提供编辑模式、图片替换、标注、反馈导出函数。
-   * [POS]: skills/codeck/scripts 的编辑器扩展,由 assemble.sh 插入核心 IIFE。
+   * [OUTPUT]: 提供编辑模式、可观察 UI 节点、图片替换、标注、agent marker 和反馈导出函数。
+   * [POS]: skills/codeck/scripts 的编辑器扩展,把 HTML deck 变成 agent 可感知主画布。
    * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
    */
 
   var editorToolbar = null;
+  var agentDialog = null;
+  var agentMarker = null;
+  var lastAgentTarget = null;
+  var agentStatusTimer = null;
   var isMarkMode = false;
+  var ckObservationBound = false;
+  var ckSelectedNode = null;
+  var ckLastSelectionKey = '';
+  var ckInputTimer = null;
+  var ckLastInputTarget = null;
   var ckMarks = [];
   var ckMarkSeq = 0;
 
@@ -33,13 +42,19 @@
     });
 
     if (isEditor) {
+      activateObservableSurface();
       bindImageEditing();
+      bindAgentMarkerCapture();
       showEditorToolbar();
+      showAgentDialog();
       var tb = document.getElementById('slide-toolbar');
       if (tb) tb.classList.add('tb-visible');
     } else {
+      deactivateObservableSurface();
       unbindImageEditing();
+      unbindAgentMarkerCapture();
       hideEditorToolbar();
+      hideAgentDialog();
       var tb2 = document.getElementById('slide-toolbar');
       if (tb2) tb2.classList.remove('tb-visible');
     }
@@ -55,9 +70,11 @@
       var btn = e.target.closest('[data-act]');
       if (!btn) return;
       var a = btn.dataset.act;
+      recordControlEvent('editor-toolbar', a, btn);
       if (a === 'exit') toggleEditor();
       else if (a === 'save') saveEditedHTML();
       else if (a === 'mark') toggleMarkMode();
+      else if (a === 'agent') toggleAgentDialog();
       else if (a === 'feedback') exportFeedback();
       else if (a === 'undo') document.execCommand('undo');
       else if (a === 'redo') document.execCommand('redo');
@@ -69,6 +86,500 @@
       editorToolbar.parentNode.removeChild(editorToolbar);
       editorToolbar = null;
     }
+  }
+
+  /* ─── Observable deck surface ─── */
+  function activateObservableSurface() {
+    assignDeckElementIds();
+    if (ckObservationBound) return;
+    ckObservationBound = true;
+    document.addEventListener('click', observeDeckClick, true);
+    document.addEventListener('input', observeDeckInput, true);
+  }
+
+  function deactivateObservableSurface() {
+    if (!ckObservationBound) return;
+    ckObservationBound = false;
+    document.removeEventListener('click', observeDeckClick, true);
+    document.removeEventListener('input', observeDeckInput, true);
+    clearSelectedNode();
+  }
+
+  function assignDeckElementIds() {
+    slides.forEach(function (slide, i) {
+      if (!slide.getAttribute('data-ck-id')) slide.setAttribute('data-ck-id', 'slide-' + padNumber(i + 1));
+      if (!slide.getAttribute('data-ck-source')) slide.setAttribute('data-ck-source', 'slides.html');
+      slide.querySelectorAll('*').forEach(function (el) {
+        if (isEditorChrome(el)) return;
+        if (!el.getAttribute('data-ck-id')) el.setAttribute('data-ck-id', 's' + padNumber(i + 1) + '-' + elementPath(slide, el));
+        if (!el.getAttribute('data-ck-source')) el.setAttribute('data-ck-source', 'slides.html');
+      });
+    });
+  }
+
+  function padNumber(n) {
+    return String(n).padStart(3, '0');
+  }
+
+  function elementPath(slide, el) {
+    var parts = [];
+    while (el && el.nodeType === 1 && el !== slide) {
+      parts.unshift(el.tagName.toLowerCase() + nthOfType(el));
+      el = el.parentElement;
+    }
+    return parts.join('-') || 'root';
+  }
+
+  function nthOfType(el) {
+    var n = 1;
+    var tag = el.tagName;
+    var cur = el;
+    while ((cur = cur.previousElementSibling)) {
+      if (cur.tagName === tag) n++;
+    }
+    return String(n).padStart(2, '0');
+  }
+
+  function isEditorChrome(el) {
+    return !!(el && el.closest && el.closest('#editor-toolbar, #agent-dialog, #slide-toolbar, .ck-pin'));
+  }
+
+  function observeDeckClick(e) {
+    if (!isEditor || isEditorChrome(e.target)) return;
+    var slide = e.target.closest && e.target.closest('.slide');
+    if (!slide) return;
+    var target = e.target === slide ? slide : (e.target.closest('[data-ck-id]') || e.target);
+    selectUiNode(target, 'click', e);
+  }
+
+  function observeDeckInput(e) {
+    if (!isEditor) return;
+    var slide = e.target.closest && e.target.closest('.slide');
+    if (!slide) return;
+    ckLastInputTarget = e.target.closest('[data-ck-id]') || slide;
+    clearTimeout(ckInputTimer);
+    ckInputTimer = setTimeout(function () {
+      if (!ckLastInputTarget) return;
+      recordUiEvent('ui-edit', ckLastInputTarget, {
+        action: 'input',
+        text: trimExcerpt(ckLastInputTarget.innerText || ckLastInputTarget.textContent || '', 1000)
+      });
+    }, 450);
+  }
+
+  function selectUiNode(target, reason, event) {
+    assignDeckElementIds();
+    var slide = target && target.closest ? target.closest('.slide') : null;
+    if (!slide) return;
+    clearSelectedNode();
+    ckSelectedNode = target;
+    if (ckSelectedNode.classList) ckSelectedNode.classList.add('ck-selected-node');
+    var payload = {
+      kind: 'ui-selection',
+      action: reason || 'select',
+      node: describeUiNode(target, slide),
+      pointer: event ? { x: Math.round(event.clientX), y: Math.round(event.clientY) } : null,
+      deck: currentDeckInfo(),
+      selectedAt: new Date().toISOString()
+    };
+    var key = payload.node.ckId + ':' + payload.action + ':' + payload.node.slide;
+    if (key !== ckLastSelectionKey) {
+      ckLastSelectionKey = key;
+      postLocalJSON('/api/selection', payload, function () {});
+    }
+  }
+
+  function clearSelectedNode() {
+    if (ckSelectedNode && ckSelectedNode.classList) ckSelectedNode.classList.remove('ck-selected-node');
+    ckSelectedNode = null;
+  }
+
+  function recordControlEvent(zone, action, target) {
+    postLocalJSON('/api/events', {
+      kind: 'ui-control',
+      zone: zone,
+      action: action,
+      node: target ? {
+        role: 'control',
+        text: trimExcerpt(target.innerText || target.getAttribute('aria-label') || action, 160)
+      } : null,
+      deck: currentDeckInfo(),
+      slide: cur + 1,
+      happenedAt: new Date().toISOString()
+    }, function () {});
+  }
+
+  function recordUiEvent(kind, target, extra) {
+    var slide = target && target.closest ? target.closest('.slide') : slides[cur];
+    postLocalJSON('/api/events', {
+      kind: kind,
+      node: describeUiNode(target, slide),
+      deck: currentDeckInfo(),
+      slide: (slides.indexOf(slide) + 1) || cur + 1,
+      details: extra || {},
+      happenedAt: new Date().toISOString()
+    }, function () {});
+  }
+
+  function currentDeckInfo() {
+    return {
+      title: document.title,
+      url: location.href,
+      slideCount: slides.length
+    };
+  }
+
+  function selectionElement(sel) {
+    if (!sel || !sel.rangeCount) return null;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    return node.nodeType === 1 ? node : node.parentElement;
+  }
+
+  function inferRole(el) {
+    if (!el) return 'unknown';
+    if (el.classList && el.classList.contains('slide')) return 'slide';
+    var tag = (el.tagName || '').toLowerCase();
+    if (/^h[1-6]$/.test(tag)) return 'heading';
+    if (tag === 'img') return 'image';
+    if (tag === 'a') return 'link';
+    if (tag === 'button') return 'control';
+    if (tag === 'li') return 'list-item';
+    if (tag === 'ul' || tag === 'ol') return 'list';
+    if (tag === 'table') return 'table';
+    if (tag === 'figure') return 'figure';
+    if (tag === 'p') return 'paragraph';
+    return tag || 'element';
+  }
+
+  function safeAttr(value, limit) {
+    value = String(value || '');
+    if (value.indexOf('data:') === 0) return value.slice(0, 80) + '…';
+    return value.slice(0, limit || 240);
+  }
+
+  function cleanClassName(value) {
+    return String(value || '').split(/\s+/).filter(function (name) {
+      return name && name.indexOf('ck-') !== 0 && name !== 'active' && name !== 'visible' && name !== 'drag-over' && name !== 'slot-filled';
+    }).join(' ');
+  }
+
+  function rectPayload(rect, baseRect) {
+    var payload = {
+      x: Math.round(rect.left),
+      y: Math.round(rect.top),
+      width: Math.round(rect.width),
+      height: Math.round(rect.height)
+    };
+    if (baseRect) {
+      payload.relative = {
+        x: Math.round(rect.left - baseRect.left),
+        y: Math.round(rect.top - baseRect.top),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height)
+      };
+    }
+    return payload;
+  }
+
+  function describeUiNode(el, slide) {
+    if (!slide && el && el.closest) slide = el.closest('.slide');
+    if (!el) el = slide || slides[cur];
+    if (!slide) slide = slides[cur];
+    assignDeckElementIds();
+    var slideIdx = slides.indexOf(slide);
+    var rect = el.getBoundingClientRect();
+    var slideRect = slide.getBoundingClientRect();
+    var selector = el === slide ? '.slide.active' : describeSelector(el);
+    var text = el.tagName === 'IMG'
+      ? 'Image: ' + safeAttr(el.getAttribute('alt') || el.getAttribute('src') || '', 300)
+      : trimExcerpt(el.innerText || el.textContent || '', 500);
+    return {
+      ckId: el.getAttribute('data-ck-id') || '',
+      role: inferRole(el),
+      tag: (el.tagName || '').toLowerCase(),
+      slide: slideIdx + 1,
+      selector: selector,
+      bbox: rectPayload(rect, slideRect),
+      text: text,
+      state: {
+        classes: cleanClassName(el.className && typeof el.className === 'string' ? el.className : ''),
+        editable: el.getAttribute('contenteditable') || '',
+        src: el.tagName === 'IMG' ? safeAttr(el.getAttribute('src') || '', 300) : '',
+        alt: el.tagName === 'IMG' ? safeAttr(el.getAttribute('alt') || '', 300) : ''
+      },
+      sourceMap: {
+        file: 'slides.html',
+        styleFile: 'custom.css',
+        slide: slideIdx + 1,
+        ckId: el.getAttribute('data-ck-id') || '',
+        selector: selector,
+        elementPath: el === slide ? 'slide' : elementPath(slide, el)
+      }
+    };
+  }
+
+  /* ─── Agent marker dialog ─── */
+  function toggleAgentDialog() {
+    if (!isEditor) return;
+    if (agentDialog) hideAgentDialog();
+    else showAgentDialog();
+  }
+
+  function showAgentDialog() {
+    if (agentDialog) {
+      updateAgentDialog();
+      return;
+    }
+    agentDialog = document.createElement('aside');
+    agentDialog.id = 'agent-dialog';
+    agentDialog.innerHTML = [
+      '<div class="agent-head">',
+      '  <div>',
+      '    <div class="agent-kicker">Agent Marker</div>',
+      '    <div class="agent-title" id="agent-slide-title">Current slide</div>',
+      '  </div>',
+      '  <button class="agent-icon-btn" data-agent-act="close" aria-label="Close">×</button>',
+      '</div>',
+      '<div class="agent-marker-card" id="agent-marker-card">',
+      '  <div class="agent-shot">',
+      '    <div class="agent-shot-bar"></div>',
+      '    <div class="agent-shot-lines"><i></i><i></i><i></i></div>',
+      '  </div>',
+      '  <div class="agent-marker-copy">',
+      '    <div class="agent-marker-label" id="agent-marker-label">Slide marker</div>',
+      '    <div class="agent-marker-excerpt" id="agent-marker-excerpt">Select text or click a block, then capture it.</div>',
+      '  </div>',
+      '</div>',
+      '<div class="agent-actions">',
+      '  <button class="agent-btn" data-agent-act="capture">Capture block</button>',
+      '  <button class="agent-btn" data-agent-act="slide">Use slide</button>',
+      '</div>',
+      '<textarea id="agent-message" rows="5" placeholder="Tell the agent what to change for this marked block..."></textarea>',
+      '<button class="agent-send" data-agent-act="send">Send marker to agent</button>',
+      '<div class="agent-status" id="agent-status">Saved messages go to the deck room inbox.</div>'
+    ].join('');
+    document.getElementById('app').appendChild(agentDialog);
+    agentDialog.addEventListener('click', onAgentDialogClick);
+    agentMarker = buildAgentMarker('slide');
+    updateAgentDialog();
+  }
+
+  function hideAgentDialog() {
+    if (!agentDialog) return;
+    agentDialog.parentNode.removeChild(agentDialog);
+    agentDialog = null;
+  }
+
+  function onAgentDialogClick(e) {
+    var btn = e.target.closest('[data-agent-act]');
+    if (!btn) return;
+    var act = btn.dataset.agentAct;
+    if (act === 'close') hideAgentDialog();
+    else if (act === 'capture') {
+      agentMarker = buildAgentMarker('block');
+      updateAgentDialog();
+      setAgentStatus('Marker captured.');
+    } else if (act === 'slide') {
+      agentMarker = buildAgentMarker('slide');
+      updateAgentDialog();
+      setAgentStatus('Slide marker selected.');
+    } else if (act === 'send') {
+      sendAgentMessage();
+    }
+  }
+
+  function bindAgentMarkerCapture() {
+    document.addEventListener('click', rememberAgentTarget, true);
+    document.addEventListener('selectionchange', rememberAgentSelection);
+  }
+
+  function unbindAgentMarkerCapture() {
+    document.removeEventListener('click', rememberAgentTarget, true);
+    document.removeEventListener('selectionchange', rememberAgentSelection);
+  }
+
+  function rememberAgentTarget(e) {
+    if (!isEditor) return;
+    if (e.target.closest('#editor-toolbar') || e.target.closest('#agent-dialog') || e.target.closest('#slide-toolbar')) return;
+    var slide = e.target.closest('.slide');
+    if (!slide) return;
+    lastAgentTarget = e.target === slide ? slide : e.target;
+    var sel = window.getSelection && window.getSelection();
+    if (agentDialog && !(sel && sel.toString().trim())) {
+      agentMarker = buildAgentMarker('block');
+      updateAgentDialog();
+    }
+  }
+
+  function rememberAgentSelection() {
+    if (!isEditor || !agentDialog) return;
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.toString().trim()) return;
+    var slide = selectionSlide(sel);
+    if (!slide) return;
+    agentMarker = buildAgentMarker('selection');
+    updateAgentDialog();
+  }
+
+  function selectionSlide(sel) {
+    if (!sel || !sel.rangeCount) return null;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    return el && el.closest ? el.closest('.slide') : null;
+  }
+
+  function currentSlideTitle(slide) {
+    var h = slide && slide.querySelector('h1, h2, h3');
+    return h ? h.textContent.replace(/\s+/g, ' ').trim().slice(0, 90) : 'Untitled slide';
+  }
+
+  function trimExcerpt(text, n) {
+    return String(text || '').replace(/\s+/g, ' ').trim().slice(0, n || 220);
+  }
+
+  function buildAgentMarker(mode) {
+    var slide = slides[cur];
+    var marker = {
+      type: mode || 'slide',
+      slide: cur + 1,
+      title: currentSlideTitle(slide),
+      selector: '',
+      excerpt: '',
+      ckId: '',
+      role: '',
+      bbox: null,
+      sourceMap: null,
+      uiNode: null,
+      capturedAt: new Date().toISOString()
+    };
+    var sel = window.getSelection();
+    var selectedText = sel && !sel.isCollapsed && selectionSlide(sel) === slide ? trimExcerpt(sel.toString(), 500) : '';
+    if ((mode === 'selection' || selectedText) && selectedText) {
+      var selectionNode = selectionElement(sel) || slide;
+      var selectionUiNode = describeUiNode(selectionNode, slide);
+      var rangeRect = sel.rangeCount ? sel.getRangeAt(0).getBoundingClientRect() : selectionNode.getBoundingClientRect();
+      marker.type = 'selection';
+      marker.excerpt = selectedText;
+      marker.selector = 'selection';
+      marker.ckId = selectionUiNode.ckId;
+      marker.role = selectionUiNode.role;
+      marker.bbox = rectPayload(rangeRect, slide.getBoundingClientRect());
+      marker.sourceMap = selectionUiNode.sourceMap;
+      marker.uiNode = selectionUiNode;
+      return marker;
+    }
+    var target = mode === 'slide' ? slide : (lastAgentTarget || document.activeElement || slide);
+    if (!target || !target.closest || !target.closest('.slide')) target = slide;
+    var uiNode = describeUiNode(target, slide);
+    marker.type = target === slide ? 'slide' : 'block';
+    marker.selector = uiNode.selector;
+    marker.excerpt = uiNode.text || marker.title;
+    marker.tag = target.tagName ? target.tagName.toLowerCase() : '';
+    marker.ckId = uiNode.ckId;
+    marker.role = uiNode.role;
+    marker.bbox = uiNode.bbox;
+    marker.sourceMap = uiNode.sourceMap;
+    marker.uiNode = uiNode;
+    return marker;
+  }
+
+  function updateAgentDialog() {
+    if (!agentDialog) return;
+    if (!agentMarker) agentMarker = buildAgentMarker('slide');
+    var title = document.getElementById('agent-slide-title');
+    var label = document.getElementById('agent-marker-label');
+    var excerpt = document.getElementById('agent-marker-excerpt');
+    if (title) title.textContent = 'Slide ' + agentMarker.slide + ' · ' + agentMarker.title;
+    if (label) label.textContent = agentMarker.type + (agentMarker.selector ? ' · ' + agentMarker.selector : '');
+    if (excerpt) excerpt.textContent = agentMarker.excerpt || 'No text in this marker.';
+  }
+
+  function setAgentStatus(text, isError) {
+    var el = document.getElementById('agent-status');
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle('agent-status-error', !!isError);
+    clearTimeout(agentStatusTimer);
+    agentStatusTimer = setTimeout(function () {
+      if (el && !isError) el.textContent = 'Saved messages go to the deck room inbox.';
+    }, 5000);
+  }
+
+  function postLocalJSON(path, payload, cb) {
+    if (!/^https?:$/.test(location.protocol)) {
+      cb(false, new Error('No local service for file:// pages.'));
+      return;
+    }
+    fetch(path, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }).then(function (json) {
+      cb(true, json);
+    }).catch(function (err) {
+      cb(false, err);
+    });
+  }
+
+  function agentMessageMarkdown(payload) {
+    return [
+      '---',
+      'source: codeck-agent-dialog',
+      'created_at: ' + new Date().toISOString(),
+      'slide: ' + payload.marker.slide,
+      'type: ' + payload.marker.type,
+      '---',
+      '',
+      '# Agent Request',
+      '',
+      payload.message,
+      '',
+      '## Marker',
+      '',
+      '- title: ' + payload.marker.title,
+      '- ck_id: `' + (payload.marker.ckId || '') + '`',
+      '- role: ' + (payload.marker.role || ''),
+      '- selector: `' + (payload.marker.selector || '') + '`',
+      '- source: `' + ((payload.marker.sourceMap && payload.marker.sourceMap.file) || 'slides.html') + '`',
+      '- source_selector: `' + ((payload.marker.sourceMap && payload.marker.sourceMap.selector) || payload.marker.selector || '') + '`',
+      '- bbox: `' + JSON.stringify(payload.marker.bbox || {}) + '`',
+      '',
+      '```',
+      payload.marker.excerpt || '',
+      '```',
+      ''
+    ].join('\n');
+  }
+
+  function sendAgentMessage() {
+    if (!agentDialog) return;
+    var textarea = document.getElementById('agent-message');
+    var message = textarea ? textarea.value.trim() : '';
+    if (!message) {
+      setAgentStatus('Write a request for the agent first.', true);
+      return;
+    }
+    if (!agentMarker) agentMarker = buildAgentMarker('block');
+    var payload = {
+      message: message,
+      marker: agentMarker,
+      deck: currentDeckInfo(),
+      marks: ckMarks.slice()
+    };
+    setAgentStatus('Saving marker...');
+    postLocalJSON('/api/inbox', payload, function (ok, result) {
+      if (ok) {
+        if (textarea) textarea.value = '';
+        setAgentStatus('Saved to agent inbox: ' + (result.id || 'open request'));
+      } else {
+        var name = 'agent-message-slide-' + agentMarker.slide + '-' + Date.now() + '.md';
+        downloadText(agentMessageMarkdown(payload), name, 'text/markdown;charset=utf-8');
+        setAgentStatus('Local service unavailable; downloaded message sidecar.', true);
+      }
+    });
   }
 
   /* ─── Image editing ─── */
@@ -110,7 +621,10 @@
     if (!isEditor) return;
     e.preventDefault();
     var img = e.currentTarget;
-    pickImage(function (dataUrl) { img.src = dataUrl; });
+    pickImage(function (dataUrl) {
+      img.src = dataUrl;
+      recordUiEvent('ui-image-change', img, { action: 'file-picker' });
+    });
   }
 
   function onSlotClick(e) {
@@ -118,7 +632,7 @@
     var slot = e.currentTarget;
     if (slot.querySelector('img')) return;
     e.preventDefault();
-    pickImage(function (dataUrl) { fillSlot(slot, dataUrl); });
+    pickImage(function (dataUrl) { fillSlot(slot, dataUrl, { action: 'file-picker' }); });
   }
 
   function onImageDragOver(e) {
@@ -139,7 +653,15 @@
     var file = e.dataTransfer.files && e.dataTransfer.files[0];
     if (!file || !file.type.startsWith('image/')) return;
     var img = e.currentTarget;
-    readImageFile(file, function (dataUrl) { img.src = dataUrl; });
+    readImageFile(file, function (dataUrl) {
+      img.src = dataUrl;
+      recordUiEvent('ui-image-change', img, {
+        action: 'drop',
+        fileName: file.name,
+        mimeType: file.type,
+        size: file.size
+      });
+    });
   }
 
   function onSlotDrop(e) {
@@ -149,13 +671,21 @@
     var slot = e.currentTarget;
     var file = e.dataTransfer.files && e.dataTransfer.files[0];
     if (!file || !file.type.startsWith('image/')) return;
-    readImageFile(file, function (dataUrl) { fillSlot(slot, dataUrl); });
+    readImageFile(file, function (dataUrl) {
+      fillSlot(slot, dataUrl, {
+        action: 'drop',
+        fileName: file.name,
+        mimeType: file.type,
+        size: file.size
+      });
+    });
   }
 
-  function fillSlot(slot, dataUrl) {
+  function fillSlot(slot, dataUrl, details) {
     var existing = slot.querySelector('img');
     if (existing) {
       existing.src = dataUrl;
+      recordUiEvent('ui-image-change', existing, details || { action: 'fill-slot' });
       return;
     }
     var img = document.createElement('img');
@@ -167,6 +697,8 @@
     img.addEventListener('dragover', onImageDragOver);
     img.addEventListener('dragleave', onImageDragLeave);
     img.addEventListener('drop', onImageDrop);
+    assignDeckElementIds();
+    recordUiEvent('ui-image-change', img, details || { action: 'fill-slot' });
   }
 
   function pickImage(cb) {
@@ -205,6 +737,9 @@
       clone.querySelectorAll('.tb-visible').forEach(function (el) {
         el.classList.remove('tb-visible');
       });
+      clone.querySelectorAll('.ck-selected-node').forEach(function (el) {
+        el.classList.remove('ck-selected-node');
+      });
     }
 
     var html = '<!DOCTYPE html>\n' + clone.outerHTML;
@@ -214,15 +749,30 @@
     if (!/\.html?$/i.test(filename)) filename = 'slides.html';
     filename = filename.replace(/\.html?$/i, '') + '-edited.html';
 
-    var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    postLocalJSON('/api/events', {
+      kind: 'edited-html',
+      deck: filename.replace(/-edited\.html?$/i, ''),
+      fileName: filename,
+      html: html,
+      marker: agentMarker || buildAgentMarker('slide'),
+      marks: ckMarks.slice(),
+      slide: cur + 1,
+      savedAt: new Date().toISOString()
+    }, function (ok) {
+      if (ok) {
+        setAgentStatus('Saved HTML snapshot to deck room events.');
+        return;
+      }
+      var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    });
   }
 
   /* ═══════════════════════════════════════
@@ -482,6 +1032,10 @@
 
     var md = lines.join('\n');
     var mdFilename = 'feedback-' + stem + '-' + rev + '.md';
+    saveOrDownloadFeedback(md, mdFilename, imgAttachments, stem, rev);
+  }
+
+  function downloadFeedbackFiles(md, mdFilename, imgAttachments) {
     downloadText(md, mdFilename, 'text/markdown;charset=utf-8');
 
     /* Also download each image separately */
@@ -503,6 +1057,27 @@
         document.body.removeChild(a);
         setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
       } catch (e) { /* skip bad data URI */ }
+    });
+  }
+
+  function saveOrDownloadFeedback(md, mdFilename, imgAttachments, stem, rev) {
+    postLocalJSON('/api/events', {
+      kind: 'feedback',
+      deck: stem,
+      revision: rev,
+      fileName: mdFilename,
+      markdown: md,
+      marker: agentMarker || buildAgentMarker('slide'),
+      marks: ckMarks.slice(),
+      imageCount: imgAttachments.length,
+      exportedAt: new Date().toISOString()
+    }, function (ok) {
+      if (ok) {
+        setAgentStatus('Saved feedback to deck room.');
+        return;
+      }
+      downloadFeedbackFiles(md, mdFilename, imgAttachments);
+      setAgentStatus('Local service unavailable; downloaded feedback sidecar.', true);
     });
   }
 

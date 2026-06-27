@@ -75,15 +75,25 @@ codeck outputs a single self-contained HTML file:
 - `scripts/assemble.sh`: inline `assets/*.html`, `icons.svg`, runtime CSS, `slides.html`, and runtime JS.
 - `scripts/build-html.sh`: revisioned final build guard; rejects full-doc `slides.html`, runtime scripts, engine selector overrides, missing presenter/editor markers, and external stylesheet links.
 - `scripts/validate-design.sh`: DESIGN.md validator; run before writing `custom.css` / `slides.html`.
+- `scripts/start-deck-editor.sh`: local deck editor service launcher; serves the HTML deck and writes collaboration state to the room.
+- `scripts/deck-editor-server.mjs`: HTTP API for UI selection, events, agent inbox, assets, revisions, and checkout.
 - `scripts/office/soffice.py`: LibreOffice wrapper for PDF/PPTX export.
 - `scripts/thumbnail.py`: PDF/PPTX thumbnail helper for export QA.
 - `assets/`: build-time UI fragments and icons; no runtime `fetch()`.
 
 AI writes only `DESIGN.md`, `custom.css`, and `slides.html`. Engine JS/CSS/assets are fixed.
 
-## Editor & feedback loop
+## Local deck editor
 
-The assembled HTML is an in-browser editing surface: press **E** for text/image edits, **M** for marks, Save for an edited snapshot, Feedback for a `feedback-*.md` sidecar. Consumption rules live in `references/workflow.md` -> "Feedback consumption".
+The assembled HTML is the main canvas. For collaborative editing, start the local deck editor service from the skill source:
+
+```bash
+bash "$CODECK_SKILL_DIR/scripts/start-deck-editor.sh" "$DECK_DIR" "$(basename "$DECK_DIR")"
+```
+
+Open the printed `http://127.0.0.1:<port>/` URL. In editor mode, press **E** for text/image edits, **M** for marks, and use the right-side Agent marker dialog to bind a request to the current slide, selected text, or clicked block. Slide elements receive stable `data-ck-id` markers; clicks update `state/selection.json`; text/image/control operations append to `events/*.jsonl`. The dialog writes `inbox/*.md`; Save and Feedback write `events/*.jsonl` and `feedback-*.md` through the local service, falling back to downloads when opened as a plain file.
+
+Agent consumption rules live in `references/workflow.md` -> "Feedback consumption" and "Agent marker inbox".
 
 ## References
 

@@ -1,5 +1,5 @@
 # office/
-> L2 | 父级: /Users/gaoding/Desktop/codeck/skills/codeck/scripts/CLAUDE.md
+> L2 | 父级: /Users/yeshu/codeck/skills/codeck/scripts/CLAUDE.md
 
 成员清单
 soffice.py: LibreOffice CLI 包装器，统一 headless 转 PDF/PPTX 的错误处理和输出路径。

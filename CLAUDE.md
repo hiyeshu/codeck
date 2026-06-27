@@ -19,9 +19,10 @@ Engine code is fixed. AI handles content and visuals only.
 codeck follows the Cowart-style repository shape:
 
 - `.codex-plugin/plugin.json` is the Codex plugin manifest.
+- `.mcp.json` exposes the local deck editor MCP bridge.
 - `skills/` is the installable skill surface exposed by the plugin.
 - `skills/codeck/` is the single user-facing skill.
-- No MCP server or frontend app is declared until there is a real local service to run.
+- `mcp/` is the agent-facing hand for deck editor room state; the browser-facing service lives in `skills/codeck/scripts/`.
 
 ## Deck room
 
@@ -37,6 +38,8 @@ Decision Ask records live in threads/ before any runtime question
 @design → DESIGN.md + custom.css + slides.html → build-html.sh → single HTML
   ↓
 @review → export (PDF/PPTX) / speech
+  ↕
+local deck editor service → state/selection.json + events/ + inbox/ + assets/ + revisions/
 ```
 
 Core idea: fixed role lanes own artifacts; dynamic people from diagnosis.md shape the judgment inside those lanes. The room is the durable scope; necessary asks are decision records first and UI questions second.
@@ -72,6 +75,10 @@ codeck/
 │   └── assets/
 │       ├── CLAUDE.md
 │       └── app-icon.svg
+├── .mcp.json          # Codex MCP declaration for deck editor tools
+├── mcp/
+│   ├── CLAUDE.md
+│   └── server.mjs     # stdio MCP bridge to deck room state
 ├── skills/
 │   ├── CLAUDE.md
 │   └── codeck/       # single consolidated skill
@@ -86,6 +93,9 @@ codeck/
 │       │   ├── CLAUDE.md
 │       │   ├── assemble.sh
 │       │   ├── build-html.sh
+│       │   ├── deck-editor-core.mjs
+│       │   ├── deck-editor-server.mjs
+│       │   ├── start-deck-editor.sh
 │       │   ├── validate-design.sh
 │       │   ├── render-engine.js
 │       │   ├── thumbnail.py

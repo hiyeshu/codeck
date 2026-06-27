@@ -1,5 +1,5 @@
 # references/
-> L2 | 父级: /Users/gaoding/Desktop/codeck/skills/codeck/CLAUDE.md
+> L2 | 父级: /Users/yeshu/codeck/skills/codeck/CLAUDE.md
 
 成员清单
 workflow.md: room contract、Decision Ask、material scan、diagnosis、@outline。

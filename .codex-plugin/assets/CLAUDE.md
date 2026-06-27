@@ -1,5 +1,5 @@
 # assets/
-> L2 | 父级: /Users/gaoding/Desktop/codeck/.codex-plugin/CLAUDE.md
+> L2 | 父级: /Users/yeshu/codeck/.codex-plugin/CLAUDE.md
 
 成员清单
 app-icon.svg: 插件市场和 composer 展示图标，供 `.codex-plugin/plugin.json` 引用。

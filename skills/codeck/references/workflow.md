@@ -13,7 +13,7 @@ This reference covers the deck room model, `MEMORY.md` structure, the Decision A
 
 A skill is a channel: an addressable role with a clear write boundary, durable room files, and a handoff protocol. `/codeck` is the entry channel; the lanes are internal channels that own one part of the room. Fixed role lanes: `@orchestrator`, `@outline`, `@design`, `@review`, `@speech`, `@export`.
 
-Cowart is the useful precedent: the plugin opens a local visual workspace, but persists canvas data under the active user project. codeck follows that boundary. Runtime assets and scripts live in the skill; room state and final deck artifacts belong to the user's workbench, not to the skill source tree.
+Cowart is the useful precedent for locality, not for infinite canvas. codeck opens a local deck editor service where the HTML deck remains the main canvas. Runtime assets and scripts live in the skill; UI selection state, editor events, agent marker requests, revision snapshots, room state, and final deck artifacts belong to the user's workbench, not to the skill source tree.
 
 Default user-facing output is compact: judgment, artifact, next action. The expanded role channel is written to `channel/YYYY-MM-DD.md`; show it only when the user asks to see the channel.
 
@@ -25,6 +25,7 @@ Room documents are not equal. One current truth layer, one work-state layer, one
 |-------|-------|-----------|------------|
 | Current truth | `MEMORY.md`, `deck.md`, `DESIGN.md`, `custom.css`, `slides.html`, latest assembled HTML, `speech.md` when present | Read first. These define the rebuildable deck. | Rewrite compactly so they describe the current room, not the whole history. |
 | Work state | `diagnosis.md`, `tasks/tasks.md`, `threads/threads.md`, `roles/*.md`, `review.md` | Read current material diagnosis, active tickets, open decisions, lane persona/rules, latest valid review. | Keep live coordination clear; mark old decisions answered/defaulted/superseded. |
+| Collaboration inbox | `state/selection.json`, `events/*.jsonl`, `inbox/*.md`, `feedback-*.md`, `revisions/` | Read before lane work. Selection is the user's current pointer; events are browser/user operation logs; inbox files are explicit agent requests; revisions are rebuild snapshots. | Consume explicit requests into source files, summarize useful events, then archive or mark resolved. |
 | Audit trail | `channel/YYYY-MM-DD.md`, legacy `PROJECT.md`, legacy `outline.md`, legacy `design-notes.md`, superseded reviews, old previews | Read only when debugging history or when the user asks to see the channel. | Append-only or leave untouched. Never use as generation truth. |
 
 Read order for every lane:
@@ -61,6 +62,7 @@ Read order for every lane:
 ## Room Truth Contract
 - Current truth: MEMORY.md, deck.md, DESIGN.md, custom.css, slides.html, latest assembled HTML, speech.md when present.
 - Work state: diagnosis.md, tasks/tasks.md active tickets, threads/threads.md open decisions and decision ledger, roles/*.md lane memory, latest valid review.md.
+- Collaboration inbox: state/selection.json, events/*.jsonl, inbox/*.md, feedback-*.md, revisions/.
 - Audit only: channel/YYYY-MM-DD.md, legacy PROJECT.md, legacy outline.md, legacy design-notes.md, superseded reviews, old previews, project-root sibling CSS.
 - Rule: audit text never overrides current truth; legacy outline.md is never a generation source.
 
@@ -371,11 +373,30 @@ Done output: show the single sharpest title transformation (the one where the be
 
 ## Feedback consumption (反馈消费)
 
-At the start of any lane (`@outline` / `@design` / `@review`), before doing anything else, check the deck room for a feedback sidecar:
+At the start of any lane (`@outline` / `@design` / `@review`), before doing anything else, check the deck room for browser collaboration inputs:
 
 ```bash
 ls "$DECK_DIR"/feedback-*.md 2>/dev/null
+test -f "$DECK_DIR"/state/selection.json && cat "$DECK_DIR"/state/selection.json
+ls "$DECK_DIR"/inbox/*.md 2>/dev/null
+ls "$DECK_DIR"/events/*.jsonl 2>/dev/null
 ```
+
+### UI selection state
+
+`state/selection.json` is the latest deck element the user pointed at in the local editor. It carries `ckId`, role, DOM selector, bbox, text excerpt, and `sourceMap` back to `slides.html` / `custom.css`. Treat it as context, not a command. Use it to disambiguate words like "this", "here", or "the card" when an inbox message or live user request asks for a change.
+
+### Agent marker inbox
+
+The right-side deck editor dialog writes `inbox/agent-*.md`. Each message has a marker block: slide number, slide title, marker type (`slide`, `selection`, `block`), `ck_id`, role, selector, bbox, source selector, and excerpt. Treat the marker as the user's explicit pointer into the HTML deck, like a small block screenshot. Apply the request to source files (`deck.md`, `slides.html`, `custom.css`, `assets/`) instead of editing the built HTML directly.
+
+Consumption:
+
+1. Read inbox messages oldest first.
+2. Resolve each marker against the current `slides.html`. Prefer `ck_id` and source selector when present; if stale, use slide number + excerpt as the fallback truth.
+3. Apply the requested change in the owned source files.
+4. Move consumed inbox files to `channel/{YYYY-MM-DD}-agent-inbox.md` or record them as resolved in the channel file, then remove the open inbox file.
+5. Build a new revision and record the result in `MEMORY.md`.
 
 If a `feedback-{deck}-{rev}.md` file exists, consume it before proceeding:
 
@@ -394,15 +415,17 @@ If a `feedback-{deck}-{rev}.md` file exists, consume it before proceeding:
 
 If multiple `feedback-*.md` files exist, consume in chronological order (oldest `exported_at` first). Never consume a feedback file twice — once archived to `channel/`, it's audit-only.
 
-If no feedback file exists, proceed with the normal lane flow.
+If no feedback or inbox file exists, proceed with the normal lane flow. Event JSONL without matching inbox/feedback is still evidence: summarize it in `review.md` or `MEMORY.md` if it changes current truth. A lone `state/selection.json` is current context only; do not mutate source files from selection alone.
 
 ### Feedback loop diagram
 
 ```
-HTML (cwd) → user presses E (editor) → edits text / replaces images
+HTML service → user presses E (editor) → elements receive data-ck-id
+           → user clicks/operates UI → state/selection.json + events/*.jsonl
+           → user edits text / replaces images
            → user presses M (mark) → pins comments / highlights text + instructions
-           → user clicks "Feedback" → downloads feedback-{deck}-{rev}.md (+ image files)
-           → user drops feedback-*.md into deck room (~/.codeck/projects/{slug}/)
+           → right-side Agent marker dialog writes inbox/agent-*.md
+           → Save/Feedback writes events/*.jsonl and feedback-{deck}-{rev}.md
            → next /codeck → agent consumes feedback → edits slides.html/custom.css
            → build-html.sh → new revision HTML → loop repeats
 ```

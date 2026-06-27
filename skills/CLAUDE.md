@@ -1,5 +1,5 @@
 # skills/
-> L2 | 父级: /Users/gaoding/Desktop/codeck/CLAUDE.md
+> L2 | 父级: /Users/yeshu/codeck/CLAUDE.md
 
 成员清单
 codeck/: 单一可安装 presentation skill，承载入口、参考文档、固定脚本和 build-time assets。
