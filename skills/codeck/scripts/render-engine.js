@@ -513,10 +513,6 @@
           if (isMarkMode) toggleMarkMode();
           else toggleEditor();
         }
-        if (e.key === 'm' || e.key === 'M') {
-          e.preventDefault();
-          toggleMarkMode();
-        }
         return;
       }
 

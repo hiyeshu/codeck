@@ -1,6 +1,6 @@
 /*
  * [INPUT]: 依赖 editor-engine.js 的 editor-mode/mark-mode 状态与编辑器 DOM。
- * [OUTPUT]: 提供编辑工具栏、图片槽、标注高亮、批注气泡样式。
+ * [OUTPUT]: 提供编辑工具栏、图片槽、Ask Codex 面板、低干扰批注痕迹样式。
  * [POS]: skills/codeck/assets 的编辑器样式扩展,由 assemble.sh 紧随 base.css 内联。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
@@ -185,8 +185,8 @@
 }
 
 /* ═══════════════════════════════════════
-   Agent dialog — marker-first request panel.
-   The marker is a small block-shot card, not free chat.
+   Ask Codex panel — selected object plus one request.
+   The marker is context; the textarea is the user command.
    ═══════════════════════════════════════ */
 #agent-dialog {
   position: fixed;
@@ -311,12 +311,12 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.agent-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+.agent-hint {
+  margin-top: -2px;
+  color: rgba(246,247,249,0.58);
+  font-size: 12px;
+  line-height: 1.35;
 }
-.agent-btn,
 .agent-send {
   min-height: 34px;
   border: 0;
@@ -324,11 +324,6 @@
   cursor: pointer;
   font: inherit;
 }
-.agent-btn {
-  background: rgba(255,255,255,0.09);
-  color: rgba(255,255,255,0.82);
-}
-.agent-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
 #agent-message {
   width: 100%;
   min-height: 108px;
@@ -368,15 +363,14 @@
     box-shadow: 0 18px 48px rgba(0,0,0,0.18);
   }
   .agent-kicker,
+  .agent-hint,
   .agent-marker-label,
   .agent-status { color: rgba(23,26,31,0.58); }
   .agent-title,
   .agent-marker-excerpt,
   #agent-message { color: #171a1f; }
-  .agent-icon-btn,
-  .agent-btn { background: rgba(0,0,0,0.07); color: rgba(23,26,31,0.76); }
-  .agent-icon-btn:hover,
-  .agent-btn:hover { background: rgba(0,0,0,0.11); color: #111; }
+  .agent-icon-btn { background: rgba(0,0,0,0.07); color: rgba(23,26,31,0.76); }
+  .agent-icon-btn:hover { background: rgba(0,0,0,0.11); color: #111; }
   .agent-marker-card { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); }
   #agent-message { background: rgba(255,255,255,0.7); border-color: rgba(0,0,0,0.13); }
   #agent-message::placeholder { color: rgba(23,26,31,0.42); }
@@ -389,15 +383,14 @@
   box-shadow: 0 18px 48px rgba(0,0,0,0.18);
 }
 [data-ui-theme="light"] .agent-kicker,
+[data-ui-theme="light"] .agent-hint,
 [data-ui-theme="light"] .agent-marker-label,
 [data-ui-theme="light"] .agent-status { color: rgba(23,26,31,0.58); }
 [data-ui-theme="light"] .agent-title,
 [data-ui-theme="light"] .agent-marker-excerpt,
 [data-ui-theme="light"] #agent-message { color: #171a1f; }
-[data-ui-theme="light"] .agent-icon-btn,
-[data-ui-theme="light"] .agent-btn { background: rgba(0,0,0,0.07); color: rgba(23,26,31,0.76); }
-[data-ui-theme="light"] .agent-icon-btn:hover,
-[data-ui-theme="light"] .agent-btn:hover { background: rgba(0,0,0,0.11); color: #111; }
+[data-ui-theme="light"] .agent-icon-btn { background: rgba(0,0,0,0.07); color: rgba(23,26,31,0.76); }
+[data-ui-theme="light"] .agent-icon-btn:hover { background: rgba(0,0,0,0.11); color: #111; }
 [data-ui-theme="light"] .agent-marker-card { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); }
 [data-ui-theme="light"] #agent-message { background: rgba(255,255,255,0.7); border-color: rgba(0,0,0,0.13); }
 [data-ui-theme="light"] #agent-message::placeholder { color: rgba(23,26,31,0.42); }
@@ -416,11 +409,11 @@
 }
 
 /* ═══════════════════════════════════════
-   Annotation (mark) mode — pins + highlights.
-   Visible in all modes so user sees marks during review.
+   Annotation traces — review evidence, not the primary Codex path.
+   Keep them quiet so they do not look like text edits.
    ═══════════════════════════════════════ */
 
-/* Mark mode cursor */
+/* Legacy mark mode cursor */
 #app.mark-mode .slide { cursor: crosshair; }
 #app.mark-mode .slide *:not(#editor-toolbar):not(#slide-toolbar):not(.ck-pin) {
   cursor: crosshair;
@@ -439,16 +432,17 @@
 
 /* Highlighted text marks (visible in all modes) */
 mark[data-ck-mark-type] {
-  background: #ffd54f;
-  color: #1a1a1a;
-  padding: 0 2px;
-  border-radius: 2px;
-  box-shadow: 0 0 0 1px rgba(255,213,79,0.5);
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: inset 0 -0.16em rgba(74,170,255,0.24);
 }
 mark[data-ck-mark-type]::after {
-  content: ' ✎';
-  color: #b8860b;
-  font-size: 0.85em;
+  content: '';
+}
+mark[data-ck-mark-type]:hover {
+  background: rgba(74,170,255,0.08);
 }
 
 /* Pin markers */
@@ -461,12 +455,12 @@ mark[data-ck-mark-type]::after {
 }
 .ck-pin-dot {
   display: block;
-  width: 14px;
-  height: 14px;
-  background: #e53935;
+  width: 10px;
+  height: 10px;
+  background: var(--accent, #4af);
   border: 2px solid #fff;
   border-radius: 50%;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.22);
   margin: 0 auto;
   pointer-events: auto;
   cursor: pointer;

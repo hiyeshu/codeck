@@ -13,7 +13,7 @@ This reference covers the deck room model, `MEMORY.md` structure, the Decision A
 
 A skill is a channel: an addressable role with a clear write boundary, durable room files, and a handoff protocol. `/codeck` is the entry channel; the lanes are internal channels that own one part of the room. Fixed role lanes: `@orchestrator`, `@outline`, `@design`, `@review`, `@speech`, `@export`.
 
-Cowart is the useful precedent for locality, not for infinite canvas. codeck opens a local deck editor service where the HTML deck remains the main canvas. Runtime assets and scripts live in the skill; UI selection state, editor events, agent marker requests, revision snapshots, room state, and final deck artifacts belong to the user's workbench, not to the skill source tree.
+Cowart is the useful precedent for locality, not for infinite canvas. codeck opens a local deck editor service where the HTML deck remains the main canvas. Runtime assets and scripts live in the skill; UI selection state, editor events, Ask Codex requests, revision snapshots, room state, and final deck artifacts belong to the user's workbench, not to the skill source tree.
 
 Default user-facing output is compact: judgment, artifact, next action. The expanded role channel is written to `channel/YYYY-MM-DD.md`; show it only when the user asks to see the channel.
 
@@ -25,7 +25,7 @@ Room documents are not equal. One current truth layer, one work-state layer, one
 |-------|-------|-----------|------------|
 | Current truth | `MEMORY.md`, `deck.md`, `DESIGN.md`, `custom.css`, `slides.html`, latest assembled HTML, `speech.md` when present | Read first. These define the rebuildable deck. | Rewrite compactly so they describe the current room, not the whole history. |
 | Work state | `diagnosis.md`, `tasks/tasks.md`, `threads/threads.md`, `roles/*.md`, `review.md` | Read current material diagnosis, active tickets, open decisions, lane persona/rules, latest valid review. | Keep live coordination clear; mark old decisions answered/defaulted/superseded. |
-| Collaboration inbox | `state/selection.json`, `events/*.jsonl`, `inbox/*.md`, `feedback-*.md`, `revisions/` | Read before lane work. Selection is the user's current pointer; events are browser/user operation logs; inbox files are explicit agent requests; revisions are rebuild snapshots. | Consume explicit requests into source files, summarize useful events, then archive or mark resolved. |
+| Collaboration inbox | `state/selection.json`, `events/*.jsonl`, `inbox/*.md`, `feedback-*.md`, `revisions/` | Read before lane work. Selection is the user's current pointer; text/image edits may already be source patches; events are browser/user operation logs; inbox files are explicit agent requests; revisions are rebuild snapshots. | Consume explicit requests into source files, summarize useful events, then archive or mark resolved. |
 | Audit trail | `channel/YYYY-MM-DD.md`, legacy `PROJECT.md`, legacy `outline.md`, legacy `design-notes.md`, superseded reviews, old previews | Read only when debugging history or when the user asks to see the channel. | Append-only or leave untouched. Never use as generation truth. |
 
 Read order for every lane:
@@ -386,9 +386,19 @@ ls "$DECK_DIR"/events/*.jsonl 2>/dev/null
 
 `state/selection.json` is the latest deck element the user pointed at in the local editor. It carries `ckId`, role, DOM selector, bbox, text excerpt, and `sourceMap` back to `slides.html` / `custom.css`. Treat it as context, not a command. Use it to disambiguate words like "this", "here", or "the card" when an inbox message or live user request asks for a change.
 
-### Agent marker inbox
+### Source writes from the editor
 
-The right-side deck editor dialog writes `inbox/agent-*.md`. Each message has a marker block: slide number, slide title, marker type (`slide`, `selection`, `block`), `ck_id`, role, selector, bbox, source selector, and excerpt. Treat the marker as the user's explicit pointer into the HTML deck, like a small block screenshot. Apply the request to source files (`deck.md`, `slides.html`, `custom.css`, `assets/`) instead of editing the built HTML directly.
+The local editor may directly patch safe source operations:
+
+- Text edits write the target element's text into `slides.html`.
+- Image replacements save the new file into `assets/` and update the target `<img src="assets/...">`.
+- Position/move events are not source writes yet. Treat them as observation only until the event carries layout intent (`reorder`, `grid-area`, or `absolute`).
+
+Source-write events appear as `source-text-updated` and `source-image-updated` in `events/*.jsonl`. These events are already applied to source; do not apply them again. Use them as audit evidence and rebuild context.
+
+### Ask Codex inbox
+
+The right-side Ask Codex panel writes `inbox/agent-*.md`. Each message has a marker block: slide number, slide title, marker type (`slide`, `selection`, `block`), `ck_id`, role, selector, bbox, source selector, and excerpt. Treat the marker as the user's explicit pointer into the HTML deck, like a small block screenshot. Apply the request to source files (`deck.md`, `slides.html`, `custom.css`, `assets/`) instead of editing the built HTML directly.
 
 Consumption:
 
@@ -415,17 +425,17 @@ If a `feedback-{deck}-{rev}.md` file exists, consume it before proceeding:
 
 If multiple `feedback-*.md` files exist, consume in chronological order (oldest `exported_at` first). Never consume a feedback file twice — once archived to `channel/`, it's audit-only.
 
-If no feedback or inbox file exists, proceed with the normal lane flow. Event JSONL without matching inbox/feedback is still evidence: summarize it in `review.md` or `MEMORY.md` if it changes current truth. A lone `state/selection.json` is current context only; do not mutate source files from selection alone.
+If no feedback or inbox file exists, proceed with the normal lane flow. Event JSONL without matching inbox/feedback is still evidence: summarize it in `review.md` or `MEMORY.md` if it changes current truth. A lone `state/selection.json` is current context only; do not mutate source files from selection alone. A source-write event is audit evidence because the source file has already changed.
 
 ### Feedback loop diagram
 
 ```
 HTML service → user presses E (editor) → elements receive data-ck-id
            → user clicks/operates UI → state/selection.json + events/*.jsonl
-           → user edits text / replaces images
+           → user edits text / replaces images → source-text/source-image updates slides.html/assets
            → user presses M (mark) → pins comments / highlights text + instructions
-           → right-side Agent marker dialog writes inbox/agent-*.md
-           → Save/Feedback writes events/*.jsonl and feedback-{deck}-{rev}.md
+           → right-side Ask Codex panel writes inbox/agent-*.md
+           → Version writes events/*.jsonl; legacy feedback files are consumed if present
            → next /codeck → agent consumes feedback → edits slides.html/custom.css
            → build-html.sh → new revision HTML → loop repeats
 ```

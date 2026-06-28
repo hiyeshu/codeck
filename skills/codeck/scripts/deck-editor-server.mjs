@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 deck-editor-core.mjs、assemble.sh 和一个 codeck deck room。
- * [OUTPUT]: 提供本地 HTTP deck editor 页面与 /api/selection、/api/events、/api/inbox、/api/revisions 等端点。
- * [POS]: skills/codeck/scripts 的本地 deck editor 服务,让浏览器主画布的当前指向与 agent room 共享状态。
+ * [OUTPUT]: 提供本地 HTTP deck editor 页面与 /api/source/*、/api/selection、/api/events、/api/inbox、/api/revisions 等端点。
+ * [POS]: skills/codeck/scripts 的本地 deck editor 服务,让浏览器主画布的文字/图片操作回写 deck source。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 
@@ -10,6 +10,8 @@ import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import {
+  applyImageReplacement,
+  applyTextEdit,
   appendEvent,
   checkoutRevision,
   createRevision,
@@ -123,6 +125,20 @@ async function handleApi(req, res, url) {
       });
     }
     sendJson(res, 200, { ok: true, ...result, feedback });
+    return true;
+  }
+
+  if (url.pathname === "/api/source/text" && req.method === "POST") {
+    const payload = await readJsonBody(req);
+    const result = await applyTextEdit(deckDir, payload);
+    sendJson(res, 200, result);
+    return true;
+  }
+
+  if (url.pathname === "/api/source/image" && req.method === "POST") {
+    const payload = await readJsonBody(req);
+    const result = await applyImageReplacement(deckDir, payload);
+    sendJson(res, 200, result);
     return true;
   }
 

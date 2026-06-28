@@ -1,6 +1,6 @@
   /**
    * [INPUT]: 依赖 render-engine.js 的 slides/editor 状态与模板常量。
-   * [OUTPUT]: 提供编辑模式、可观察 UI 节点、图片替换、标注、agent marker 和反馈导出函数。
+   * [OUTPUT]: 提供编辑模式、可观察 UI 节点、文字/图片 source write、Ask Codex 请求和低干扰反馈导出函数。
    * [POS]: skills/codeck/scripts 的编辑器扩展,把 HTML deck 变成 agent 可感知主画布。
    * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
    */
@@ -73,7 +73,6 @@
       recordControlEvent('editor-toolbar', a, btn);
       if (a === 'exit') toggleEditor();
       else if (a === 'save') saveEditedHTML();
-      else if (a === 'mark') toggleMarkMode();
       else if (a === 'agent') toggleAgentDialog();
       else if (a === 'feedback') exportFeedback();
       else if (a === 'undo') document.execCommand('undo');
@@ -156,11 +155,17 @@
     if (!isEditor) return;
     var slide = e.target.closest && e.target.closest('.slide');
     if (!slide) return;
-    ckLastInputTarget = e.target.closest('[data-ck-id]') || slide;
+    var target = e.target.closest('[data-ck-id]') || slide;
+    var selEl = selectionElement(window.getSelection && window.getSelection());
+    if (selEl && selEl.closest && selEl.closest('.slide') === slide) {
+      var selectedTarget = selEl.closest('[data-ck-id]');
+      if (selectedTarget && selectedTarget !== slide) target = selectedTarget;
+    }
+    ckLastInputTarget = target;
     clearTimeout(ckInputTimer);
     ckInputTimer = setTimeout(function () {
       if (!ckLastInputTarget) return;
-      recordUiEvent('ui-edit', ckLastInputTarget, {
+      saveTextEdit(ckLastInputTarget, {
         action: 'input',
         text: trimExcerpt(ckLastInputTarget.innerText || ckLastInputTarget.textContent || '', 1000)
       });
@@ -219,6 +224,41 @@
       details: extra || {},
       happenedAt: new Date().toISOString()
     }, function () {});
+  }
+
+  function saveTextEdit(target, details) {
+    var text = details && details.text ? details.text : trimExcerpt(target.innerText || target.textContent || '', 1000);
+    postLocalJSON('/api/source/text', {
+      kind: 'edit-text',
+      node: describeUiNode(target),
+      text: text,
+      details: details || {},
+      deck: currentDeckInfo(),
+      happenedAt: new Date().toISOString()
+    }, function (ok) {
+      if (!ok) {
+        recordUiEvent('ui-edit', target, { action: 'input', text: text, sourceWrite: 'failed' });
+      }
+    });
+  }
+
+  function saveImageReplacement(target, dataUrl, file, details, done) {
+    postLocalJSON('/api/source/image', {
+      kind: 'replace-image',
+      node: describeUiNode(target),
+      dataUrl: dataUrl,
+      fileName: file && file.name ? file.name : 'image.png',
+      mimeType: file && file.type ? file.type : '',
+      size: file && file.size ? file.size : 0,
+      details: details || {},
+      deck: currentDeckInfo(),
+      happenedAt: new Date().toISOString()
+    }, function (ok, result) {
+      if (ok && result && result.asset && done) done(result.asset);
+      if (!ok) {
+        recordUiEvent('ui-image-change', target, Object.assign({ sourceWrite: 'failed' }, details || {}));
+      }
+    });
   }
 
   function currentDeckInfo() {
@@ -318,7 +358,7 @@
     };
   }
 
-  /* ─── Agent marker dialog ─── */
+  /* ─── Ask Codex panel ─── */
   function toggleAgentDialog() {
     if (!isEditor) return;
     if (agentDialog) hideAgentDialog();
@@ -335,7 +375,7 @@
     agentDialog.innerHTML = [
       '<div class="agent-head">',
       '  <div>',
-      '    <div class="agent-kicker">Agent Marker</div>',
+      '    <div class="agent-kicker">Ask Codex</div>',
       '    <div class="agent-title" id="agent-slide-title">Current slide</div>',
       '  </div>',
       '  <button class="agent-icon-btn" data-agent-act="close" aria-label="Close">×</button>',
@@ -350,13 +390,10 @@
       '    <div class="agent-marker-excerpt" id="agent-marker-excerpt">Select text or click a block, then capture it.</div>',
       '  </div>',
       '</div>',
-      '<div class="agent-actions">',
-      '  <button class="agent-btn" data-agent-act="capture">Capture block</button>',
-      '  <button class="agent-btn" data-agent-act="slide">Use slide</button>',
-      '</div>',
-      '<textarea id="agent-message" rows="5" placeholder="Tell the agent what to change for this marked block..."></textarea>',
-      '<button class="agent-send" data-agent-act="send">Send marker to agent</button>',
-      '<div class="agent-status" id="agent-status">Saved messages go to the deck room inbox.</div>'
+      '<div class="agent-hint">Click an object on the slide, then tell Codex what to change.</div>',
+      '<textarea id="agent-message" rows="5" placeholder="Tell Codex what to change here..."></textarea>',
+      '<button class="agent-send" data-agent-act="send">Send to Codex</button>',
+      '<div class="agent-status" id="agent-status">Codex can read sent requests from this deck room.</div>'
     ].join('');
     document.getElementById('app').appendChild(agentDialog);
     agentDialog.addEventListener('click', onAgentDialogClick);
@@ -375,15 +412,7 @@
     if (!btn) return;
     var act = btn.dataset.agentAct;
     if (act === 'close') hideAgentDialog();
-    else if (act === 'capture') {
-      agentMarker = buildAgentMarker('block');
-      updateAgentDialog();
-      setAgentStatus('Marker captured.');
-    } else if (act === 'slide') {
-      agentMarker = buildAgentMarker('slide');
-      updateAgentDialog();
-      setAgentStatus('Slide marker selected.');
-    } else if (act === 'send') {
+    else if (act === 'send') {
       sendAgentMessage();
     }
   }
@@ -490,8 +519,18 @@
     var label = document.getElementById('agent-marker-label');
     var excerpt = document.getElementById('agent-marker-excerpt');
     if (title) title.textContent = 'Slide ' + agentMarker.slide + ' · ' + agentMarker.title;
-    if (label) label.textContent = agentMarker.type + (agentMarker.selector ? ' · ' + agentMarker.selector : '');
+    if (label) label.textContent = agentMarkerLabel(agentMarker);
     if (excerpt) excerpt.textContent = agentMarker.excerpt || 'No text in this marker.';
+  }
+
+  function agentMarkerLabel(marker) {
+    if (!marker) return 'Whole slide';
+    if (marker.type === 'selection') return 'Selected text';
+    if (marker.type === 'block') {
+      var role = marker.role || marker.tag || 'block';
+      return 'Selected ' + role;
+    }
+    return 'Whole slide';
   }
 
   function setAgentStatus(text, isError) {
@@ -501,7 +540,7 @@
     el.classList.toggle('agent-status-error', !!isError);
     clearTimeout(agentStatusTimer);
     agentStatusTimer = setTimeout(function () {
-      if (el && !isError) el.textContent = 'Saved messages go to the deck room inbox.';
+      if (el && !isError) el.textContent = 'Codex can read sent requests from this deck room.';
     }, 5000);
   }
 
@@ -559,7 +598,7 @@
     var textarea = document.getElementById('agent-message');
     var message = textarea ? textarea.value.trim() : '';
     if (!message) {
-      setAgentStatus('Write a request for the agent first.', true);
+      setAgentStatus('Write a request for Codex first.', true);
       return;
     }
     if (!agentMarker) agentMarker = buildAgentMarker('block');
@@ -569,15 +608,15 @@
       deck: currentDeckInfo(),
       marks: ckMarks.slice()
     };
-    setAgentStatus('Saving marker...');
+    setAgentStatus('Sending to Codex inbox...');
     postLocalJSON('/api/inbox', payload, function (ok, result) {
       if (ok) {
         if (textarea) textarea.value = '';
-        setAgentStatus('Saved to agent inbox: ' + (result.id || 'open request'));
+        setAgentStatus('Sent to Codex inbox: ' + (result.id || 'open request'));
       } else {
         var name = 'agent-message-slide-' + agentMarker.slide + '-' + Date.now() + '.md';
         downloadText(agentMessageMarkdown(payload), name, 'text/markdown;charset=utf-8');
-        setAgentStatus('Local service unavailable; downloaded message sidecar.', true);
+        setAgentStatus('Local service unavailable; downloaded request sidecar.', true);
       }
     });
   }
@@ -621,9 +660,11 @@
     if (!isEditor) return;
     e.preventDefault();
     var img = e.currentTarget;
-    pickImage(function (dataUrl) {
+    pickImage(function (dataUrl, file) {
       img.src = dataUrl;
-      recordUiEvent('ui-image-change', img, { action: 'file-picker' });
+      saveImageReplacement(img, dataUrl, file, { action: 'file-picker' }, function (asset) {
+        img.setAttribute('data-ck-asset-src', asset.src);
+      });
     });
   }
 
@@ -632,7 +673,7 @@
     var slot = e.currentTarget;
     if (slot.querySelector('img')) return;
     e.preventDefault();
-    pickImage(function (dataUrl) { fillSlot(slot, dataUrl, { action: 'file-picker' }); });
+    pickImage(function (dataUrl, file) { fillSlot(slot, dataUrl, file, { action: 'file-picker' }); });
   }
 
   function onImageDragOver(e) {
@@ -649,17 +690,20 @@
   function onImageDrop(e) {
     if (!isEditor) return;
     e.preventDefault();
+    e.stopPropagation();
     e.currentTarget.classList.remove('drag-over');
     var file = e.dataTransfer.files && e.dataTransfer.files[0];
     if (!file || !file.type.startsWith('image/')) return;
     var img = e.currentTarget;
     readImageFile(file, function (dataUrl) {
       img.src = dataUrl;
-      recordUiEvent('ui-image-change', img, {
+      saveImageReplacement(img, dataUrl, file, {
         action: 'drop',
         fileName: file.name,
         mimeType: file.type,
         size: file.size
+      }, function (asset) {
+        img.setAttribute('data-ck-asset-src', asset.src);
       });
     });
   }
@@ -667,12 +711,13 @@
   function onSlotDrop(e) {
     if (!isEditor) return;
     e.preventDefault();
+    e.stopPropagation();
     e.currentTarget.classList.remove('drag-over');
     var slot = e.currentTarget;
     var file = e.dataTransfer.files && e.dataTransfer.files[0];
     if (!file || !file.type.startsWith('image/')) return;
     readImageFile(file, function (dataUrl) {
-      fillSlot(slot, dataUrl, {
+      fillSlot(slot, dataUrl, file, {
         action: 'drop',
         fileName: file.name,
         mimeType: file.type,
@@ -681,11 +726,13 @@
     });
   }
 
-  function fillSlot(slot, dataUrl, details) {
+  function fillSlot(slot, dataUrl, file, details) {
     var existing = slot.querySelector('img');
     if (existing) {
       existing.src = dataUrl;
-      recordUiEvent('ui-image-change', existing, details || { action: 'fill-slot' });
+      saveImageReplacement(existing, dataUrl, file, details || { action: 'fill-slot' }, function (asset) {
+        existing.setAttribute('data-ck-asset-src', asset.src);
+      });
       return;
     }
     var img = document.createElement('img');
@@ -698,7 +745,9 @@
     img.addEventListener('dragleave', onImageDragLeave);
     img.addEventListener('drop', onImageDrop);
     assignDeckElementIds();
-    recordUiEvent('ui-image-change', img, details || { action: 'fill-slot' });
+    saveImageReplacement(slot, dataUrl, file, details || { action: 'fill-slot' }, function (asset) {
+      img.setAttribute('data-ck-asset-src', asset.src);
+    });
   }
 
   function pickImage(cb) {
@@ -714,7 +763,7 @@
 
   function readImageFile(file, cb) {
     var reader = new FileReader();
-    reader.onload = function () { cb(reader.result); };
+    reader.onload = function () { cb(reader.result, file); };
     reader.readAsDataURL(file);
   }
 
@@ -776,8 +825,8 @@
   }
 
   /* ═══════════════════════════════════════
-     Annotation (mark) mode — pin comments + highlight instructions.
-     Toggle: M key or editor toolbar Mark button.
+     Annotation (mark) mode — legacy review pins + highlights.
+     Hidden from the primary toolbar; Ask Codex is the default collaboration path.
      Marks persist in DOM as data-ck-mark + serialized to #app[data-ck-marks].
      Export via exportFeedback().
      ═══════════════════════════════════════ */
@@ -786,8 +835,6 @@
     isMarkMode = !isMarkMode;
     var app = document.getElementById('app');
     app.classList.toggle('mark-mode', isMarkMode);
-    var btn = document.getElementById('ed-mark-btn');
-    if (btn) btn.classList.toggle('ed-btn-active', isMarkMode);
     if (isMarkMode) {
       document.addEventListener('click', onMarkClick, true);
       document.addEventListener('mouseup', onMarkSelection, true);

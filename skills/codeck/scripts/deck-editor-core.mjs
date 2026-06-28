@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 node fs/path/os/crypto 原语与 codeck deck room 文件结构。
- * [OUTPUT]: 提供 deck editor 服务和 MCP 共享的 selection、event、inbox、asset、revision 操作。
+ * [OUTPUT]: 提供 deck editor 服务和 MCP 共享的 source patch、selection、event、inbox、asset、revision 操作。
  * [POS]: skills/codeck/scripts 的本地协作状态内核,统一浏览器感知状态与 agent 消费语义。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
@@ -193,6 +193,262 @@ export async function saveFeedbackMarkdown(deckDir, payload = {}) {
   const filePath = path.join(deckDir, fileName);
   await writeFile(filePath, String(payload.markdown || ""));
   return { filePath, fileName };
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/"/g, "&quot;");
+}
+
+function parseElementPath(elementPath) {
+  return String(elementPath || "")
+    .split("-")
+    .filter(Boolean)
+    .map((part) => {
+      const match = /^(.+?)([0-9]{2})$/.exec(part);
+      if (!match) throw new Error(`Invalid element path segment: ${part}`);
+      return { tagName: match[1].toLowerCase(), nth: Number(match[2]) };
+    });
+}
+
+const VOID_TAGS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr",
+]);
+
+function isVoidOpenTag(tagName, openTag) {
+  return VOID_TAGS.has(tagName.toLowerCase()) || /\/\s*>$/.test(openTag);
+}
+
+function findElementEnd(html, openStart, openEnd, tagName) {
+  const openTag = html.slice(openStart, openEnd);
+  if (isVoidOpenTag(tagName, openTag)) {
+    return { closeStart: openEnd, closeEnd: openEnd };
+  }
+
+  const tagRe = new RegExp(`<\\/?${tagName}\\b[^>]*>`, "gi");
+  tagRe.lastIndex = openEnd;
+  let depth = 1;
+  let match;
+  while ((match = tagRe.exec(html))) {
+    const token = match[0];
+    if (/^<\//.test(token)) {
+      depth -= 1;
+      if (depth === 0) {
+        return { closeStart: match.index, closeEnd: tagRe.lastIndex };
+      }
+    } else if (!isVoidOpenTag(tagName, token)) {
+      depth += 1;
+    }
+  }
+  throw new Error(`Unclosed <${tagName}> element.`);
+}
+
+function findDirectChildRange(html, tagName, nth) {
+  const tagRe = /<\/?([a-zA-Z][\w:-]*)\b[^>]*>/g;
+  let depth = 0;
+  let count = 0;
+  let match;
+  while ((match = tagRe.exec(html))) {
+    const token = match[0];
+    const name = match[1].toLowerCase();
+    const closing = /^<\//.test(token);
+    if (closing) {
+      if (depth > 0) depth -= 1;
+      continue;
+    }
+
+    if (depth === 0 && name === tagName) {
+      count += 1;
+      if (count === nth) {
+        const openStart = match.index;
+        const openEnd = tagRe.lastIndex;
+        const end = findElementEnd(html, openStart, openEnd, name);
+        return {
+          tagName: name,
+          start: openStart,
+          openEnd,
+          closeStart: end.closeStart,
+          closeEnd: end.closeEnd,
+          openTag: token,
+          isVoid: end.closeStart === openEnd && end.closeEnd === openEnd,
+        };
+      }
+    }
+
+    if (!isVoidOpenTag(name, token)) depth += 1;
+  }
+  return null;
+}
+
+function findRangeByElementPath(html, elementPath) {
+  const parts = parseElementPath(elementPath);
+  if (!parts.length) throw new Error("Missing elementPath.");
+
+  let current = html;
+  let offset = 0;
+  let range = null;
+  for (let i = 0; i < parts.length; i += 1) {
+    const part = parts[i];
+    range = findDirectChildRange(current, part.tagName, part.nth);
+    if (!range) throw new Error(`Element path not found: ${elementPath}`);
+
+    const absolute = {
+      ...range,
+      start: offset + range.start,
+      openEnd: offset + range.openEnd,
+      closeStart: offset + range.closeStart,
+      closeEnd: offset + range.closeEnd,
+    };
+    if (i === parts.length - 1) return absolute;
+    if (range.isVoid) throw new Error(`Element path crosses void tag: ${elementPath}`);
+    current = current.slice(range.openEnd, range.closeStart);
+    offset += range.openEnd;
+  }
+  return range;
+}
+
+function hasSlideClass(openTag) {
+  const classMatch = /\bclass\s*=\s*(["'])(.*?)\1/is.exec(openTag);
+  return !!classMatch && classMatch[2].split(/\s+/).includes("slide");
+}
+
+function findSlideRange(html, slideNumber) {
+  const wanted = Number(slideNumber || 1);
+  const sectionRe = /<section\b[^>]*>/gi;
+  let count = 0;
+  let match;
+  while ((match = sectionRe.exec(html))) {
+    const openTag = match[0];
+    if (!hasSlideClass(openTag)) continue;
+    count += 1;
+    if (count !== wanted) continue;
+    const end = findElementEnd(html, match.index, sectionRe.lastIndex, "section");
+    return {
+      start: match.index,
+      openEnd: sectionRe.lastIndex,
+      closeStart: end.closeStart,
+      closeEnd: end.closeEnd,
+    };
+  }
+  throw new Error(`Slide not found: ${wanted}`);
+}
+
+function replaceRange(text, start, end, replacement) {
+  return `${text.slice(0, start)}${replacement}${text.slice(end)}`;
+}
+
+function sourceMapFromPayload(payload = {}) {
+  const node = payload.node && typeof payload.node === "object" ? payload.node : {};
+  const sourceMap = payload.sourceMap && typeof payload.sourceMap === "object" ? payload.sourceMap : node.sourceMap || {};
+  return { node, sourceMap };
+}
+
+function sourceTarget(slidesHtml, payload = {}) {
+  const { node, sourceMap } = sourceMapFromPayload(payload);
+  const slide = findSlideRange(slidesHtml, sourceMap.slide || node.slide || payload.slide || 1);
+  const elementPath = sourceMap.elementPath || payload.elementPath;
+  if (!elementPath || elementPath === "slide") throw new Error("Expected a non-slide elementPath.");
+  const slideInner = slidesHtml.slice(slide.openEnd, slide.closeStart);
+  const localRange = findRangeByElementPath(slideInner, elementPath);
+  return {
+    node,
+    sourceMap,
+    elementPath,
+    slide,
+    range: {
+      ...localRange,
+      start: slide.openEnd + localRange.start,
+      openEnd: slide.openEnd + localRange.openEnd,
+      closeStart: slide.openEnd + localRange.closeStart,
+      closeEnd: slide.openEnd + localRange.closeEnd,
+    },
+  };
+}
+
+function setHtmlAttribute(openTag, name, value) {
+  const attrRe = new RegExp(`\\s${name}\\s*=\\s*(["'])(.*?)\\1`, "is");
+  if (attrRe.test(openTag)) {
+    return openTag.replace(attrRe, ` ${name}="${escapeAttr(value)}"`);
+  }
+  return openTag.replace(/\s*\/?>$/, (end) => ` ${name}="${escapeAttr(value)}"${end}`);
+}
+
+export async function applyTextEdit(deckDir, payload = {}) {
+  await ensureRoom(deckDir);
+  const slidesPath = path.join(deckDir, "slides.html");
+  const slidesHtml = await readFile(slidesPath, "utf8");
+  const text = String(payload.text ?? payload.after ?? payload.details?.text ?? "");
+  const target = sourceTarget(slidesHtml, payload);
+  if (target.range.isVoid) throw new Error("Cannot write text into a void element.");
+
+  const nextHtml = replaceRange(slidesHtml, target.range.openEnd, target.range.closeStart, escapeHtml(text));
+  await writeFile(slidesPath, nextHtml);
+  const event = await appendEvent(deckDir, {
+    kind: "source-text-updated",
+    node: target.node,
+    sourceMap: target.sourceMap,
+    text,
+  });
+  return { ok: true, filePath: slidesPath, node: target.node, sourceMap: target.sourceMap, event: event.event };
+}
+
+export async function applyImageReplacement(deckDir, payload = {}) {
+  await ensureRoom(deckDir);
+  const asset = payload.assetSrc
+    ? { src: String(payload.assetSrc), fileName: path.basename(String(payload.assetSrc)) }
+    : await saveAsset(deckDir, {
+      dataUrl: payload.dataUrl,
+      sourcePath: payload.sourcePath,
+      fileName: payload.fileName,
+    });
+
+  const slidesPath = path.join(deckDir, "slides.html");
+  const slidesHtml = await readFile(slidesPath, "utf8");
+  const target = sourceTarget(slidesHtml, payload);
+  let nextHtml = slidesHtml;
+  let action = "replace-src";
+
+  if (target.range.tagName === "img") {
+    const openTag = slidesHtml.slice(target.range.start, target.range.openEnd);
+    let nextOpenTag = setHtmlAttribute(openTag, "src", asset.src);
+    if (payload.alt) nextOpenTag = setHtmlAttribute(nextOpenTag, "alt", payload.alt);
+    nextHtml = replaceRange(slidesHtml, target.range.start, target.range.openEnd, nextOpenTag);
+  } else if (!target.range.isVoid) {
+    action = "insert-img";
+    const img = `<img src="${escapeAttr(asset.src)}"${payload.alt ? ` alt="${escapeAttr(payload.alt)}"` : ""}>`;
+    nextHtml = replaceRange(slidesHtml, target.range.openEnd, target.range.openEnd, img);
+  } else {
+    throw new Error(`Cannot insert image into <${target.range.tagName}>.`);
+  }
+
+  await writeFile(slidesPath, nextHtml);
+  const event = await appendEvent(deckDir, {
+    kind: "source-image-updated",
+    action,
+    node: target.node,
+    sourceMap: target.sourceMap,
+    asset,
+  });
+  return { ok: true, filePath: slidesPath, asset, action, node: target.node, sourceMap: target.sourceMap, event: event.event };
 }
 
 async function readJsonl(filePath) {
