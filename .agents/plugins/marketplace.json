@@ -1,0 +1,12 @@
+{
+  "name": "codeck-github",
+  "interface": { "displayName": "codeck GitHub" },
+  "plugins": [
+    {
+      "name": "codeck",
+      "source": { "source": "local", "path": "." },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}

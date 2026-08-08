@@ -1,0 +1,31 @@
+{
+  "name": "codeck",
+  "version": "2.5.0",
+  "description": "AI presentation deck room for Codex. /codeck turns local materials into a single-file HTML deck with outline, design, review, speech, and export lanes.",
+  "author": { "name": "hiyeshu", "url": "https://github.com/hiyeshu" },
+  "homepage": "https://codeck.sh",
+  "repository": "https://github.com/hiyeshu/codeck",
+  "license": "MIT",
+  "keywords": ["presentation", "slides", "deck", "html", "skills"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "codeck",
+    "shortDescription": "Turn a folder of notes into a designed single-file HTML presentation.",
+    "longDescription": "codeck opens a persistent deck room. Outline, design, review, speech, and export skills collaborate through room files in ~/.codeck, producing a self-contained HTML deck plus PDF/PPTX exports.",
+    "developerName": "hiyeshu",
+    "category": "Productivity",
+    "brandColor": "#111111",
+    "capabilities": [
+      "Material scanning and diagnosis",
+      "Narrative outline",
+      "Single-file HTML deck generation",
+      "Visual QA review",
+      "PDF/PPTX export and speech scripts"
+    ],
+    "defaultPrompt": [
+      "/codeck — build a presentation from the files in this folder.",
+      "Change the visual style of my deck.",
+      "Export my deck to PDF."
+    ]
+  }
+}

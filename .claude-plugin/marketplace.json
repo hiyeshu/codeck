@@ -1,0 +1,13 @@
+{
+  "name": "codeck",
+  "owner": { "name": "hiyeshu", "url": "https://github.com/hiyeshu" },
+  "description": "codeck — AI presentation deck room, distributed from its own repository.",
+  "plugins": [
+    {
+      "name": "codeck",
+      "source": "./",
+      "description": "AI presentation deck room. /codeck scans materials, plans, designs, reviews, exports.",
+      "category": "productivity"
+    }
+  ]
+}

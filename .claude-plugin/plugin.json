@@ -1,0 +1,12 @@
+{
+  "name": "codeck",
+  "displayName": "codeck",
+  "version": "2.5.0",
+  "description": "AI presentation deck room. /codeck scans materials, plans the story, designs a single-file HTML deck, reviews it, and exports PDF/PPTX.",
+  "author": { "name": "hiyeshu", "url": "https://github.com/hiyeshu" },
+  "homepage": "https://codeck.sh",
+  "repository": "https://github.com/hiyeshu/codeck",
+  "license": "MIT",
+  "keywords": ["presentation", "slides", "deck", "html", "skills"],
+  "skills": "./skills/"
+}
