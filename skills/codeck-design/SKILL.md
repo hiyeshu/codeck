@@ -1,6 +1,6 @@
 ---
 name: codeck-design
-version: 2.0.0
+version: 2.0.1
 description: |
   Designer role. Reads deck.md, generates a single HTML presentation file
   with CSS design system + JS slide engine + per-slide content.
@@ -78,11 +78,18 @@ If no structured AskUser UI is available and the visual direction is blocking, s
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
 if [ -z "$CODECK_SKILL_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
     if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles" "$DECK_DIR/assets"
 bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
@@ -284,13 +291,22 @@ Write to `$DECK_DIR/DESIGN.md`.
 Run validation immediately after writing:
 
 ```bash
-CODECK_DESIGN_DIR="${CODECK_DESIGN_DIR:-}"
-if [ -z "$CODECK_DESIGN_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck-design" "$HOME/.codex/skills/codeck-design" "$HOME/.claude/skills/codeck-design"; do
-    if [ -d "$d/scripts" ]; then CODECK_DESIGN_DIR="$d"; break; fi
+DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_DESIGN_DIR" ] || { echo "codeck-design scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
+[ -n "${CODECK_DESIGN_DIR:-}" ] || { echo "codeck-design not found; set CODECK_DESIGN_DIR" >&2; exit 1; }
 bash "$CODECK_DESIGN_DIR/scripts/validate-design.sh" "$DECK_DIR/DESIGN.md"
 ```
 
@@ -332,13 +348,22 @@ The slide engine (navigation, fragments, overview, speaker mode, progress bar, F
 **Bash assembles the final HTML. This is the only valid path to a project-root `*-rN.html`:**
 
 ```bash
-CODECK_DESIGN_DIR="${CODECK_DESIGN_DIR:-}"
-if [ -z "$CODECK_DESIGN_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck-design" "$HOME/.codex/skills/codeck-design" "$HOME/.claude/skills/codeck-design"; do
-    if [ -d "$d/scripts" ]; then CODECK_DESIGN_DIR="$d"; break; fi
+DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_DESIGN_DIR" ] || { echo "codeck-design scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
+[ -n "${CODECK_DESIGN_DIR:-}" ] || { echo "codeck-design not found; set CODECK_DESIGN_DIR" >&2; exit 1; }
 ENGINE_DIR="$CODECK_DESIGN_DIR/scripts"
 
 bash "$ENGINE_DIR/build-html.sh" "$DECK_DIR" "{file-stem}" "{language}" "."

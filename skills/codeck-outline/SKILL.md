@@ -1,6 +1,6 @@
 ---
 name: codeck-outline
-version: 2.2.0
+version: 2.2.1
 description: |
   Editor role. Reads local materials, asks narrative questions, plans
   story arc. Outputs $DECK_DIR/deck.md as the sole content source.
@@ -51,11 +51,18 @@ Fallback if no diagnosis: curious magazine editor who asks "why" and won't accep
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
 if [ -z "$CODECK_SKILL_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
     if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
 bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
@@ -280,7 +287,7 @@ Level: inline / poster / extract. No assets → write "none".
 
 ## Self-review
 
-Read `$HOME/.claude/skills/codeck-outline/references/checklist.md`, then check `deck.md`.
+Read `$CODECK_ROOT/codeck-outline/references/checklist.md`, then check `deck.md`. (`CODECK_ROOT` is exported by the Setup block; if unset, it is the parent directory of the resolved codeck skill directory.)
 
 - Pass 1: structural issues → auto-fix
 - Pass 2: content quality → auto-fix mechanical issues. Ask only for real user-owned content conflicts.

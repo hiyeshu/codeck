@@ -1,6 +1,6 @@
 ---
 name: codeck-review
-version: 2.1.0
+version: 2.1.1
 description: |
   Reviewer role. Opens rendered HTML, inspects every slide visually,
   fixes problems in custom.css or slides.html and rebuilds through build-html.sh.
@@ -49,11 +49,18 @@ Fallback: senior publishing editor with an eye for detail.
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
 if [ -z "$CODECK_SKILL_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
     if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
 bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
@@ -200,13 +207,22 @@ Only create a Decision Ask when there is a real user-owned decision: conflicting
 3. Run `build-html.sh`
 
 ```bash
-CODECK_DESIGN_DIR="${CODECK_DESIGN_DIR:-}"
-if [ -z "$CODECK_DESIGN_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck-design" "$HOME/.codex/skills/codeck-design" "$HOME/.claude/skills/codeck-design"; do
-    if [ -d "$d/scripts" ]; then CODECK_DESIGN_DIR="$d"; break; fi
+DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_DESIGN_DIR" ] || { echo "codeck-design scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
+[ -n "${CODECK_DESIGN_DIR:-}" ] || { echo "codeck-design not found; set CODECK_DESIGN_DIR" >&2; exit 1; }
 ENGINE_DIR="$CODECK_DESIGN_DIR/scripts"
 bash "$ENGINE_DIR/build-html.sh" "$DECK_DIR" "{file-stem}" "{language}" "."
 ```

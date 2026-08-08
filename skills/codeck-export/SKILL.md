@@ -1,6 +1,6 @@
 ---
 name: codeck-export
-version: 2.1.0
+version: 2.1.1
 description: |
   Internal publisher module for /codeck. Exports deck to PDF or PPTX
   with post-export QA. User-facing export requests should enter through
@@ -34,11 +34,18 @@ Write boundaries:
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
 if [ -z "$CODECK_SKILL_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
     if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
 bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
@@ -138,13 +145,21 @@ Default: keep placeholders in export. If user says "embed video", extract path f
 **Option A (recommended): LibreOffice**
 
 ```bash
-CODECK_EXPORT_DIR="${CODECK_EXPORT_DIR:-}"
-if [ -z "$CODECK_EXPORT_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck-export" "$HOME/.codex/skills/codeck-export" "$HOME/.claude/skills/codeck-export"; do
-    if [ -d "$d/pptx/scripts" ]; then CODECK_EXPORT_DIR="$d"; break; fi
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_EXPORT_DIR" ] || { echo "codeck-export scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
+[ -n "${CODECK_EXPORT_DIR:-}" ] || { echo "codeck-export not found; set CODECK_EXPORT_DIR" >&2; exit 1; }
 EXPORT_SCRIPTS="$CODECK_EXPORT_DIR/pptx/scripts"
 python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pdf ./*-r*.html
 python "$EXPORT_SCRIPTS/office/soffice.py" --headless --convert-to pptx ./*-r*.html
@@ -167,13 +182,21 @@ Check: pages complete (no truncation), backgrounds render, fonts display correct
 Generate thumbnails:
 
 ```bash
-CODECK_EXPORT_DIR="${CODECK_EXPORT_DIR:-}"
-if [ -z "$CODECK_EXPORT_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck-export" "$HOME/.codex/skills/codeck-export" "$HOME/.claude/skills/codeck-export"; do
-    if [ -d "$d/pptx/scripts" ]; then CODECK_EXPORT_DIR="$d"; break; fi
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_EXPORT_DIR" ] || { echo "codeck-export scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
+[ -n "${CODECK_EXPORT_DIR:-}" ] || { echo "codeck-export not found; set CODECK_EXPORT_DIR" >&2; exit 1; }
 EXPORT_SCRIPTS="$CODECK_EXPORT_DIR/pptx/scripts"
 python "$EXPORT_SCRIPTS/thumbnail.py" ./*-r*.pptx
 ```

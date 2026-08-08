@@ -1,6 +1,6 @@
 ---
 name: codeck
-version: 2.4.0
+version: 2.4.1
 description: |
   codeck entry point. Scans local files for materials, shows pipeline
   dashboard with diagnostic intelligence, guides user to the next step.
@@ -351,11 +351,18 @@ Scan materials in `.`. Write intermediate artifacts to `$DECK_DIR`. Output final
 DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
 CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
 if [ -z "$CODECK_SKILL_DIR" ]; then
-  for d in "$HOME/.agents/skills/codeck" "$HOME/.codex/skills/codeck" "$HOME/.claude/skills/codeck"; do
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
     if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
   done
 fi
-[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found" >&2; exit 1; }
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
 mkdir -p "$DECK_DIR"
 mkdir -p "$DECK_DIR/channel" "$DECK_DIR/tasks" "$DECK_DIR/threads" "$DECK_DIR/roles"
 bash "$CODECK_SKILL_DIR/scripts/init-room.sh" "$DECK_DIR"
