@@ -1,0 +1,24 @@
+# [INPUT]: 依赖 scripts/check-plugin-metadata.mjs 与 skills/**/*.sh
+# [OUTPUT]: PR 与 main push 上的清单一致性 + shell 语法门禁
+# [POS]: 仓库唯一 CI 工作流
+# [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate plugin metadata
+        run: node scripts/check-plugin-metadata.mjs
+      - name: Syntax-check shell scripts
+        run: find skills -name '*.sh' -print0 | xargs -0 -n1 bash -n
