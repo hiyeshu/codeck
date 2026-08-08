@@ -45,7 +45,7 @@ if [ -z "$CODECK_SKILL_DIR" ]; then
   for d in \
     "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
     "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
-    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/*/skills/codeck \
     "$HOME/.agents/skills/codeck" \
     "$HOME/.codex/skills/codeck" \
     "$HOME/.claude/skills/codeck"; do

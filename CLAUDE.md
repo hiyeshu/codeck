@@ -43,7 +43,7 @@ Room documents have rank:
 
 ## Directory structure
 
-Skills resolve their install location in this order: `CODECK_SKILL_DIR` / `CODECK_DESIGN_DIR` / `CODECK_EXPORT_DIR` env overrides → `${CLAUDE_PLUGIN_ROOT}/skills/*` (Claude Code plugin install) → plugin cache globs (`~/.claude/plugins/cache/*/codeck/*/skills/*`, `~/.codex/plugins/cache/*/codeck/skills/*`) → flat installs (`~/.agents/skills/codeck*/`, `~/.codex/skills/codeck*/`, `~/.claude/skills/codeck*/`). The first match wins, so the same SKILL.md works as a Claude Code plugin, a Codex plugin, or a flat skills.sh install. Sibling lane directories are derived by `codeck/scripts/resolve-dirs.sh` (siblings hold in every layout), sourced from each skill's unified Setup bootstrap block.
+Skills resolve their install location in this order: `CODECK_SKILL_DIR` / `CODECK_DESIGN_DIR` / `CODECK_EXPORT_DIR` env overrides → `${CLAUDE_PLUGIN_ROOT}/skills/*` (Claude Code plugin install) → plugin cache globs (`~/.claude/plugins/cache/*/codeck/*/skills/*`, `~/.codex/plugins/cache/*/codeck/*/skills/*`) → flat installs (`~/.agents/skills/codeck*/`, `~/.codex/skills/codeck*/`, `~/.claude/skills/codeck*/`). The first match wins, so the same SKILL.md works as a Claude Code plugin, a Codex plugin, or a flat skills.sh install. Sibling lane directories are derived by `codeck/scripts/resolve-dirs.sh` (siblings hold in every layout), sourced from each skill's unified Setup bootstrap block.
 
 Two directories at runtime:
 - **cwd** — the user's project. codeck reads materials here, writes final deliverables here (HTML, PDF, PPTX).
