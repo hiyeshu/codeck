@@ -34,13 +34,50 @@ handoff는 chat history가 아니라 room에 남는다.
 
 ## 설치
 
-[Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com), [Codex](https://openai.com/codex) 및 [40개 이상의 에이전트](https://skills.sh) 지원.
+### Claude Code (권장)
+
+```
+/plugin marketplace add hiyeshu/codeck
+/plugin install codeck@codeck
+```
+
+`/codeck`을 입력하면 시작된다 (플러그인 네임스페이스에서는 `/codeck:codeck`으로 표시).
+
+### Codex
+
+```bash
+codex plugin marketplace add hiyeshu/codeck --ref main
+codex plugin add codeck@codeck-github
+```
+
+설치 후 새 태스크를 열어 스킬을 로드한 뒤 `/codeck`을 입력한다.
+
+### 기타 에이전트
+
+[Cursor](https://cursor.com) 및 [40개 이상의 에이전트](https://skills.sh) 지원.
 
 ```bash
 npx skills add hiyeshu/codeck
 ```
 
-`/codeck`을 입력하면 시작된다.
+## 로컬 개발 — clone 후 바로 편집
+
+저장소 자체가 마켓플레이스다. 플러그인 source가 저장소 루트를 가리키므로, 로컬 clone이 그대로 편집 가능한 라이브 설치가 된다.
+
+```bash
+git clone https://github.com/hiyeshu/codeck && cd codeck
+```
+
+- **Claude Code 제자리 로드 (즉시 반영):** `claude --plugin-dir .` —— SKILL.md, engine.css, 참조 문서를 수정한 뒤 `/reload-plugins`.
+- **Claude Code 마켓플레이스 경로:** `/plugin marketplace add /path/to/codeck` 후 `/plugin install codeck@codeck`. 이 방식은 플러그인 캐시로 복사되므로, 수정 후 `/plugin marketplace update codeck`과 재설치로 갱신.
+- **Codex:** `codex plugin marketplace add /path/to/codeck`, 이어서 `codex plugin add codeck@codeck-github`. 수정 후 `codex plugin marketplace upgrade codeck-github`로 갱신.
+- **만능 탈출구 (어떤 런타임이든 항상 라이브):** 스킬이 clone을 직접 가리키게 한다 —— 모든 Setup 블록은 이 세 환경 변수를 최우선으로 읽는다.
+
+  ```bash
+  export CODECK_SKILL_DIR=/path/to/codeck/skills/codeck
+  export CODECK_DESIGN_DIR=/path/to/codeck/skills/codeck-design
+  export CODECK_EXPORT_DIR=/path/to/codeck/skills/codeck-export
+  ```
 
 ## HTML 파일
 

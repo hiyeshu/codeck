@@ -90,3 +90,29 @@ When SKILL.md approaches 500 lines, move details to references/ and note when to
 - Upstream/downstream data passes through `~/.codeck/projects/{slug}/`, not direct skill-to-skill calls
 - Each stage activates a dynamic role via diagnosis.md recommendations
 - Skills and all internal documentation are in English
+
+## Packaging & versions
+
+- The repository is simultaneously a Claude Code marketplace/plugin (`.claude-plugin/`), a Codex marketplace/plugin (`.codex-plugin/` + `.agents/plugins/`), and a flat skills bundle (`skills/` consumed by skills.sh). All three channels ship the same `skills/` directory; never restructure `skills/` in a way that breaks any channel.
+- Two version scopes: the **bundle version** lives in both plugin.json files, must stay identical, and bumps on any released change under `skills/`; the **per-skill version** lives in each SKILL.md frontmatter and bumps per lane change. `scripts/check-plugin-metadata.mjs` enforces both (CI runs it on every PR).
+- Every SKILL.md that needs lane directories starts from the unified Setup bootstrap block below — copy it verbatim, then assert the specific `CODECK_*_DIR` you need. Never hard-code an install path outside this probe list; the metadata check rejects it.
+
+```bash
+DECK_DIR="$HOME/.codeck/projects/$(basename "$(pwd)")"
+CODECK_SKILL_DIR="${CODECK_SKILL_DIR:-}"
+if [ -z "$CODECK_SKILL_DIR" ]; then
+  for d in \
+    "${CLAUDE_PLUGIN_ROOT}/skills/codeck" \
+    "$HOME"/.claude/plugins/cache/*/codeck/*/skills/codeck \
+    "$HOME"/.codex/plugins/cache/*/codeck/skills/codeck \
+    "$HOME/.agents/skills/codeck" \
+    "$HOME/.codex/skills/codeck" \
+    "$HOME/.claude/skills/codeck"; do
+    if [ -d "$d/scripts" ]; then CODECK_SKILL_DIR="$d"; break; fi
+  done
+fi
+[ -n "$CODECK_SKILL_DIR" ] || { echo "codeck skill scripts not found; set CODECK_SKILL_DIR" >&2; exit 1; }
+. "$CODECK_SKILL_DIR/scripts/resolve-dirs.sh"
+```
+
+- Write `${CLAUDE_PLUGIN_ROOT}` exactly as shown — never the `${VAR:-}` modifier form, which may defeat the plugin runtime's textual substitution. Unset, it expands empty and the `-d` test fails harmlessly.

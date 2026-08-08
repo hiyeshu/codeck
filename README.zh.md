@@ -34,13 +34,50 @@ handoff 留在 room 里，不靠聊天历史。
 
 ## 安装
 
-支持 [Claude Code](https://docs.anthropic.com/en/docs/claude-code)、[Cursor](https://cursor.com)、[Codex](https://openai.com/codex) 及 [40+ 其他 agent](https://skills.sh)。
+### Claude Code（推荐）
+
+```
+/plugin marketplace add hiyeshu/codeck
+/plugin install codeck@codeck
+```
+
+输入 `/codeck` 开始（插件命名空间下显示为 `/codeck:codeck`）。
+
+### Codex
+
+```bash
+codex plugin marketplace add hiyeshu/codeck --ref main
+codex plugin add codeck@codeck-github
+```
+
+安装完成后开一个新任务让技能加载，然后输入 `/codeck`。
+
+### 其他 agent
+
+支持 [Cursor](https://cursor.com) 及 [40+ 其他 agent](https://skills.sh)。
 
 ```bash
 npx skills add hiyeshu/codeck
 ```
 
-输入 `/codeck` 开始。
+## 本地开发 — clone 即改即生效
+
+仓库本身就是 marketplace：插件 source 指向仓库根目录，本地 clone 就是一个可编辑的活安装。
+
+```bash
+git clone https://github.com/hiyeshu/codeck && cd codeck
+```
+
+- **Claude Code 原地加载（立即生效）：** `claude --plugin-dir .` —— 改任何 SKILL.md、engine.css 或参考文档后 `/reload-plugins` 即可。
+- **Claude Code marketplace 路径：** `/plugin marketplace add /path/to/codeck` 再 `/plugin install codeck@codeck`。此方式会复制进插件缓存；改动后 `/plugin marketplace update codeck` 并重装刷新。
+- **Codex：** `codex plugin marketplace add /path/to/codeck`，再 `codex plugin add codeck@codeck-github`；改动后 `codex plugin marketplace upgrade codeck-github` 刷新。
+- **万能逃生口（任何 runtime，永远即时生效）：** 让技能直接指向你的 clone —— 每个 Setup 块都优先读这三个环境变量。
+
+  ```bash
+  export CODECK_SKILL_DIR=/path/to/codeck/skills/codeck
+  export CODECK_DESIGN_DIR=/path/to/codeck/skills/codeck-design
+  export CODECK_EXPORT_DIR=/path/to/codeck/skills/codeck-export
+  ```
 
 ## HTML 文件
 

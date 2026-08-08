@@ -34,13 +34,50 @@ handoff は chat history ではなく room に残る。
 
 ## インストール
 
-[Claude Code](https://docs.anthropic.com/en/docs/claude-code)、[Cursor](https://cursor.com)、[Codex](https://openai.com/codex)、[その他 40 以上のエージェント](https://skills.sh)に対応。
+### Claude Code（推奨）
+
+```
+/plugin marketplace add hiyeshu/codeck
+/plugin install codeck@codeck
+```
+
+`/codeck` と打てば始まる（プラグイン名前空間では `/codeck:codeck` と表示）。
+
+### Codex
+
+```bash
+codex plugin marketplace add hiyeshu/codeck --ref main
+codex plugin add codeck@codeck-github
+```
+
+インストール後は新しいタスクを開いてスキルを読み込み、`/codeck` と打つ。
+
+### その他のエージェント
+
+[Cursor](https://cursor.com) と[その他 40 以上のエージェント](https://skills.sh)に対応。
 
 ```bash
 npx skills add hiyeshu/codeck
 ```
 
-`/codeck` と打てば始まる。
+## ローカル開発 — clone してそのまま編集
+
+リポジトリ自体がマーケットプレイス。プラグインの source はリポジトリルートを指すため、ローカル clone がそのまま編集可能なライブインストールになる。
+
+```bash
+git clone https://github.com/hiyeshu/codeck && cd codeck
+```
+
+- **Claude Code その場読み込み（即時反映）：** `claude --plugin-dir .` —— SKILL.md や engine.css、参照ドキュメントを編集したら `/reload-plugins`。
+- **Claude Code マーケットプレイス経由：** `/plugin marketplace add /path/to/codeck` の後 `/plugin install codeck@codeck`。この方式はプラグインキャッシュへコピーされるため、編集後は `/plugin marketplace update codeck` と再インストールで更新。
+- **Codex：** `codex plugin marketplace add /path/to/codeck`、続けて `codex plugin add codeck@codeck-github`。編集後は `codex plugin marketplace upgrade codeck-github` で更新。
+- **万能の逃げ道（どのランタイムでも常にライブ）：** スキルを clone に直接向ける —— すべての Setup ブロックはこの 3 つの環境変数を最優先で読む。
+
+  ```bash
+  export CODECK_SKILL_DIR=/path/to/codeck/skills/codeck
+  export CODECK_DESIGN_DIR=/path/to/codeck/skills/codeck-design
+  export CODECK_EXPORT_DIR=/path/to/codeck/skills/codeck-export
+  ```
 
 ## HTML ファイル
 

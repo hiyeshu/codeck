@@ -34,13 +34,50 @@ The handoff lives in the room, not in chat history.
 
 ## Install
 
-Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com), [Codex](https://openai.com/codex), and [40+ other agents](https://skills.sh).
+### Claude Code (recommended)
+
+```
+/plugin marketplace add hiyeshu/codeck
+/plugin install codeck@codeck
+```
+
+Type `/codeck` to start (shown as `/codeck:codeck` in the plugin namespace).
+
+### Codex
+
+```bash
+codex plugin marketplace add hiyeshu/codeck --ref main
+codex plugin add codeck@codeck-github
+```
+
+Start a new task so the skills load, then type `/codeck`.
+
+### Other agents
+
+Works with [Cursor](https://cursor.com) and [40+ other agents](https://skills.sh).
 
 ```bash
 npx skills add hiyeshu/codeck
 ```
 
-Type `/codeck` to start.
+## Local development — clone and edit live
+
+The repository is its own marketplace: the plugin's source points at the repo root, so a local clone is a live, editable install.
+
+```bash
+git clone https://github.com/hiyeshu/codeck && cd codeck
+```
+
+- **Claude Code, in place (immediately live):** `claude --plugin-dir .` — edits to any SKILL.md, engine.css, or reference file are picked up with `/reload-plugins`.
+- **Claude Code, marketplace path:** `/plugin marketplace add /path/to/codeck` then `/plugin install codeck@codeck`. This copies into the plugin cache; after edits run `/plugin marketplace update codeck` and reinstall to refresh.
+- **Codex:** `codex plugin marketplace add /path/to/codeck`, then `codex plugin add codeck@codeck-github`; refresh after edits with `codex plugin marketplace upgrade codeck-github`.
+- **Universal escape hatch (any runtime, always live):** point the skills at your clone — every Setup block honors these before any probe.
+
+  ```bash
+  export CODECK_SKILL_DIR=/path/to/codeck/skills/codeck
+  export CODECK_DESIGN_DIR=/path/to/codeck/skills/codeck-design
+  export CODECK_EXPORT_DIR=/path/to/codeck/skills/codeck-export
+  ```
 
 ## The HTML file
 
